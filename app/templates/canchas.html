@@ -1,0 +1,966 @@
+{% extends 'base.html' %}
+{% block base %}
+<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
+    <!-- Sidebar Navigation -->
+    {% include "components/nav.html" %}
+
+    <!-- Main Content Area -->
+    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
+        <!-- Top Navigation Bar -->
+        {% include "components/top_nav.html" %}
+        
+        <!-- Venues Section -->
+        <div class="container-fluid p-4 bg-dark">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                                <div>
+                                    <h4 class="text-white mb-1">Canchas disponibles</h4>
+                                    <p class="text-white-50 mb-md-0">Encuentra las mejores canchas para tus partidos</p>
+                                </div>
+                                <div class="d-flex gap-2 mt-3 mt-md-0">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-dark text-white border-secondary" placeholder="Buscar canchas...">
+                                        <button class="btn btn-success" type="button">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addVenueModal">
+                                        <i class="fas fa-plus-circle me-md-2"></i><span class="d-none d-md-inline">Añadir cancha</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Toggle and Filters -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                <div class="d-flex flex-wrap gap-2 mb-3 mb-md-0">
+                                    <button class="btn btn-success" id="allVenuesBtn">Todas</button>
+                                    <button class="btn btn-dark" id="verifiedVenuesBtn">Verificadas</button>
+                                    <button class="btn btn-dark" id="communityVenuesBtn">Comunitarias</button>
+                                    <button class="btn btn-outline-light" data-bs-toggle="collapse" data-bs-target="#venueFilters">
+                                        <i class="fas fa-filter me-2"></i>Filtros
+                                    </button>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-dark active" id="listViewBtn" title="Vista de lista">
+                                        <i class="fas fa-list-ul"></i>
+                                    </button>
+                                    <button class="btn btn-dark" id="mapViewBtn" title="Vista de mapa">
+                                        <i class="fas fa-map-marked-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters (Collapsible) -->
+            <div class="collapse mb-4" id="venueFilters">
+                <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-4 col-lg-3">
+                                <label class="form-label text-white">Superficie</label>
+                                <select class="form-select bg-dark text-white border-secondary">
+                                    <option selected>Todas las superficies</option>
+                                    <option>Césped natural</option>
+                                    <option>Césped artificial</option>
+                                    <option>Fútbol sala</option>
+                                    <option>Tierra</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-lg-3">
+                                <label class="form-label text-white">Tamaño</label>
+                                <select class="form-select bg-dark text-white border-secondary">
+                                    <option selected>Todos los tamaños</option>
+                                    <option>Fútbol 5</option>
+                                    <option>Fútbol 7</option>
+                                    <option>Fútbol 11</option>
+                                    <option>Fútbol sala</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-lg-3">
+                                <label class="form-label text-white">Servicios</label>
+                                <select class="form-select bg-dark text-white border-secondary">
+                                    <option selected>Todos</option>
+                                    <option>Con vestuarios</option>
+                                    <option>Con parking</option>
+                                    <option>Con iluminación</option>
+                                    <option>Con cafetería</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-lg-3">
+                                <label class="form-label text-white">Distancia</label>
+                                <select class="form-select bg-dark text-white border-secondary">
+                                    <option selected>Cualquier distancia</option>
+                                    <option>Menos de 2 km</option>
+                                    <option>Menos de 5 km</option>
+                                    <option>Menos de 10 km</option>
+                                    <option>Menos de 20 km</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-lg-3">
+                                <label class="form-label text-white">Precio</label>
+                                <select class="form-select bg-dark text-white border-secondary">
+                                    <option selected>Cualquier precio</option>
+                                    <option>Gratuito</option>
+                                    <option>Hasta 30€/h</option>
+                                    <option>Hasta 60€/h</option>
+                                    <option>Hasta 100€/h</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-lg-3">
+                                <label class="form-label text-white">Disponibilidad</label>
+                                <select class="form-select bg-dark text-white border-secondary">
+                                    <option selected>Cualquier disponibilidad</option>
+                                    <option>Disponible hoy</option>
+                                    <option>Disponible este fin de semana</option>
+                                    <option>Disponible entre semana</option>
+                                    <option>Disponible por la noche</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-lg-3">
+                                <label class="form-label text-white">Valoración</label>
+                                <select class="form-select bg-dark text-white border-secondary">
+                                    <option selected>Todas las valoraciones</option>
+                                    <option>4 estrellas o más</option>
+                                    <option>3 estrellas o más</option>
+                                    <option>2 estrellas o más</option>
+                                </select>
+                            </div>
+                            <div class="col-12 text-end mt-3">
+                                <button class="btn btn-outline-light me-2">Limpiar filtros</button>
+                                <button class="btn btn-success">Aplicar filtros</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List View (Active by default) -->
+            <div id="venueListView">
+                <!-- Verified Venues Section -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-white mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>Canchas verificadas
+                            <span class="badge bg-success ms-2">Premium</span>
+                        </h5>
+                        <p class="text-white-50 mb-4">Instalaciones oficiales con acuerdos de colaboración. Reserva garantizada y servicios verificados.</p>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-5">
+                    <!-- Verified Venue Card 1 -->
+                    <div class="col-md-6 col-xl-4">
+                        <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
+                            <div class="position-relative">
+                                <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="Campo Municipal Norte">
+                                <div class="position-absolute top-0 start-0 m-3">
+                                    <span class="badge bg-success d-flex align-items-center">
+                                        <i class="fas fa-check-circle me-1"></i>Verificada
+                                    </span>
+                                </div>
+                                <div class="position-absolute top-0 end-0 m-3">
+                                    <span class="badge bg-dark">
+                                        <i class="fas fa-map-marker-alt me-1"></i>1.2 km
+                                    </span>
+                                </div>
+                                <div class="position-absolute bottom-0 start-0 end-0 p-3 text-center" style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
+                                    <h5 class="text-white mb-0">Campo Municipal Norte</h5>
+                                </div>
+                            </div>
+
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="text-warning me-2">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                    <span class="text-white">4.5</span>
+                                    <span class="text-white-50 ms-2">(32 valoraciones)</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-map-marker-alt text-success me-3"></i>
+                                    <span class="text-white">Av. del Deporte, 123, Madrid</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-leaf text-success me-3"></i>
+                                    <span class="text-white">Césped artificial</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-users text-success me-3"></i>
+                                    <span class="text-white">Fútbol 7 y 11</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-euro-sign text-success me-3"></i>
+                                    <span class="text-white">Desde 60€/hora</span>
+                                </div>
+                                
+                                <!-- Amenities -->
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge bg-dark"><i class="fas fa-parking me-1"></i>Parking</span>
+                                    <span class="badge bg-dark"><i class="fas fa-shower me-1"></i>Vestuarios</span>
+                                    <span class="badge bg-dark"><i class="fas fa-lightbulb me-1"></i>Iluminación</span>
+                                    <span class="badge bg-dark"><i class="fas fa-utensils me-1"></i>Cafetería</span>
+                                </div>
+                                
+                                <!-- Special Offer -->
+                                <div class="alert alert-success bg-success bg-opacity-10 border-success d-flex align-items-center mb-3" role="alert">
+                                    <i class="fas fa-tag me-2 text-success"></i>
+                                    <div class="text-success">10% de descuento para usuarios de FútbolConnect</div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between">
+                                    <a href="#" class="btn btn-outline-light">
+                                        <i class="fas fa-info-circle me-2"></i>Detalles
+                                    </a>
+                                    <a href="#" class="btn btn-success">
+                                        <i class="fas fa-calendar-alt me-2"></i>Reservar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Verified Venue Card 2 -->
+                    <div class="col-md-6 col-xl-4">
+                        <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
+                            <div class="position-relative">
+                                <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="Estadio Central">
+                                <div class="position-absolute top-0 start-0 m-3">
+                                    <span class="badge bg-success d-flex align-items-center">
+                                        <i class="fas fa-check-circle me-1"></i>Verificada
+                                    </span>
+                                </div>
+                                <div class="position-absolute top-0 end-0 m-3">
+                                    <span class="badge bg-dark">
+                                        <i class="fas fa-map-marker-alt me-1"></i>3.5 km
+                                    </span>
+                                </div>
+                                <div class="position-absolute bottom-0 start-0 end-0 p-3 text-center" style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
+                                    <h5 class="text-white mb-0">Estadio Central</h5>
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="text-warning me-2">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <span class="text-white">5.0</span>
+                                    <span class="text-white-50 ms-2">(48 valoraciones)</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-map-marker-alt text-success me-3"></i>
+                                    <span class="text-white">Calle Central, 45, Madrid</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-leaf text-success me-3"></i>
+                                    <span class="text-white">Césped natural</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-users text-success me-3"></i>
+                                    <span class="text-white">Fútbol 11</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-euro-sign text-success me-3"></i>
+                                    <span class="text-white">Desde 90€/hora</span>
+                                </div>
+                                
+                                <!-- Amenities -->
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge bg-dark"><i class="fas fa-parking me-1"></i>Parking</span>
+                                    <span class="badge bg-dark"><i class="fas fa-shower me-1"></i>Vestuarios</span>
+                                    <span class="badge bg-dark"><i class="fas fa-lightbulb me-1"></i>Iluminación</span>
+                                    <span class="badge bg-dark"><i class="fas fa-utensils me-1"></i>Cafetería</span>
+                                    <span class="badge bg-dark"><i class="fas fa-first-aid me-1"></i>Primeros auxilios</span>
+                                </div>
+                                
+                                <!-- Special Offer -->
+                                <div class="alert alert-success bg-success bg-opacity-10 border-success d-flex align-items-center mb-3" role="alert">
+                                    <i class="fas fa-tag me-2 text-success"></i>
+                                    <div class="text-success">15% de descuento en horario matutino</div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between">
+                                    <a href="#" class="btn btn-outline-light">
+                                        <i class="fas fa-info-circle me-2"></i>Detalles
+                                    </a>
+                                    <a href="#" class="btn btn-success">
+                                        <i class="fas fa-calendar-alt me-2"></i>Reservar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Verified Venue Card 3 -->
+                    <div class="col-md-6 col-xl-4">
+                        <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
+                            <div class="position-relative">
+                                <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="Polideportivo Sur">
+                                <div class="position-absolute top-0 start-0 m-3">
+                                    <span class="badge bg-success d-flex align-items-center">
+                                        <i class="fas fa-check-circle me-1"></i>Verificada
+                                    </span>
+                                </div>
+                                <div class="position-absolute top-0 end-0 m-3">
+                                    <span class="badge bg-dark">
+                                        <i class="fas fa-map-marker-alt me-1"></i>4.1 km
+                                    </span>
+                                </div>
+                                <div class="position-absolute bottom-0 start-0 end-0 p-3 text-center" style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
+                                    <h5 class="text-white mb-0">Polideportivo Sur</h5>
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="text-warning me-2">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                    <span class="text-white">4.0</span>
+                                    <span class="text-white-50 ms-2">(27 valoraciones)</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-map-marker-alt text-success me-3"></i>
+                                    <span class="text-white">Paseo Sur, 78, Madrid</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-leaf text-success me-3"></i>
+                                    <span class="text-white">Fútbol sala (interior)</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-users text-success me-3"></i>
+                                    <span class="text-white">Fútbol 5</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-euro-sign text-success me-3"></i>
+                                    <span class="text-white">Desde 40€/hora</span>
+                                </div>
+                                
+                                <!-- Amenities -->
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge bg-dark"><i class="fas fa-parking me-1"></i>Parking</span>
+                                    <span class="badge bg-dark"><i class="fas fa-shower me-1"></i>Vestuarios</span>
+                                    <span class="badge bg-dark"><i class="fas fa-utensils me-1"></i>Cafetería</span>
+                                </div>
+                                
+                                <!-- Special Offer -->
+                                <div class="alert alert-success bg-success bg-opacity-10 border-success d-flex align-items-center mb-3" role="alert">
+                                    <i class="fas fa-tag me-2 text-success"></i>
+                                    <div class="text-success">Oferta 2x1 en horario de mañana entre semana</div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between">
+                                    <a href="#" class="btn btn-outline-light">
+                                        <i class="fas fa-info-circle me-2"></i>Detalles
+                                    </a>
+                                    <a href="#" class="btn btn-success">
+                                        <i class="fas fa-calendar-alt me-2"></i>Reservar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Community Venues Section -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="text-white mb-3">
+                            <i class="fas fa-users text-info me-2"></i>Canchas comunitarias
+                            <span class="badge bg-info text-dark ms-2">Añadidas por usuarios</span>
+                        </h5>
+                        <p class="text-white-50 mb-4">Canchas añadidas por la comunidad. La información puede variar y se recomienda confirmar los detalles antes de acudir.</p>
+                    </div>
+                </div>
+                
+                <div class="row g-4 mb-5">
+                    <!-- Community Venue Card 1 -->
+                    <div class="col-md-6 col-xl-4">
+                        <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
+                            <div class="position-relative">
+                                <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="Cancha El Barrio">
+                                <div class="position-absolute top-0 start-0 m-3">
+                                    <span class="badge bg-info text-dark d-flex align-items-center">
+                                        <i class="fas fa-users me-1"></i>Comunitaria
+                                    </span>
+                                </div>
+                                <div class="position-absolute top-0 end-0 m-3">
+                                    <span class="badge bg-dark">
+                                        <i class="fas fa-map-marker-alt me-1"></i>0.7 km
+                                    </span>
+                                </div>
+                                <div class="position-absolute bottom-0 start-0 end-0 p-3 text-center" style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
+                                    <h5 class="text-white mb-0">Cancha "El Barrio"</h5>
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="text-warning me-2">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                    <span class="text-white">3.5</span>
+                                    <span class="text-white-50 ms-2">(12 valoraciones)</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-map-marker-alt text-info me-3"></i>
+                                    <span class="text-white">Calle Vecina, 15, Madrid</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-leaf text-info me-3"></i>
+                                    <span class="text-white">Tierra</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-users text-info me-3"></i>
+                                    <span class="text-white">Fútbol 7</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-euro-sign text-info me-3"></i>
+                                    <span class="text-white">Gratuito</span>
+                                </div>
+                                
+                                <!-- Amenities -->
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge bg-dark"><i class="fas fa-parking me-1"></i>Parking cercano</span>
+                                </div>
+                                
+                                <!-- Warning Notice -->
+                                <div class="alert alert-warning bg-warning bg-opacity-10 border-warning d-flex align-items-center mb-3" role="alert">
+                                    <i class="fas fa-exclamation-triangle me-2 text-warning"></i>
+                                    <div class="text-warning">Cancha pública, disponibilidad no garantizada</div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <small class="text-white-50">
+                                            <i class="fas fa-user me-1"></i>Añadida por: Miguel S.
+                                        </small>
+                                    </div>
+                                    <a href="#" class="btn btn-outline-light">
+                                        <i class="fas fa-info-circle me-2"></i>Detalles
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Community Venue Card 2 -->
+                    <div class="col-md-6 col-xl-4">
+                        <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
+                            <div class="position-relative">
+                                <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="Campo San Jorge">
+                                <div class="position-absolute top-0 start-0 m-3">
+                                    <span class="badge bg-info text-dark d-flex align-items-center">
+                                        <i class="fas fa-users me-1"></i>Comunitaria
+                                    </span>
+                                </div>
+                                <div class="position-absolute top-0 end-0 m-3">
+                                    <span class="badge bg-dark">
+                                        <i class="fas fa-map-marker-alt me-1"></i>2.3 km
+                                    </span>
+                                </div>
+                                <div class="position-absolute bottom-0 start-0 end-0 p-3 text-center" style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
+                                    <h5 class="text-white mb-0">Campo San Jorge</h5>
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="text-warning me-2">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                    <span class="text-white">4.0</span>
+                                    <span class="text-white-50 ms-2">(8 valoraciones)</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-map-marker-alt text-info me-3"></i>
+                                    <span class="text-white">Calle San Jorge, 34, Madrid</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-leaf text-info me-3"></i>
+                                    <span class="text-white">Césped artificial</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-users text-info me-3"></i>
+                                    <span class="text-white">Fútbol 5</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-euro-sign text-info me-3"></i>
+                                    <span class="text-white">25€/hora (aprox.)</span>
+                                </div>
+                                
+                                <!-- Amenities -->
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge bg-dark"><i class="fas fa-shower me-1"></i>Vestuarios</span>
+                                    <span class="badge bg-dark"><i class="fas fa-lightbulb me-1"></i>Iluminación</span>
+                                </div>
+                                
+                                <!-- Warning Notice -->
+                                <div class="alert alert-warning bg-warning bg-opacity-10 border-warning d-flex align-items-center mb-3" role="alert">
+                                    <i class="fas fa-exclamation-triangle me-2 text-warning"></i>
+                                    <div class="text-warning">Reserva por teléfono, no integrada en la plataforma</div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <small class="text-white-50">
+                                            <i class="fas fa-user me-1"></i>Añadida por: Laura M.
+                                        </small>
+                                    </div>
+                                    <a href="#" class="btn btn-outline-light">
+                                        <i class="fas fa-info-circle me-2"></i>Detalles
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Community Venue Card 3 -->
+                    <div class="col-md-6 col-xl-4">
+                        <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
+                            <div class="position-relative">
+                                <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="Pista Municipal Este">
+                                <div class="position-absolute top-0 start-0 m-3">
+                                    <span class="badge bg-info text-dark d-flex align-items-center">
+                                        <i class="fas fa-users me-1"></i>Comunitaria
+                                    </span>
+                                </div>
+                                <div class="position-absolute top-0 end-0 m-3">
+                                    <span class="badge bg-dark">
+                                        <i class="fas fa-map-marker-alt me-1"></i>5.6 km
+                                    </span>
+                                </div>
+                                <div class="position-absolute bottom-0 start-0 end-0 p-3 text-center" style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
+                                    <h5 class="text-white mb-0">Pista Municipal Este</h5>
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="text-warning me-2">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                    <span class="text-white">3.0</span>
+                                    <span class="text-white-50 ms-2">(5 valoraciones)</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-map-marker-alt text-info me-3"></i>
+                                    <span class="text-white">Parque Este, s/n, Madrid</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-leaf text-info me-3"></i>
+                                    <span class="text-white">Cemento</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-users text-info me-3"></i>
+                                    <span class="text-white">Fútbol sala</span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-euro-sign text-info me-3"></i>
+                                    <span class="text-white">Gratuito</span>
+                                </div>
+                                
+                                <!-- Amenities -->
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <span class="badge bg-dark"><i class="fas fa-parking me-1"></i>Parking</span>
+                                </div>
+                                
+                                <!-- Warning Notice -->
+                                <div class="alert alert-warning bg-warning bg-opacity-10 border-warning d-flex align-items-center mb-3" role="alert">
+                                    <i class="fas fa-exclamation-triangle me-2 text-warning"></i>
+                                    <div class="text-warning">Pista pública, no se puede reservar</div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <small class="text-white-50">
+                                            <i class="fas fa-user me-1"></i>Añadida por: Carlos R.
+                                        </small>
+                                    </div>
+                                    <a href="#" class="btn btn-outline-light">
+                                        <i class="fas fa-info-circle me-2"></i>Detalles
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Add More Button -->
+                <div class="text-center mb-5">
+                    <button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#addVenueModal">
+                        <i class="fas fa-plus-circle me-2"></i>Añadir nueva cancha
+                    </button>
+                </div>
+                
+                <!-- Map View (Hidden by default) -->
+                <div id="venueMapView" style="display: none;">
+                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
+                        <div class="card-body p-0">
+                            <div style="height: 600px; background-color: #1a202c; position: relative;">
+                                <!-- This would be replaced with the actual map implementation -->
+                                <div class="d-flex justify-content-center align-items-center h-100">
+                                    <div class="text-center">
+                                        <i class="fas fa-map-marked-alt text-success mb-3" style="font-size: 3rem;"></i>
+                                        <h5 class="text-white">Mapa de canchas</h5>
+                                        <p class="text-white-50">Aquí se cargaría el mapa interactivo con todas las canchas</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Sample controls that would appear over the map -->
+                                <div class="position-absolute" style="top: 10px; right: 10px;">
+                                    <div class="btn-group-vertical">
+                                        <button class="btn btn-dark" title="Acercar">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                        <button class="btn btn-dark" title="Alejar">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="position-absolute" style="top: 10px; left: 10px;">
+                                    <div class="btn-group">
+                                        <button class="btn btn-success active" title="Mostrar canchas verificadas">
+                                            <i class="fas fa-check-circle me-md-2"></i><span class="d-none d-md-inline">Verificadas</span>
+                                        </button>
+                                        <button class="btn btn-info" title="Mostrar canchas comunitarias">
+                                            <i class="fas fa-users me-md-2"></i><span class="d-none d-md-inline">Comunitarias</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="position-absolute" style="bottom: 20px; right: 20px;">
+                                    <button class="btn btn-success" title="Mi ubicación">
+                                        <i class="fas fa-location-arrow"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                </div>
+                </div>
+                
+            <!-- MODAL AÑADIR CANCHA -->
+             <!-- Modal añadir cancha -->
+<div class="modal fade" id="addVenueModal" tabindex="-1" aria-labelledby="addVenueModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0" style="background-color: #2d3748; border-radius: 15px;">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title text-white" id="addVenueModalLabel">Añadir nueva cancha comunitaria</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Tipo de usuario -->
+                <div class="alert alert-warning bg-warning bg-opacity-10 border-warning mb-4" role="alert">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-warning me-2"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-warning mb-1">¿Eres dueño o administrador de una cancha?</h6>
+                            <p class="mb-2 text-warning">Este formulario es solo para usuarios que quieren compartir canchas que conocen con la comunidad. Las canchas añadidas aquí serán "no verificadas".</p>
+                            <a href="/registrar-cancha-verificada" class="btn btn-warning btn-sm">
+                                <i class="fas fa-building me-2"></i>Registrar mi cancha como negocio
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <form>
+                    <div class="alert alert-info bg-info bg-opacity-10 border-info mb-4" role="alert">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-info-circle text-info me-2"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-info mb-1">Añadir una cancha a la comunidad</h6>
+                                <p class="mb-0 text-info">Comparte tus canchas favoritas con otros jugadores. La información será revisada por nuestro equipo.</p>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Basic Information -->
+                    <h6 class="text-white mb-3">Información básica</h6>
+                    
+                    <div class="mb-3">
+                        <label for="venueName" class="form-label text-white">Nombre de la cancha <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" id="venueName" placeholder="Ej: Campo San Jorge" required>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="venueAddress" class="form-label text-white">Dirección <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="venueAddress" placeholder="Dirección completa" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="venueCity" class="form-label text-white">Ciudad <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="venueCity" placeholder="Ej: Madrid" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-white">Ubicación en el mapa <span class="text-danger">*</span></label>
+                        <div style="height: 200px; background-color: #1a202c; position: relative; border-radius: 10px; overflow: hidden; margin-bottom: 15px;">
+                            <!-- This would be replaced with the actual map implementation -->
+                            <div class="d-flex justify-content-center align-items-center h-100">
+                                <div class="text-center">
+                                    <i class="fas fa-map-marked-alt text-info mb-3" style="font-size: 2rem;"></i>
+                                    <p class="text-white-50">Haz clic en el mapa para seleccionar la ubicación exacta</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Venue Details -->
+                    <h6 class="text-white mb-3 mt-4">Detalles de la cancha</h6>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="venueType" class="form-label text-white">Tipo de cancha <span class="text-danger">*</span></label>
+                            <select class="form-select bg-dark text-white border-secondary" id="venueType" required>
+                                <option value="" selected disabled>Seleccionar tipo</option>
+                                <option value="football5">Fútbol 5</option>
+                                <option value="football7">Fútbol 7</option>
+                                <option value="football11">Fútbol 11</option>
+                                <option value="futsal">Fútbol sala</option>
+                                <option value="multi">Multiuso</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="venueSurface" class="form-label text-white">Superficie <span class="text-danger">*</span></label>
+                            <select class="form-select bg-dark text-white border-secondary" id="venueSurface" required>
+                                <option value="" selected disabled>Seleccionar superficie</option>
+                                <option value="natural">Césped natural</option>
+                                <option value="artificial">Césped artificial</option>
+                                <option value="indoor">Fútbol sala (interior)</option>
+                                <option value="dirt">Tierra</option>
+                                <option value="concrete">Cemento</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="venuePrice" class="form-label text-white">Precio aproximado (por hora)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-white border-secondary">€</span>
+                                <input type="number" class="form-control bg-dark text-white border-secondary" id="venuePrice" placeholder="0.00" min="0">
+                            </div>
+                            <div class="form-text text-white-50">Deja en blanco si es gratuito</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="venueBooking" class="form-label text-white">Método de reserva</label>
+                            <select class="form-select bg-dark text-white border-secondary" id="venueBooking">
+                                <option value="" selected disabled>Seleccionar método</option>
+                                <option value="none">No se puede reservar (libre acceso)</option>
+                                <option value="phone">Por teléfono</option>
+                                <option value="inperson">En persona</option>
+                                <option value="web">Página web</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="venueContactContainer" class="mb-3 d-none">
+                        <label for="venueContact" class="form-label text-white">Contacto para reservas</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" id="venueContact" placeholder="Ej: Número de teléfono o web">
+                    </div>
+                    
+                    <!-- Amenities -->
+                    <h6 class="text-white mb-3 mt-4">Instalaciones y servicios</h6>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input bg-dark border-secondary" type="checkbox" id="venueParking">
+                                <label class="form-check-label text-white-50" for="venueParking">
+                                    Parking disponible
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input bg-dark border-secondary" type="checkbox" id="venueShowers">
+                                <label class="form-check-label text-white-50" for="venueShowers">
+                                    Vestuarios/Duchas
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input bg-dark border-secondary" type="checkbox" id="venueLighting">
+                                <label class="form-check-label text-white-50" for="venueLighting">
+                                    Iluminación nocturna
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input bg-dark border-secondary" type="checkbox" id="venueCafeteria">
+                                <label class="form-check-label text-white-50" for="venueCafeteria">
+                                    Bar/Cafetería
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input bg-dark border-secondary" type="checkbox" id="venueEquipment">
+                                <label class="form-check-label text-white-50" for="venueEquipment">
+                                    Alquiler de equipamiento
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input bg-dark border-secondary" type="checkbox" id="venueFirstAid">
+                                <label class="form-check-label text-white-50" for="venueFirstAid">
+                                    Primeros auxilios
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Info -->
+                    <div class="mb-3">
+                        <label for="venueDescription" class="form-label text-white">Descripción adicional</label>
+                        <textarea class="form-control bg-dark text-white border-secondary" id="venueDescription" rows="3" placeholder="Información adicional, horarios, consejos, etc."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="venuePhotos" class="form-label text-white">Fotos de la cancha</label>
+                        <input type="file" class="form-control bg-dark text-white border-secondary" id="venuePhotos" multiple accept="image/*">
+                        <div class="form-text text-white-50">Puedes subir hasta 5 fotos (máx. 5MB cada una)</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top border-secondary">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-info">
+                    <i class="fas fa-plus-circle me-2"></i>Añadir cancha comunitaria
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- JavaScript for Toggle Views -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle between list and map views
+        const listViewBtn = document.getElementById('listViewBtn');
+        const mapViewBtn = document.getElementById('mapViewBtn');
+        const listView = document.getElementById('venueListView');
+        const mapView = document.getElementById('venueMapView');
+        
+        listViewBtn.addEventListener('click', function() {
+            listView.style.display = 'block';
+            mapView.style.display = 'none';
+            listViewBtn.classList.add('active');
+            mapViewBtn.classList.remove('active');
+        });
+        
+        mapViewBtn.addEventListener('click', function() {
+            listView.style.display = 'none';
+            mapView.style.display = 'block';
+            mapViewBtn.classList.add('active');
+            listViewBtn.classList.remove('active');
+        });
+        
+        // Toggle venue category filters
+        const allBtn = document.getElementById('allVenuesBtn');
+        const verifiedBtn = document.getElementById('verifiedVenuesBtn');
+        const communityBtn = document.getElementById('communityVenuesBtn');
+        
+        allBtn.addEventListener('click', function() {
+            allBtn.classList.add('btn-success');
+            allBtn.classList.remove('btn-dark');
+            verifiedBtn.classList.add('btn-dark');
+            verifiedBtn.classList.remove('btn-success');
+            communityBtn.classList.add('btn-dark');
+            communityBtn.classList.remove('btn-success');
+        });
+        
+        verifiedBtn.addEventListener('click', function() {
+            verifiedBtn.classList.add('btn-success');
+            verifiedBtn.classList.remove('btn-dark');
+            allBtn.classList.add('btn-dark');
+            allBtn.classList.remove('btn-success');
+            communityBtn.classList.add('btn-dark');
+            communityBtn.classList.remove('btn-success');
+        });
+        
+        communityBtn.addEventListener('click', function() {
+            communityBtn.classList.add('btn-success');
+            communityBtn.classList.remove('btn-dark');
+            allBtn.classList.add('btn-dark');
+            allBtn.classList.remove('btn-success');
+            verifiedBtn.classList.add('btn-dark');
+            verifiedBtn.classList.remove('btn-success');
+        });
+        
+        // Show/hide venue contact field based on booking method
+        const bookingSelect = document.getElementById('venueBooking');
+        const contactContainer = document.getElementById('venueContactContainer');
+        
+        bookingSelect.addEventListener('change', function() {
+            if (this.value === 'none') {
+                contactContainer.classList.add('d-none');
+            } else {
+                contactContainer.classList.remove('d-none');
+            }
+        });
+    });
+</script>
+{% endblock %}
+                

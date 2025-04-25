@@ -1,0 +1,124 @@
+<!-- Top Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark p-3" style="background-color: #1E293B;">
+    <div class="container-fluid">
+        <!-- Sidebar Toggle -->
+        <button class="btn btn-dark d-lg-none me-3" type="button">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Search Bar -->
+        <form class="d-flex flex-grow-1 me-auto mb-2 mb-lg-0 mx-lg-3">
+            <div class="input-group">
+                <span class="input-group-text bg-dark border-0 text-success">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="search" class="form-control bg-gray text-black border-0" placeholder="Buscar partidos, jugadores, equipos..." aria-label="Search">
+            </div>
+        </form>
+        
+        <!-- Notifications -->
+        <div class="dropdown me-3">
+            <a class="btn btn-dark position-relative" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-bell text-white"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    3
+                    <span class="visually-hidden">unread notifications</span>
+                </span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="dropdownMenuLink" style="min-width: 300px;">
+                <li><h6 class="dropdown-header">Notificaciones recientes</h6></li>
+                <li>
+                    <a class="dropdown-item" href="#">
+                        <div class="d-flex align-items-center">
+                            <img src="https://via.placeholder.com/32" class="rounded-circle me-2" width="32" height="32" alt="Avatar">
+                            <div>
+                                <small class="d-block">Luis te ha invitado a un partido</small>
+                                <small class="text-muted">Hace 10 minutos</small>
+                            </div>
+                        </div>
+                    </a>
+            </li>
+                <li>
+                    <a class="dropdown-item" href="#">
+                        <div class="d-flex align-items-center">
+                            <img src="https://via.placeholder.com/32" class="rounded-circle me-2" width="32" height="32" alt="Avatar">
+                            <div>
+                                <small class="d-block">Nuevo partido cerca de ti</small>
+                                <small class="text-muted">Hace 30 minutos</small>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                <i class="fas fa-futbol text-white"></i>
+                            </div>
+                            <div>
+                                <small class="d-block">Tu equipo tiene un nuevo miembro</small>
+                                <small class="text-muted">Hace 1 hora</small>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                <li>
+                    <a class="dropdown-item text-center" href="#">Ver todas las notificaciones</a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Messages -->
+        <div class="dropdown me-3">
+            <a class="btn btn-dark position-relative" href="#" role="button" id="messagesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-envelope text-white"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                    2
+                    <span class="visually-hidden">unread messages</span>
+                </span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="messagesDropdown" style="min-width: 300px;">
+                <li><h6 class="dropdown-header">Mensajes recientes</h6></li>
+                <li><a class="dropdown-item" href="#">
+                    <div class="d-flex align-items-center">
+                        <img src="https://via.placeholder.com/32" class="rounded-circle me-2" width="32" height="32" alt="Avatar">
+                        <div>
+                            <small class="d-block">María García</small>
+                            <small class="text-muted">¿Juegas este sábado?</small>
+                        </div>
+                    </div>
+                </a></li>
+                <li><a class="dropdown-item" href="#">
+                    <div class="d-flex align-items-center">
+                        <img src="https://via.placeholder.com/32" class="rounded-circle me-2" width="32" height="32" alt="Avatar">
+                        <div>
+                            <small class="d-block">Equipo Los Tigres</small>
+                            <small class="text-muted">Nos falta un jugador para...</small>
+                        </div>
+                    </div>
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-center" href="#">Ver todos los mensajes</a></li>
+            </ul>
+        </div>
+        
+        <!-- User dropdown -->
+        <div class="dropdown">
+            <a class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="https://via.placeholder.com/32" alt="Avatar" width="32" height="32" class="rounded-circle me-2">
+                <span>Carlos</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark text-small" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item" href="{% url 'perfil' %}">Mi perfil</a></li>
+                <li><a class="dropdown-item" href="#">Configuración</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,60 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top py-3" style="background-color: #0a0a0a;">
+    <div class="container-fluid px-4">
+        <!-- Logo y Marca -->
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'landing'%}">
+            {% include 'components/svg/logo.html' %}
+            <span class="fw-bold fs-4">XXX</span>
+        </a>
+        
+        <!-- Toggle para móviles -->
+        <button class="navbar-toggler border-success" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <!-- Enlaces de navegación -->
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav mx-auto" id="enlaces">
+                <li class="nav-item px-2">
+                    <a class="nav-link fs-5 active" href="#inicio">Inicio</a>
+                </li>
+                <li class="nav-item px-2">
+                    <a class="nav-link fs-5" href="#caracteristicas">Características</a>
+                </li>
+                <li class="nav-item px-2">
+                    <a class="nav-link fs-5" href="#como-funciona">Cómo Funciona</a>
+                </li>
+            </ul>
+            
+            <!-- Botones de login -->
+            <div class="d-flex gap-3">
+                <a href="{% url 'login' %}" class="btn btn-outline-success px-4" id="btn-login">
+                    <i class="fas fa-sign-in-alt me-2"></i>Acceder
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-success px-4" id="btn-reg">
+                    <i class="fas fa-user-plus me-2"></i>Registrarse
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    
+    const enlaces = document.getElementById('enlaces');
+    const botonLogin = document.getElementById('btn-login');
+    const botonReg = document.getElementById('btn-reg');
+
+       
+    const currentPath = window.location.pathname;
+    
+    
+    if (currentPath.includes('/login')) {
+        enlaces.style.display = 'none';
+        botonLogin.style.display = 'none';
+        botonReg.style.display = 'none';
+    
+    }
+    
+});
+</script>

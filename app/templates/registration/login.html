@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% block base %}
+<!-- Navbar -->
+{% include "components/landing_nav.html" %}
+
+<!-- Auth Section - Login & Register -->
+<section class="py-5 position-relative overflow-hidden" style="background-color: #1a202c; min-height: calc(100vh - 84px);">
+    <!-- Background Elements -->
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="opacity: 0.05; z-index: 1;">
+        <div class="position-absolute" style="top: 10%; left: 5%;">
+            <i class="fas fa-futbol fa-5x"></i>
+        </div>
+        <div class="position-absolute" style="top: 80%; left: 25%;">
+            <i class="fas fa-trophy fa-3x"></i>
+        </div>
+        <div class="position-absolute" style="bottom: 15%; right: 10%;">
+            <i class="fas fa-futbol fa-4x"></i>
+        </div>
+    </div>
+    
+    
+    
+    <!-- Right Side Background Image -->
+    <div class="position-absolute h-100 w-100 end-0 d-none d-xl-block" style="width: 25%; z-index: 1; opacity: 0.8;">
+        <img src="https://sportrenders.com/wp-content/uploads/2023/11/Ronaldinho-Render-PNG-Barcelona-Imagen-Transparente-Sport-Renders.png" alt="Jugador de fútbol retro" class="h-100 w-100" style="object-fit: contain; object-position: right center;">
+    </div>
+    
+    <div class="container position-relative" style="z-index: 2;">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <!-- Tabs for Login/Register -->
+                <ul class="nav nav-tabs mb-4 justify-content-center border-0" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-white active px-4 py-3 me-2" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-tab-pane" type="button" role="tab" aria-controls="login-tab-pane" aria-selected="true" style="background-color: #2d3748; border: none; border-radius: 10px;">
+                            <i class="fas fa-sign-in-alt me-2"></i>Acceder
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-white px-4 py-3" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-tab-pane" type="button" role="tab" aria-controls="register-tab-pane" aria-selected="false" style="background-color: #2d3748; border: none; border-radius: 10px;">
+                            <i class="fas fa-user-plus me-2"></i>Registrarse
+                        </button>
+                    </li>
+                </ul>
+                
+                <!-- Tab Content -->
+                <div class="tab-content" id="myTabContent">
+                    <!-- Login Tab -->
+                    <div class="tab-pane fade show active" id="login-tab-pane" role="tabpanel" aria-labelledby="login-tab" tabindex="0">
+                        <div class="card border-0 shadow-lg wow animate__animated animate__fadeIn" style="background-color: #2d3748; border-radius: 15px;">
+                            <div class="card-body p-4 p-md-5">
+                                <h2 class="text-center text-white mb-4">Bienvenido de nuevo</h2>
+                                <p class="text-white-50 text-center mb-4">Ingresa tus datos para acceder a tu cuenta y conectarte con jugadores de tu zona</p>
+                                
+                                <form action="" method="post" id="loginForm">
+                                    {% csrf_token %}
+
+                                    <div class="mb-4">
+                                        <label for="login-email" class="form-label text-white">Correo electrónico</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-dark text-success border-0">
+                                                <i class="fas fa-envelope"></i>
+                                            </span>
+                                            <input type="email" class="form-control bg-dark text-white border-0" id="login-email" placeholder="tu@email.com">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <div class="d-flex justify-content-between">
+                                            <label for="login-password" class="form-label text-white">Contraseña</label>
+                                            <a href="#" class="text-success text-decoration-none small">¿Olvidaste tu contraseña?</a>
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-dark text-success border-0">
+                                                <i class="fas fa-lock"></i>
+                                            </span>
+                                            <input type="password" class="form-control bg-dark text-white border-0" id="login-password" placeholder="Tu contraseña">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4 form-check">
+                                        <input type="checkbox" class="form-check-input bg-dark border-success" id="remember-me">
+                                        <label class="form-check-label text-white-50" for="remember-me">Recordarme</label>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-success w-100 py-3 mb-4">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Iniciar sesión
+                                    </button>
+                                    
+                                    <div class="text-center text-white-50">
+                                        <p class="mb-0">¿No tienes una cuenta? <a href="#" class="text-success" id="goto-register">Regístrate ahora</a></p>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Register Tab -->
+                    <div class="tab-pane fade" id="register-tab-pane" role="tabpanel" aria-labelledby="register-tab" tabindex="0">
+                        <div class="card border-0 shadow-lg wow animate__animated animate__fadeIn" style="background-color: #2d3748; border-radius: 15px;">
+                            <div class="card-body p-4 p-md-5">
+                                <h2 class="text-center text-white mb-4">Crea tu cuenta</h2>
+                                <p class="text-white-50 text-center mb-4">Únete a la comunidad de FútbolConnect y empieza a disfrutar del fútbol como en los 90's</p>
+                                
+                                <form>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <label for="register-name" class="form-label text-white">Nombre completo</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-dark text-success border-0">
+                                                    <i class="fas fa-user"></i>
+                                                </span>
+                                                <input type="text" class="form-control bg-dark text-white border-0" id="register-name" placeholder="Tu nombre">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-4">
+                                            <label for="register-username" class="form-label text-white">Nombre de usuario</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-dark text-success border-0">
+                                                    <i class="fas fa-at"></i>
+                                                </span>
+                                                <input type="text" class="form-control bg-dark text-white border-0" id="register-username" placeholder="@usuario">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label for="register-email" class="form-label text-white">Correo electrónico</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-dark text-success border-0">
+                                                <i class="fas fa-envelope"></i>
+                                            </span>
+                                            <input type="email" class="form-control bg-dark text-white border-0" id="register-email" placeholder="tu@email.com">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label for="register-phone" class="form-label text-white">Teléfono (opcional)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-dark text-success border-0">
+                                                <i class="fas fa-phone"></i>
+                                            </span>
+                                            <input type="tel" class="form-control bg-dark text-white border-0" id="register-phone" placeholder="+34 600 000 000">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <label for="register-password" class="form-label text-white">Contraseña</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-dark text-success border-0">
+                                                    <i class="fas fa-lock"></i>
+                                                </span>
+                                                <input type="password" class="form-control bg-dark text-white border-0" id="register-password" placeholder="Contraseña">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-4">
+                                            <label for="register-confirm-password" class="form-label text-white">Confirmar contraseña</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-dark text-success border-0">
+                                                    <i class="fas fa-lock"></i>
+                                                </span>
+                                                <input type="password" class="form-control bg-dark text-white border-0" id="register-confirm-password" placeholder="Confirmar contraseña">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label for="register-position" class="form-label text-white">Posición preferida</label>
+                                        <select class="form-select bg-dark text-white border-0" id="register-position">
+                                            <option selected disabled>Selecciona tu posición</option>
+                                            <option value="portero">Portero</option>
+                                            <option value="defensa">Defensa</option>
+                                            <option value="centrocampista">Centrocampista</option>
+                                            <option value="delantero">Delantero</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-4 form-check">
+                                        <input type="checkbox" class="form-check-input bg-dark border-success" id="terms">
+                                        <label class="form-check-label text-white-50" for="terms">
+                                            Acepto los <a href="#" class="text-success">términos y condiciones</a> y la <a href="#" class="text-success">política de privacidad</a>
+                                        </label>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-success w-100 py-3 mb-4">
+                                        <i class="fas fa-user-plus me-2"></i>Crear cuenta
+                                    </button>
+                                    
+                                    <div class="text-center text-white-50">
+                                        <p class="mb-0">¿Ya tienes una cuenta? <a href="#" class="text-success" id="goto-login">Inicia sesión</a></p>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-5" style="background-color: #0a0a0a;">
+    <div class="container">
+        <!-- Footer Bottom / Copyright -->
+        <div class="pt-2">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <p class="text-white-50 small mb-0">© 2023 FútbolConnect. Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="text-white-50 small mb-0">Reviviendo el fútbol callejero <i class="fas fa-futbol text-success mx-1"></i></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Tab Switcher Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        
+        // Tab switching
+        document.getElementById('goto-register').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('register-tab').click();
+        });
+        
+        document.getElementById('goto-login').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('login-tab').click();
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,134 @@
+<!-- Sidebar Navigation -->
+<div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-white bg-dark border-end border-secondary" style="width: 280px; min-height: 100vh;">
+    <!-- Logo and brand -->
+    <a href="{% url 'home' %}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        {% include 'components/svg/logo.html' %}
+        <span class="fs-4 fw-bold">XXX</span>
+    </a>
+    <hr>
+    <!-- User profile preview -->
+    <div class="d-flex align-items-center mb-3">
+        <img src="https://via.placeholder.com/50" class="rounded-circle me-2" width="50" height="50" alt="Avatar">
+        <div>
+            <h6 class="mb-0 text-white">Carlos Rodríguez</h6>
+            <span class="text-success">Centrocampista</span>
+        </div>
+    </div>
+    <hr>
+    <!-- Navigation menu -->
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a href="{% url 'home' %}" class="nav-link text-white active" aria-current="page">
+                <i class="fas fa-home me-2"></i>
+                Inicio
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'buscar_partidos' %}" class="nav-link text-white">
+                <i class="fas fa-search me-2"></i>
+                Buscar partidos
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'crear_partidos' %}" class="nav-link text-white">
+                <i class="fas fa-plus-circle me-2"></i>
+                Crear partido
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'estadisticas' %}" class="nav-link text-white">
+                <i class="fas fa-calendar-alt me-2"></i>
+                Estadísticas
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'torneos' %}" class="nav-link text-white">
+                <i class="fas fa-users me-2"></i>
+                Mis equipos
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'torneos' %}" class="nav-link text-white">
+                <i class="fas fa-calendar-alt me-2"></i>
+                Mis partidos
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'canchas' %}" class="nav-link text-white">
+                <i class="fas fa-map-marker-alt me-2"></i>
+                Canchas
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'torneos' %}" class="nav-link text-white">
+                <i class="fas fa-trophy me-2"></i>
+                Torneos
+            </a>
+        </li>
+    </ul>
+    <hr>
+    <!-- Settings and logout -->
+    <ul class="nav nav-pills flex-column">
+        <li>
+            <a href="{% url 'torneos' %}" class="nav-link text-white">
+                <i class="fas fa-cog me-2"></i>
+                Configuración
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'torneos' %}" class="nav-link text-white">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                Cerrar sesión
+            </a>
+        </li>
+    </ul>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Obtener todos los enlaces de navegación
+    const navLinks = document.querySelectorAll('.sidebar .nav-link');
+    
+    // Obtener la URL actual
+    const currentPath = window.location.pathname;
+    
+    // Primero, quitar la clase active de todos los enlaces
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    // Caso especial: Página de inicio (cuando la URL es "/" o contiene "/home")
+    if (currentPath.includes('/home')) {
+
+        const homeLink = document.querySelector('.sidebar .nav-link i.fas.fa-home').closest('.nav-link');
+        if (homeLink) {
+            homeLink.classList.add('active');
+            return; // Si estamos en inicio, no necesitamos verificar otros enlaces
+        }
+    }
+    
+    // Para otras páginas, buscar coincidencias por URL
+    // Mapeo de rutas a identificadores de menú
+    const routeMappings = {
+        '/buscar_partidos': '.fas.fa-search',
+        '/crear_partidos': '.fas.fa-plus-circle',
+        '/estadisticas': '.fas.fa-calendar-alt:first-of-type',
+        '/equipos': '.fas.fa-users',
+        '/mis_partidos': '.fas.fa-calendar-alt:nth-of-type(2)',
+        '/canchas': '.fas.fa-map-marker-alt',
+        '/torneos': '.fas.fa-trophy',
+        '/configuracion': '.fas.fa-cog',
+        '/logout': '.fas.fa-sign-out-alt'
+    };
+    
+    // Buscar coincidencia de ruta
+    for (const [route, iconSelector] of Object.entries(routeMappings)) {
+        if (currentPath.includes(route)) {
+            const link = document.querySelector(`.sidebar .nav-link i${iconSelector}`).closest('.nav-link');
+            if (link) {
+                link.classList.add('active');
+                break; // Una vez encontrada la coincidencia, salimos del bucle
+            }
+        }
+    }
+});
+</script>

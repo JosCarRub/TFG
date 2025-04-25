@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+{% block base %}
+<!-- Navbar -->
+{% include "components/landing_nav.html" %}
+
+<!-- Hero Section -->
+<section id="hero" class="position-relative bg-black text-white overflow-hidden d-flex align-items-center" style="min-height: 75vh;">
+    <!-- Background Image -->
+     <!-- <div class="position-absolute w-100 h-100 top-0 start-0 opacity-15" style="z-index: 1;">
+        <img src="https://sportrenders.com/wp-content/uploads/2023/06/Ronaldo-Brasil-World-Cup-Imagen-PNG-Futbol-Sport-Renders.png" alt="Fútbol Background" class="position-absolute start-0 bottom-0 h-100" style="object-fit: contain;">
+    </div>  -->
+
+    <!-- <div class="position-absolute w-100 h-100 top-0 end-0" style="width: 22%; z-index: 1; opacity: 0.35;">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBJ_SKKcYRh-kOQRlTldxlPKLdsIK-4Tctw9rwrsPeslt6vN5QKEmutvf_Rcb37nOMlEkC_XLPBFo8AzXvtYoKt7jZ7ERpKOAxa6P7bXRYcXBMoZhv4R-CpDIRjNg5J8v2FrolifO74bk/s1600/juan_riquelme_Renders_12789521442.png" alt="Riquelme" class="position-absolute end-0 bottom-0 h-100" style="object-fit: contain;">
+    </div> -->
+
+    <div class="position-absolute w-100 h-100 top-0 end-0" style="width: 22%; z-index: 1; opacity: 0.55;">
+        <img src="https://sportrenders.com/wp-content/uploads/2024/03/Ronaldo-Nazario-PNG-Inter-Football-Render.png" alt="Ronaldo" class="position-absolute end-0 bottom-0 h-100" style="object-fit: contain;">
+    </div>
+
+    
+
+    <!-- <div class="position-absolute w-100 h-100 top-0 start-0" style="width: 22%; z-index: 1; opacity: 0.75;">
+        <img src="https://sportrenders.com/wp-content/uploads/2023/06/Henry-Image-PNG-Render-Arsenal-Futbol-Sport-Renders.png" alt="titi" class="position-absolute start-0 bottom-0 h-100" style="object-fit: contain;">
+    </div> -->
+    
+    <!-- Content -->
+    <div class="container py-5 text-center position-relative" style="z-index: 2;">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-4">Conecta, Juega, Gana</h1>
+                <p class="lead mb-5">Encuentra partidos de fútbol cerca de ti, conecta con otros jugadores y disfruta del deporte rey sin preocuparte por nada más que jugar y disfrutar.</p>
+                <div class="d-flex justify-content-center gap-2">
+                    <a href="{% url 'login' %}" class="btn btn-success btn-lg">
+                        Únete ahora
+                    </a>
+                    <a href="{% url 'home' %}" class="btn btn-outline-light btn-lg ">
+                        Cómo funciona
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<!-- Features Section - Retro-Modern Style -->
+<section id="caracteristicas" class="py-5 position-relative overflow-hidden" style="background-color: #1a202c !important; min-height: 55vh;">
+    <!-- Decorative Elements - Soccer Elements -->
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="z-index: 1; opacity: 0.05;">
+        <div class="position-absolute" style="top: 10%; left: 5%;">
+            <i class="fas fa-futbol fa-5x"></i>
+        </div>
+        <div class="position-absolute" style="top: 80%; left: 25%;">
+            <i class="fas fa-trophy fa-3x"></i>
+        </div>
+        <div class="position-absolute" style="top: 60%; right: 10%;">
+            <i class="fas fa-futbol fa-4x"></i>
+        </div>
+        <div class="position-absolute" style="top: 20%; right: 15%;">
+            <i class="fas fa-whistle fa-3x"></i>
+        </div>
+    </div>
+
+<!-- Features Section - Retro-Modern Style with Side Image -->
+<section id="caracteristicas" class="py-5 position-relative overflow-hidden" style="background-color: #1a202c !important; min-height: 55vh;">
+    <!-- Left Side Background Image -->
+    <div class="position-absolute h-100 w-100 d-none d-lg-block" style="width: 22%; z-index: 1; opacity: 0.65;">
+        <img src="https://sportrenders.com/wp-content/uploads/2023/10/Ronaldo-PNG-Render-Transparent-Brazil-Free-Image-World-Cup-Football-Sport-Renders-1.png" alt="Ronaldo el de verdad" class="h-100 w-100" style="object-fit: contain; object-position: left center;">
+    </div>
+
+    <!-- Decorative Elements - Soccer Elements -->
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="z-index: 1; opacity: 0.05;">
+        <div class="position-absolute" style="top: 10%; left: 5%;">
+            <i class="fas fa-futbol fa-5x"></i>
+        </div>
+        <div class="position-absolute" style="top: 80%; left: 25%;">
+            <i class="fas fa-trophy fa-3x"></i>
+        </div>
+        <div class="position-absolute" style="top: 60%; right: 10%;">
+            <i class="fas fa-futbol fa-4x"></i>
+        </div>
+        <div class="position-absolute" style="top: 20%; right: 15%;">
+            <i class="fas fa-whistle fa-3x"></i>
+        </div>
+    </div>
+
+    <div class="container position-relative" style="z-index: 2;">
+        <!-- Section Header -->
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-white display-5 mb-3">El fútbol de los 90 con la tecnología del presente</h2>
+            <p class="lead text-white-50 mb-5">Recupera la esencia del fútbol callejero con herramientas digitales que facilitan la organización</p>
+        </div>
+        
+        <!-- Features Cards -->
+        <div class="row g-4">
+            <!-- Feature 1 -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 bg-dark text-white shadow-lg" style="background-color: #2d3748 !important; border-radius: 1rem; overflow: hidden; transition: transform 0.3s;">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success bg-opacity-10 rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            {% include 'components/svg/landing_location.html' %}
+                        </div>
+                        <h4 class="card-title">Encuentra partidos cercanos</h4>
+                        <p class="card-text text-white-50">Localiza partidos de barrio en tu zona, como en los viejos tiempos pero sin tener que recorrer las calles para encontrarlos.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 bg-dark text-white shadow-lg wow animate__animated animate__fadeInUp" data-wow-delay="0.3s" style="background-color: #2d3748 !important; border-radius: 1rem; overflow: hidden; transition: transform 0.3s;">
+                    <div class="card-body text-center p-4">
+
+                        <div class="bg-success bg-opacity-10 rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            {% include 'components/svg/landing_team.html' %}
+                        </div>
+
+                        <h4 class="card-title">Crea tu equipo de barrio</h4>
+                        <p class="card-text text-white-50">Forma tu propio equipo con amigos o conoce nuevos jugadores, como cuando armábamos equipos improvisados en la plaza.</p>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 bg-dark text-white shadow-lg " style="background-color: #2d3748 !important; border-radius: 1rem; overflow: hidden; transition: transform 0.3s;">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success bg-opacity-10 rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            {% include 'components/svg/landing_player.html' %}
+                        </div>
+                        <h4 class="card-title">Organiza partidos sin complicaciones</h4>
+                        <p class="card-text text-white-50">Programa tus partidos sin las llamadas infinitas de antaño. Reserva canchas y confirma asistencia con un solo clic.</p>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Row -->
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <a href="#como-funciona" class="btn btn-outline-success btn-lg px-4 py-2 wow animate__animated animate__fadeIn" data-wow-delay="0.7s">
+                    <span>Descubre todas las funcionalidades</span>
+                    <i class="fas fa-angle-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+ <section id="como-funciona" class="py-5" style="background-color: #111827 !important;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-white">¿Cómo funciona?</h2>
+            <p class="lead text-white-50">Es muy sencillo comenzar a usar FútbolConnect</p>
+        </div>
+        
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <!-- <img src="https://phantom-marca.uecdn.es/a2289a02c290eab98d75ead5f5236422/f/webp/assets/multimedia/imagenes/2020/03/26/15852159092839.jpg" alt="App Screenshot" class="img-fluid rounded mb-4 mb-lg-0"> -->
+                <img src="https://pbs.twimg.com/media/DWL7apFXcAAutkq.jpg" alt="" class="img-fluid rounded mb-4 mb-lg-0">
+            </div>
+            <div class="col-lg-6">
+                <div class="d-flex mb-4">
+                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center text-white me-3" style="min-width: 50px; height: 50px;">
+                        <strong>1</strong>
+                    </div>
+                    <div>
+                        <h5 class="text-white">Crea tu perfil</h5>
+                        <p class="text-white-50">Regístrate y completa tu perfil con tu posición, nivel y disponibilidad.</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex mb-4 wow animate__animated animate__fadeInRight" data-wow-delay="0.3s">
+                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center text-white me-3" style="min-width: 50px; height: 50px;">
+                        <strong>2</strong>
+                    </div>
+                    <div>
+                        <h5 class="text-white">Busca partidos</h5>
+                        <p class="text-white-50">Encuentra partidos cercanos usando el mapa o crea tu propio partido.</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex mb-4 wow animate__animated animate__fadeInRight" data-wow-delay="0.5s">
+                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center text-white me-3" style="min-width: 50px; height: 50px;">
+                        <strong>3</strong>
+                    </div>
+                    <div>
+                        <h5 class="text-white">Únete o invita</h5>
+                        <p class="text-white-50">Solicita unirte a un partido existente o invita a otros jugadores al tuyo.</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex wow animate__animated animate__fadeInRight" data-wow-delay="0.7s">
+                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center text-white me-3" style="min-width: 50px; height: 50px;">
+                        <strong>4</strong>
+                    </div>
+                    <div>
+                        <h5 class="text-white">¡A jugar!</h5>
+                        <p class="text-white-50">Disfruta del partido y después valora a tus compañeros.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer Mejorado -->
+<footer class="py-5" style="background-color: #0a0a0a;">
+    <div class="container">
+        <!-- Main Footer Content -->
+        <div class="row mb-4">
+            <!-- Brand Column -->
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <div class="d-flex align-items-center mb-3">
+                    {% include 'components/svg/logo.html' %}
+                    <h3 class="text-white fw-bold mb-0">FútbolConnect</h3>
+                </div>
+                <p class="text-white-50 mb-4">Conectando jugadores desde el barrio hasta el estadio.</p>
+
+                <p class="text-white-50 mb-4">Reviviendo la pasión del fútbol callejero con la tecnología de hoy.</p>
+                <div class="d-flex gap-3 mb-3">
+                    <a href="#" class="btn btn-dark btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; transition: all 0.3s;">
+                        <i class="fab fa-facebook-f text-success"></i>
+                    </a>
+                    <a href="#" class="btn btn-dark btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; transition: all 0.3s;">
+                        <i class="fab fa-instagram text-success"></i>
+                    </a>
+                    <a href="#" class="btn btn-dark btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; transition: all 0.3s;">
+                        <i class="fab fa-twitter text-success"></i>
+                    </a>
+                    <a href="#" class="btn btn-dark btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; transition: all 0.3s;">
+                        <i class="fab fa-youtube text-success"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Quick Links -->
+            <div class="col-lg-2 col-6 mb-4 mb-lg-0">
+                <h5 class="text-white mb-4">Enlaces</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#inicio" class="text-white-50 text-decoration-none hover-success">Inicio</a></li>
+                    <li class="mb-2"><a href="#caracteristicas" class="text-white-50 text-decoration-none hover-success">Características</a></li>
+                    <li class="mb-2"><a href="#como-funciona" class="text-white-50 text-decoration-none hover-success">Cómo Funciona</a></li>
+                    <li class="mb-2"><a href="#testimonios" class="text-white-50 text-decoration-none hover-success">Testimonios</a></li>
+                </ul>
+            </div>
+            
+            <!-- Legal Links -->
+            <div class="col-lg-2 col-6 mb-4 mb-lg-0">
+                <h5 class="text-white mb-4">Legal</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-success">Privacidad</a></li>
+                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-success">Términos</a></li>
+                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-success">Cookies</a></li>
+                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-success">FAQ</a></li>
+                </ul>
+            </div>
+            
+            <!-- Contact / Newsletter -->
+            <div class="col-lg-4">
+                <h5 class="text-white mb-4">¡Mantente conectado!</h5>
+                <p class="text-white-50 mb-3">Suscríbete para recibir novedades, partidos destacados y promociones.</p>
+                <div class="input-group mb-3">
+                    <input type="email" class="form-control bg-dark border-success text-white" placeholder="Tu email" aria-label="Email" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                    <button class="btn btn-success" type="button" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Bottom / Copyright -->
+        <div class="border-top border-secondary pt-4">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <p class="text-white-50 small mb-0">© 2025 XXX. Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="text-white-50 small mb-0">Reviviendo el fútbol callejero</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}

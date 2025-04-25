@@ -1,0 +1,567 @@
+{% extends 'base.html' %}
+{% block base %}
+<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
+    <!-- Nav -->
+    {% include "components/nav.html" %}
+
+    <!-- Main Content Area -->
+    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
+        <!-- Top Navigation Bar -->
+        {% include "components/top_nav.html" %}
+        
+        <!-- Tournaments Section -->
+        <div class="container-fluid p-4 bg-dark">
+            <!-- Section Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                                <div>
+                                    <h4 class="card-title text-white mb-1">Torneos oficiales</h4>
+                                    <p class="card-text text-white-50">Competiciones organizadas por FútbolConnect para toda la comunidad</p>
+                                </div>
+                                <div class="mt-3 mt-md-0">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-dark text-white border-secondary" placeholder="Buscar torneos...">
+                                        <button class="btn btn-success" type="button">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tournament Categories/Filters -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
+                        <div class="card-body p-3">
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="btn btn-success">Todos los torneos</button>
+                                <button class="btn btn-dark">Próximos</button>
+                                <button class="btn btn-dark">En curso</button>
+                                <button class="btn btn-dark">Finalizados</button>
+                                <button class="btn btn-dark">Fútbol 5</button>
+                                <button class="btn btn-dark">Fútbol 7</button>
+                                <button class="btn btn-dark">Fútbol 11</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Tournament -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm overflow-hidden" style="background-color: #2d3748; border-radius: 15px;">
+                        <div class="position-relative">
+                            <img src="https://via.placeholder.com/1200x300" class="w-100" style="height: 200px; object-fit: cover;" alt="Copa FútbolConnect">
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge bg-danger">Destacado</span>
+                            </div>
+                            <div class="position-absolute top-0 end-0 m-3">
+                                <span class="badge bg-warning text-dark">¡Inscripciones abiertas!</span>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h3 class="text-white mb-2">Copa FútbolConnect - Edición Verano 2023</h3>
+                                    <p class="text-white-50">El torneo más importante de nuestra plataforma. Reúne a los mejores equipos para competir por el título y premios en efectivo.</p>
+                                    
+                                    <div class="row mt-4">
+                                        <div class="col-md-6">
+                                            <ul class="list-group list-group-flush bg-transparent mb-3">
+                                                <li class="list-group-item d-flex justify-content-between align-items-center px-0" style="background-color: transparent; border-color: #3f495e;">
+                                                    <span class="text-white-50"><i class="fas fa-calendar-alt text-success me-2"></i>Fecha de inicio</span>
+                                                    <span class="text-white">15 de Julio, 2023</span>
+                                                </li>
+                                                <li class="list-group-item d-flex justify-content-between align-items-center px-0" style="background-color: transparent; border-color: #3f495e;">
+                                                    <span class="text-white-50"><i class="fas fa-hourglass-end text-success me-2"></i>Fin de inscripciones</span>
+                                                    <span class="text-white">10 de Julio, 2023</span>
+                                                </li>
+                                                <li class="list-group-item d-flex justify-content-between align-items-center px-0" style="background-color: transparent; border-color: #3f495e;">
+                                                    <span class="text-white-50"><i class="fas fa-users text-success me-2"></i>Formato</span>
+                                                    <span class="text-white">Fútbol 7</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <ul class="list-group list-group-flush bg-transparent mb-3">
+                                                <li class="list-group-item d-flex justify-content-between align-items-center px-0" style="background-color: transparent; border-color: #3f495e;">
+                                                    <span class="text-white-50"><i class="fas fa-map-marker-alt text-success me-2"></i>Ubicación</span>
+                                                    <span class="text-white">Complejo Deportivo Norte</span>
+                                                </li>
+                                                <li class="list-group-item d-flex justify-content-between align-items-center px-0" style="background-color: transparent; border-color: #3f495e;">
+                                                    <span class="text-white-50"><i class="fas fa-trophy text-success me-2"></i>Premio</span>
+                                                    <span class="text-white">1.500€ + Trofeo</span>
+                                                </li>
+                                                <li class="list-group-item d-flex justify-content-between align-items-center px-0" style="background-color: transparent; border-color: #3f495e;">
+                                                    <span class="text-white-50"><i class="fas fa-shield-alt text-success me-2"></i>Equipos</span>
+                                                    <span class="text-white">16 (6 plazas disponibles)</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-3 mt-md-0 text-center">
+                                    <div class="d-flex flex-column h-100 justify-content-between">
+                                        <div>
+                                            <div class="p-3 mb-3 rounded" style="background-color: #1a202c;">
+                                                <h5 class="text-white mb-3">Requisitos mínimos</h5>
+                                                <ul class="list-unstyled text-start text-white-50">
+                                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Equipo de 7-10 jugadores</li>
+                                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Nivel intermedio o superior</li>
+                                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Equipación uniforme</li>
+                                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Cuota de inscripción: 150€</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <a href="#" class="btn btn-success btn-lg">
+                                            <i class="fas fa-clipboard-list me-2"></i>Inscribir equipo
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tournament List -->
+            <div class="row g-4">
+                <!-- Tournament Card 1 -->
+                <div class="col-md-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
+                        <div class="position-relative">
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge bg-success">Inscripciones abiertas</span>
+                            </div>
+                            <div class="bg-dark text-center py-4 d-flex align-items-center justify-content-center" style="height: 120px;">
+                                <i class="fas fa-trophy text-success" style="font-size: 3rem;"></i>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="text-white mb-2">Liga Barrios Unidos</h5>
+                            <p class="text-white-50 mb-3">Torneo amistoso entre equipos de diferentes barrios de la ciudad.</p>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Formato</span>
+                                    <span class="text-white">Fútbol 7</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Fecha de inicio</span>
+                                    <span class="text-white">5 de Agosto, 2023</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Equipos</span>
+                                    <span class="text-white">12 (5 plazas libres)</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Premio</span>
+                                    <span class="text-white">800€ + Trofeo</span>
+                                </div>
+                            </div>
+                            
+                            <div class="border-top border-secondary pt-3 mt-3">
+                                <h6 class="text-white mb-2">Requisitos mínimos</h6>
+                                <ul class="text-white-50 ps-3 mb-3" style="font-size: 0.9rem;">
+                                    <li>Equipo de 7-9 jugadores</li>
+                                    <li>Todos los niveles</li>
+                                    <li>Cuota: 100€ por equipo</li>
+                                </ul>
+                            </div>
+                            
+                            <a href="#" class="btn btn-success w-100">Ver detalles</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tournament Card 2 -->
+                <div class="col-md-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
+                        <div class="position-relative">
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge bg-info">En curso</span>
+                            </div>
+                            <div class="bg-dark text-center py-4 d-flex align-items-center justify-content-center" style="height: 120px;">
+                                <i class="fas fa-trophy text-info" style="font-size: 3rem;"></i>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="text-white mb-2">Torneo Empresarial</h5>
+                            <p class="text-white-50 mb-3">Competición entre empresas y organizaciones locales.</p>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Formato</span>
+                                    <span class="text-white">Fútbol 5</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Fecha de inicio</span>
+                                    <span class="text-white">15 de Junio, 2023</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Equipos</span>
+                                    <span class="text-white">10 (Completo)</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Premio</span>
+                                    <span class="text-white">500€ + Donación benéfica</span>
+                                </div>
+                            </div>
+                            
+                            <div class="border-top border-secondary pt-3 mt-3">
+                                <h6 class="text-white mb-2">Requisitos mínimos</h6>
+                                <ul class="text-white-50 ps-3 mb-3" style="font-size: 0.9rem;">
+                                    <li>Equipo de 5-7 jugadores</li>
+                                    <li>Representar a una empresa</li>
+                                    <li>Cuota: 200€ por equipo</li>
+                                </ul>
+                            </div>
+                            
+                            <a href="#" class="btn btn-info w-100">Ver clasificación</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tournament Card 3 -->
+                <div class="col-md-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
+                        <div class="position-relative">
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge bg-warning text-dark">Próximamente</span>
+                            </div>
+                            <div class="bg-dark text-center py-4 d-flex align-items-center justify-content-center" style="height: 120px;">
+                                <i class="fas fa-trophy text-warning" style="font-size: 3rem;"></i>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="text-white mb-2">Copa Veterans</h5>
+                            <p class="text-white-50 mb-3">Torneo exclusivo para jugadores mayores de 35 años.</p>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Formato</span>
+                                    <span class="text-white">Fútbol 11</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Fecha de inicio</span>
+                                    <span class="text-white">10 de Septiembre, 2023</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Equipos</span>
+                                    <span class="text-white">8 (8 plazas libres)</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Premio</span>
+                                    <span class="text-white">1.000€ + Trofeo</span>
+                                </div>
+                            </div>
+                            
+                            <div class="border-top border-secondary pt-3 mt-3">
+                                <h6 class="text-white mb-2">Requisitos mínimos</h6>
+                                <ul class="text-white-50 ps-3 mb-3" style="font-size: 0.9rem;">
+                                    <li>Jugadores +35 años</li>
+                                    <li>Equipo de 11-15 jugadores</li>
+                                    <li>Cuota: 250€ por equipo</li>
+                                </ul>
+                            </div>
+                            
+                            <button class="btn btn-warning text-dark w-100" disabled>
+                                Inscripciones pronto
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tournament Card 4 -->
+                <div class="col-md-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
+                        <div class="position-relative">
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge bg-success">Inscripciones abiertas</span>
+                            </div>
+                            <div class="bg-dark text-center py-4 d-flex align-items-center justify-content-center" style="height: 120px;">
+                                <i class="fas fa-trophy text-success" style="font-size: 3rem;"></i>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="text-white mb-2">Torneo Femenino</h5>
+                            <p class="text-white-50 mb-3">Competición exclusiva para equipos femeninos de todos los niveles.</p>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Formato</span>
+                                    <span class="text-white">Fútbol 7</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Fecha de inicio</span>
+                                    <span class="text-white">20 de Julio, 2023</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Equipos</span>
+                                    <span class="text-white">12 (7 plazas libres)</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Premio</span>
+                                    <span class="text-white">1.200€ + Trofeo</span>
+                                </div>
+                            </div>
+                            
+                            <div class="border-top border-secondary pt-3 mt-3">
+                                <h6 class="text-white mb-2">Requisitos mínimos</h6>
+                                <ul class="text-white-50 ps-3 mb-3" style="font-size: 0.9rem;">
+                                    <li>Equipo femenino (7-10 jugadoras)</li>
+                                    <li>Todos los niveles</li>
+                                    <li>Cuota: 120€ por equipo</li>
+                                </ul>
+                            </div>
+                            
+                            <a href="#" class="btn btn-success w-100">Ver detalles</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tournament Card 5 -->
+                <div class="col-md-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
+                        <div class="position-relative">
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge bg-secondary">Finalizado</span>
+                            </div>
+                            <div class="bg-dark text-center py-4 d-flex align-items-center justify-content-center" style="height: 120px;">
+                                <i class="fas fa-trophy text-secondary" style="font-size: 3rem;"></i>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="text-white mb-2">Torneo Primavera</h5>
+                            <p class="text-white-50 mb-3">Torneo amistoso celebrado durante la primavera de 2023.</p>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Formato</span>
+                                    <span class="text-white">Fútbol 5</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Fecha</span>
+                                    <span class="text-white">15 Marzo - 30 Abril, 2023</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Equipos</span>
+                                    <span class="text-white">16 (Completo)</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Campeón</span>
+                                    <span class="text-white">Leones FC</span>
+                                </div>
+                            </div>
+                            
+                            <div class="border-top border-secondary pt-3 mt-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Premio entregado</span>
+                                    <span class="text-white">750€ + Trofeo</span>
+                                </div>
+                            </div>
+                            
+                            <a href="#" class="btn btn-secondary w-100">Ver resultados</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tournament Card 6 -->
+                <div class="col-md-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
+                        <div class="position-relative">
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge bg-success">Inscripciones abiertas</span>
+                            </div>
+                            <div class="bg-dark text-center py-4 d-flex align-items-center justify-content-center" style="height: 120px;">
+                                <i class="fas fa-trophy text-success" style="font-size: 3rem;"></i>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="text-white mb-2">Copa Rookie</h5>
+                            <p class="text-white-50 mb-3">Torneo exclusivo para equipos principiantes y recién formados.</p>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Formato</span>
+                                    <span class="text-white">Fútbol 7</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Fecha de inicio</span>
+                                    <span class="text-white">12 de Agosto, 2023</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Equipos</span>
+                                    <span class="text-white">10 (4 plazas libres)</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-white-50">Premio</span>
+                                    <span class="text-white">500€ + Equipamiento</span>
+                                </div>
+                            </div>
+                            
+                            <div class="border-top border-secondary pt-3 mt-3">
+                                <h6 class="text-white mb-2">Requisitos mínimos</h6>
+                                <ul class="text-white-50 ps-3 mb-3" style="font-size: 0.9rem;">
+                                    <li>Nivel principiante</li>
+                                    <li>Equipo de 7-10 jugadores</li>
+                                    <li>Equipos formados hace < 6 meses</li>
+                                    <li>Cuota: 80€ por equipo</li>
+                                </ul>
+                            </div>
+                            
+                            <a href="#" class="btn btn-success w-100">Ver detalles</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-5">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li class="page-item disabled">
+                            <a class="page-link bg-dark border-secondary text-secondary" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item active"><a class="page-link bg-success border-success" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link bg-dark border-secondary text-white" href="#">2</a></li>
+                        <li class="page-item">
+                            <a class="page-link bg-dark border-secondary text-white" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <!-- Tournament Registration CTA -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-lg-7">
+                                    <h4 class="text-white mb-2">¿Quieres organizar tu propio torneo?</h4>
+                                    <p class="text-white-50 mb-0">Si representas a una organización, club o empresa y quieres organizar un torneo en nuestra plataforma, ponte en contacto con nosotros. Te ofrecemos gestión completa, arbitraje, promoción y más.</p>
+                                </div>
+                                <div class="col-lg-5 mt-3 mt-lg-0 text-lg-end">
+                                    <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#tournamentRequestModal">
+                                        <i class="fas fa-handshake me-2"></i>Solicitar organización
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tournament Request Modal -->
+<div class="modal fade" id="tournamentRequestModal" tabindex="-1" aria-labelledby="tournamentRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0" style="background-color: #2d3748; border-radius: 15px;">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title text-white" id="tournamentRequestModalLabel">Solicitar organización de torneo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="organizationName" class="form-label text-white">Nombre de la organización</label>
+                        <input type="text" class="form-control bg-dark text-white border-secondary" id="organizationName" placeholder="Nombre de tu organización, club o empresa">
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="contactName" class="form-label text-white">Nombre de contacto</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="contactName" placeholder="Tu nombre completo">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="contactEmail" class="form-label text-white">Email de contacto</label>
+                            <input type="email" class="form-control bg-dark text-white border-secondary" id="contactEmail" placeholder="email@ejemplo.com">
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="tournamentFormat" class="form-label text-white">Formato de torneo</label>
+                            <select class="form-select bg-dark text-white border-secondary" id="tournamentFormat">
+                                <option selected disabled>Selecciona un formato</option>
+                                <option value="5v5">Fútbol 5 (5 vs 5)</option>
+                                <option value="7v7">Fútbol 7 (7 vs 7)</option>
+                                <option value="11v11">Fútbol 11 (11 vs 11)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="teamCount" class="form-label text-white">Número de equipos</label>
+                            <select class="form-select bg-dark text-white border-secondary" id="teamCount">
+                                <option selected disabled>Selecciona una opción</option>
+                                <option value="8">8 equipos</option>
+                                <option value="12">12 equipos</option>
+                                <option value="16">16 equipos</option>
+                                <option value="24">24 equipos</option>
+                                <option value="32">32 equipos</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="startDate" class="form-label text-white">Fecha aproximada de inicio</label>
+                            <input type="date" class="form-control bg-dark text-white border-secondary" id="startDate">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="duration" class="form-label text-white">Duración aproximada</label>
+                            <select class="form-select bg-dark text-white border-secondary" id="duration">
+                                <option selected disabled>Selecciona una opción</option>
+                                <option value="1day">1 día (torneo intensivo)</option>
+                                <option value="1weekend">1 fin de semana</option>
+                                <option value="2weeks">2 semanas</option>
+                                <option value="1month">1 mes</option>
+                                <option value="3months">3 meses (liga)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="tournamentDescription" class="form-label text-white">Descripción del torneo</label>
+                        <textarea class="form-control bg-dark text-white border-secondary" id="tournamentDescription" rows="3" placeholder="Describe brevemente el tipo de torneo que quieres organizar, objetivos, público objetivo, etc."></textarea>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input bg-dark border-secondary" type="checkbox" id="needVenues">
+                        <label class="form-check-label text-white-50" for="needVenues">
+                            Necesito ayuda para encontrar instalaciones deportivas
+                        </label>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input bg-dark border-secondary" type="checkbox" id="needReferees">
+                        <label class="form-check-label text-white-50" for="needReferees">
+                            Necesito servicio de arbitraje
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top border-secondary">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success">
+                    <i class="fas fa-paper-plane me-2"></i>Enviar solicitud
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
