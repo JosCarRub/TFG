@@ -1,4 +1,4 @@
-<!-- Navbar -->
+<!-- Navbar con espaciador para mantener la posición de los botones -->
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top py-3" style="background-color: #0a0a0a;">
     <div class="container-fluid px-4">
         <!-- Logo y Marca -->
@@ -12,28 +12,38 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         
-        <!-- Enlaces de navegación -->
+        <!-- Contenedor con estructura fija -->
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav mx-auto" id="enlaces">
-                <li class="nav-item px-2">
-                    <a class="nav-link fs-5 active" href="#inicio">Inicio</a>
-                </li>
-                <li class="nav-item px-2">
-                    <a class="nav-link fs-5" href="#caracteristicas">Características</a>
-                </li>
-                <li class="nav-item px-2">
-                    <a class="nav-link fs-5" href="#como-funciona">Cómo Funciona</a>
-                </li>
-            </ul>
-            
-            <!-- Botones de login -->
-            <div class="d-flex gap-3">
-                <a href="{% url 'login' %}" class="btn btn-outline-success px-4" id="btn-login">
-                    <i class="fas fa-sign-in-alt me-2"></i>Acceder
-                </a>
-                <a href="{% url 'login' %}" class="btn btn-success px-4" id="btn-reg">
-                    <i class="fas fa-user-plus me-2"></i>Registrarse
-                </a>
+            <!-- División en tres partes con flexbox -->
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <!-- Primera parte: espacio vacío a la izquierda -->
+                <div class="flex-grow-1 d-lg-block d-none" style="width: 160px;"></div>
+                
+                <!-- Segunda parte: enlaces -->
+                <ul class="navbar-nav" id="enlaces">
+                    <li class="nav-item px-2">
+                        <a class="nav-link fs-5 active" href="#inicio">Inicio</a>
+                    </li>
+                    <li class="nav-item px-2">
+                        <a class="nav-link fs-5" href="#caracteristicas">Características</a>
+                    </li>
+                    <li class="nav-item px-2">
+                        <a class="nav-link fs-5" href="#como-funciona">Cómo Funciona</a>
+                    </li>
+                </ul>
+                
+                <!-- Elemento espaciador invisible que toma el lugar de los enlaces cuando se ocultan -->
+                <div id="enlaces-placeholder" class="flex-grow-1 d-none"></div>
+                
+                <!-- Tercera parte: botones de login siempre a la derecha -->
+                <div class="d-flex gap-3">
+                    <a href="{% url 'login' %}" class="btn btn-outline-success px-4" id="btn-login">
+                        <i class="fas fa-sign-in-alt me-2"></i>Acceder
+                    </a>
+                    <a href="{% url 'registro' %}" class="btn btn-success px-4" id="btn-reg">
+                        <i class="fas fa-user-plus me-2"></i>Registrarse
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -42,19 +52,31 @@
     document.addEventListener('DOMContentLoaded', function() {
     
     const enlaces = document.getElementById('enlaces');
+    const enlacesPlaceholder = document.getElementById('enlaces-placeholder');
     const botonLogin = document.getElementById('btn-login');
     const botonReg = document.getElementById('btn-reg');
-
-       
+    
     const currentPath = window.location.pathname;
     
-    
-    if (currentPath.includes('/login')) {
+    if (currentPath.includes('/login') || currentPath.includes('/registro')) {
+
         enlaces.style.display = 'none';
+
+        enlacesPlaceholder.classList.remove('d-none');
+
+    }else if (currentPath.includes('/login')) {
+
         botonLogin.style.display = 'none';
+
+    }else if (currentPath.includes('/registro')) {
+
         botonReg.style.display = 'none';
-    
+
+    } else {
+        
+        enlacesPlaceholder.classList.remove('d-none');
     }
+
     
 });
 </script>

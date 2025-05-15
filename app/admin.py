@@ -16,7 +16,7 @@ admin.site.register(HistorialELO)
 class MyAdmin(UserAdmin):
     model = User
 
-    list_display = ("email", "nombre", "calificacion", "posicion")
+    list_display = ("email", "username", "nombre", "calificacion", "posicion")
     search_fields = ("email", "nombre", "posicion")
 
     ordering = ("-calificacion",)

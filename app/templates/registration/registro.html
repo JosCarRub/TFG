@@ -4,7 +4,7 @@
 <!-- Navbar -->
 {% include "components/landing_nav.html" %}
 
-<!-- Auth Section - Login con diseño mejorado -->
+<!-- Auth Section - Register con diseño mejorado -->
 <section class="py-5 position-relative overflow-hidden" style="background-color: #1a202c; min-height: calc(100vh - 84px);">
     <!-- Patrón de fondo sutil -->
     <div class="position-absolute top-0 start-0 w-100 h-100" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAwIiBoZWlnaHQ9IjEwMDAiIHZpZXdCb3g9IjAgMCAxMDAwIDEwMDAiPjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNTAwIiB4PSIxMDAiIHk9IjI1MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDQwLDE2Nyw2OSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iNTAwIiBjeT0iNTAwIiByPSI4MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDQwLDE2Nyw2OSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIyIi8+PHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIzMDAiIHg9IjEwMCIgeT0iMzUwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoNDAsMTY3LDY5LDAuMDUpIiBzdHJva2Utd2lkdGg9IjIiLz48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjMwMCIgeD0iNzIwIiB5PSIzNTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSg0MCwxNjcsNjksMC4wNSkiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg=='); background-size: cover; background-position: center; z-index: 1; opacity: 0.1;"></div>
@@ -22,9 +22,9 @@
         </div>
     </div>
     
-    <!-- Imagen del jugador con mejoras visuales -->
+    <!-- Imagen de Beckham con mejoras visuales -->
     <div class="position-absolute h-100 w-100 end-0 d-none d-xl-block" style="width: 25%; z-index: 1; opacity: 0.8;">
-        <img src="https://sportrenders.com/wp-content/uploads/2023/11/Ronaldinho-Render-PNG-Barcelona-Imagen-Transparente-Sport-Renders.png" alt="Jugador de fútbol retro" class="h-100 w-100" style="object-fit: contain; object-position: right center; filter: drop-shadow(0 0 30px rgba(40,167,69,0.2));">
+        <img src="https://sportrenders.com/wp-content/uploads/2023/06/David-Beckham-Image-PNG-Render-Manchester-United-Futbol-Sport-Renders.png" alt="David Beckham" class="h-100 w-100" style="object-fit: contain; object-position: right center; filter: drop-shadow(0 0 30px rgba(40,167,69,0.2));">
         
         <!-- Resplandor detrás de la imagen -->
         <div class="position-absolute top-50 end-0 translate-middle-y" style="width: 300px; height: 600px; background: radial-gradient(ellipse at center, rgba(40,167,69,0.15) 0%, rgba(40,167,69,0) 70%); filter: blur(30px); z-index: -1;"></div>
@@ -32,35 +32,30 @@
     
     <div class="container position-relative" style="z-index: 2;">
         <div class="row justify-content-center">
-            <div class="col-md-10 col-lg-8 col-xl-6">
-                <!-- Formulario de login mejorado -->
+            <div class="col-md-10 col-lg-8">
+                <!-- Formulario de registro mejorado -->
                 <div class="card border-0 shadow-lg" style="background: linear-gradient(145deg, #2d3748, #1e2533); border-radius: 1rem; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.3);">
                     <div class="card-body p-4 p-md-5">
-                        <h2 class="text-center text-white fw-bold mb-2">Bienvenido de nuevo</h2>
+                        <h2 class="text-center text-white fw-bold mb-2">Crea tu cuenta</h2>
                         <div class="d-flex justify-content-center mb-4">
                             <div class="bg-success" style="height: 3px; width: 60px; border-radius: 3px;"></div>
                         </div>
-                        <p class="text-white-50 text-center mb-4">Ingresa tus datos para acceder a tu cuenta y conectarte con jugadores de tu zona</p>
+                        <p class="text-white-50 text-center mb-4">Únete a la comunidad de FútbolConnect y empieza a disfrutar del fútbol como en los 90's</p>
                         
                         <!-- Implementando crispy_forms -->
-                        <form action="{% url 'login' %}" method="post" id="loginForm">
+                        <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             
                             <div class="row">
                                 {{ form | crispy }}
                             </div>
                             
-                            <div class="mb-4 form-check">
-                                <input type="checkbox" class="form-check-input" id="remember-me" style="background-color: rgba(0,0,0,0.2); border-color: rgba(40,167,69,0.5);">
-                                <label class="form-check-label text-white-50" for="remember-me">Recordarme</label>
-                            </div>
-                            
                             <button type="submit" class="btn btn-success w-100 py-3 mb-4" style="border-radius: 0.5rem; box-shadow: 0 8px 15px rgba(40,167,69,0.3);">
-                                <i class="fas fa-sign-in-alt me-2"></i>Iniciar sesión
+                                <i class="fas fa-user-plus me-2"></i>Crear cuenta
                             </button>
                             
                             <div class="text-center text-white-50">
-                                <p class="mb-0">¿No tienes una cuenta? <a href="{% url 'registro' %}" class="text-success fw-bold">Regístrate ahora</a></p>
+                                <p class="mb-0">¿Ya tienes una cuenta? <a href="{% url 'login' %}" class="text-success fw-bold">Inicia sesión</a></p>
                             </div>
                         </form>
                     </div>

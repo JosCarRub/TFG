@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %} 
+
+{% block base %}
+<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
+    {% include "components/nav.html" %}
+
+    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
+        {% include "components/top_nav.html" %}
+        
+        <div class="container-fluid p-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10">
+                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
+                        <div class="card-header bg-transparent border-0 py-3">
+                            <h4 class="text-white mb-0">{{ titulo_pagina|default:"Editar Perfil" }}</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+
+                            <form method="post" enctype="multipart/form-data"> {# enctype es crucial para subir archivos #}
+                                {% csrf_token %}
+                                
+                                {{ form.non_field_errors }}
+
+                                <div class="mb-3">
+                                    <label for="{{ form.nombre.id_for_label }}" class="form-label text-white">{{ form.nombre.label }}</label>
+                                    {{ form.nombre }}
+                                    {% if form.nombre.help_text %}
+                                        <small class="form-text text-white-50">{{ form.nombre.help_text }}</small>
+                                    {% endif %}
+                                    {% for error in form.nombre.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label text-white">{{ form.fecha_nacimiento.label }}</label>
+                                        {{ form.fecha_nacimiento }}
+                                        {% for error in form.fecha_nacimiento.errors %}
+                                            <div class="invalid-feedback d-block">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.genero.id_for_label }}" class="form-label text-white">{{ form.genero.label }}</label>
+                                        {{ form.genero }}
+                                        {% for error in form.genero.errors %}
+                                            <div class="invalid-feedback d-block">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.posicion.id_for_label }}" class="form-label text-white">{{ form.posicion.label }}</label>
+                                        {{ form.posicion }}
+                                        {% for error in form.posicion.errors %}
+                                            <div class="invalid-feedback d-block">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.ubicacion.id_for_label }}" class="form-label text-white">{{ form.ubicacion.label }}</label>
+                                        {{ form.ubicacion }}
+                                        {% for error in form.ubicacion.errors %}
+                                            <div class="invalid-feedback d-block">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ form.imagen_perfil.id_for_label }}" class="form-label text-white">{{ form.imagen_perfil.label }}</label>
+                                    {% if user.imagen_perfil %}
+                                        <p class="text-white-50">Actual: <a href="{{ user.imagen_perfil.url }}" target="_blank">{{ user.imagen_perfil.name|truncatechars:30 }}</a></p>
+                                    {% endif %}
+                                    {{ form.imagen_perfil }}
+                                    {% for error in form.imagen_perfil.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="{{ form.banner_perfil.id_for_label }}" class="form-label text-white">{{ form.banner_perfil.label }}</label>
+                                     {% if user.banner_perfil %}
+                                        <p class="text-white-50">Actual: <a href="{{ user.banner_perfil.url }}" target="_blank">{{ user.banner_perfil.name|truncatechars:30 }}</a></p>
+                                    {% endif %}
+                                    {{ form.banner_perfil }}
+                                    {% for error in form.banner_perfil.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                   
+                                
+                                <div class="d-flex justify-content-end">
+                                    <a href="{% url 'perfil' %}" class="btn btn-outline-light me-2">Cancelar</a>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-save me-2"></i>Guardar Cambios
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block base %}
 <!-- Dashboard Layout -->
 <div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
     {% include "components/nav.html" %}
 
     <!-- Main Content Area -->
-    <div class="flex-grow-1 overflow-auto p-0">
+    <div class="flex-grow-1 overflow-auto p-0 bg-dark"> 
         <!-- Top Navigation Bar -->
         {% include "components/top_nav.html" %}
         
@@ -18,39 +20,33 @@
                         <div class="card-body p-0">
                             <!-- Cover image -->
                             <div class="position-relative">
-                                <img src="https://via.placeholder.com/1200x300" class="w-100" style="height: 200px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px;" alt="Cover">
+                                <img src="{% if user.banner_perfil %}{{ user.banner_perfil.url }}{% else %}{% static 'images/default_banner.jpg' %}{% endif %}" class="w-100" style="height: 200px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px;" alt="Banner del perfil">
                                 <!-- Profile image -->
                                 <div class="position-absolute" style="bottom: -50px; left: 30px;">
                                     <div class="position-relative">
-                                        <img src="https://via.placeholder.com/150" class="rounded-circle border border-4 border-dark" width="100" height="100" alt="Avatar">
-                                        <div class="position-absolute bottom-0 end-0">
-                                            <button class="btn btn-sm btn-success rounded-circle" style="width: 32px; height: 32px;">
-                                                <i class="fas fa-camera"></i>
-                                            </button>
-                                        </div>
+                                        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'images/default_avatar.png' %}{% endif %}" class="rounded-circle border border-4 border-dark" width="100" height="100" alt="Avatar de {{ user.nombre }}">
                                     </div>
-                                </div>
-                                <div class="position-absolute" style="top: 15px; right: 15px;">
-                                    <button class="btn btn-sm btn-dark">
-                                        <i class="fas fa-edit me-2"></i>Editar portada
-                                    </button>
                                 </div>
                             </div>
                             <!-- Profile info -->
                             <div class="p-4 mt-5">
                                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
                                     <div>
-                                        <h3 class="text-white mb-1">Carlos Rodríguez</h3>
+                                        <h3 class="text-white mb-1">{{ user.nombre|default:"Nombre no especificado" }}</h3>
                                         <p class="text-success mb-0">
-                                            <i class="fas fa-futbol me-2"></i>Centrocampista | 
-                                            <i class="fas fa-map-marker-alt me-2"></i>Madrid, España |
-                                            <i class="fas fa-star me-2"></i>4.8/5 (24 valoraciones)
+                                            {% if user.posicion %}
+                                                <i class="fas fa-futbol me-2"></i>{{ user.get_posicion_display }} | 
+                                            {% endif %}
+                                            {% if user.ubicacion %}
+                                                <i class="fas fa-map-marker-alt me-2"></i>{{ user.ubicacion }} |
+                                            {% endif %}
+                                            <i class="fas fa-star me-2"></i>ELO: {{ user.calificacion|floatformat:0 }}
                                         </p>
                                     </div>
                                     <div class="mt-3 mt-md-0">
-                                        <button class="btn btn-outline-light">
+                                        <a href="{% url 'update_profile' %}" class="btn btn-outline-light">
                                             <i class="fas fa-edit me-2"></i>Editar perfil
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -75,18 +71,13 @@
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link text-white" style="background-color: #2d3748; border: none;" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-tab-pane" type="button" role="tab" aria-controls="history-tab-pane" aria-selected="false">
-                                <i class="fas fa-history me-2"></i>Historial
+                            <button class="nav-link text-white" style="background-color: #2d3748; border: none;" id="elo-history-tab" data-bs-toggle="tab" data-bs-target="#elo-history-tab-pane" type="button" role="tab" aria-controls="elo-history-tab-pane" aria-selected="false">
+                                <i class="fas fa-trophy me-2"></i>Historial ELO
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link text-white" style="background-color: #2d3748; border: none;" id="teams-tab" data-bs-toggle="tab" data-bs-target="#teams-tab-pane" type="button" role="tab" aria-controls="teams-tab-pane" aria-selected="false">
-                                <i class="fas fa-users me-2"></i>Equipos
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link text-white" style="background-color: #2d3748; border: none;" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews-tab-pane" type="button" role="tab" aria-controls="reviews-tab-pane" aria-selected="false">
-                                <i class="fas fa-star me-2"></i>Valoraciones
+                                <i class="fas fa-users me-2"></i>Mis Equipos
                             </button>
                         </li>
                     </ul>
@@ -95,154 +86,101 @@
                     <div class="tab-content" id="profileTabsContent">
                         <!-- Info Tab -->
                         <div class="tab-pane fade show active" id="info-tab-pane" role="tabpanel" aria-labelledby="info-tab" tabindex="0">
-                            <div class="row g-4">
-                                <!-- Personal Info -->
-                                <div class="col-md-6">
-                                    <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px;">
-                                        <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center py-3">
-                                            <h5 class="text-white mb-0">Información personal</h5>
-                                            <button class="btn btn-sm btn-dark text-success">
-                                                <i class="fas fa-edit me-1"></i>Editar
-                                            </button>
-                                        </div>
-                                        <div class="card-body">
-                                            <ul class="list-group list-group-flush" style="background-color: transparent;">
-                                                <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                                    <span class="text-white-50">Nombre completo</span>
-                                                    <span class="text-white">Carlos Rodríguez Martínez</span>
-                                                </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                                    <span class="text-white-50">Fecha de nacimiento</span>
-                                                    <span class="text-white">15/08/1992 (31 años)</span>
-                                                </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                                    <span class="text-white-50">Género</span>
-                                                    <span class="text-white">Masculino</span>
-                                                </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                                    <span class="text-white-50">Email</span>
-                                                    <span class="text-white">carlos.rodriguez@email.com</span>
-                                                </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                                    <span class="text-white-50">Ubicación</span>
-                                                    <span class="text-white">Madrid, España</span>
-                                                </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                                    <span class="text-white-50">Miembro desde</span>
-                                                    <span class="text-white">Marzo 2023</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                            <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px;">
+                                <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center py-3">
+                                    <h5 class="text-white mb-0">Información personal</h5>
+                                    <a href="{% url 'update_profile' %}" class="btn btn-sm btn-dark text-success">
+                                        <i class="fas fa-edit me-1"></i>Editar
+                                    </a>
                                 </div>
-                                
-                                <!-- Football Profile -->
-                                <div class="col-md-6">
-                                    <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px;">
-                                        <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center py-3">
-                                            <h5 class="text-white mb-0">Perfil futbolístico</h5>
-                                            <button class="btn btn-sm btn-dark text-success">
-                                                <i class="fas fa-edit me-1"></i>Editar
-                                            </button>
-                                        </div>
-                                        <div class="card-body">
-                                            <ul class="list-group list-group-flush" style="background-color: transparent;">
-                                                <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                                    <span class="text-white-50">Posición principal</span>
-                                                    <span class="text-white">Centrocampista</span>
-                                                </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                                    <span class="text-white-50">Posiciones secundarias</span>
-                                                    <span class="text-white">Mediapunta, Interior Izquierdo</span>
-                                                </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                                    <span class="text-white-50">Nivel de juego</span>
-                                                    <span class="text-white">Intermedio-avanzado</span>
-                                                </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                                    <span class="text-white-50">Pie dominante</span>
-                                                    <span class="text-white">Derecho</span>
-                                                </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                                    <span class="text-white-50">Altura</span>
-                                                    <span class="text-white">178 cm</span>
-                                                </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                                    <span class="text-white-50">Disponibilidad</span>
-                                                    <span class="text-white">Tardes y fines de semana</span>
-                                                </li>
-                                                <li class="list-group-item" style="background-color: transparent; border-color: #3f495e;">
-                                                    <span class="text-white-50 d-block mb-2">Descripción</span>
-                                                    <span class="text-white">Centrocampista con buen pase y visión de juego. Me gusta el fútbol técnico y organizar el juego del equipo. Busco partidos de nivel intermedio-avanzado, preferiblemente fútbol 7 u 11.</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Activity Summary -->
-                                <div class="col-12">
-                                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                                        <div class="card-header bg-transparent border-0 py-3">
-                                            <h5 class="text-white mb-0">Resumen de actividad</h5>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <div class="row g-0 text-center">
-                                                <div class="col-md-3 p-4 border-end border-bottom" style="border-color: #3f495e !important;">
-                                                    <h2 class="text-success mb-1">24</h2>
-                                                    <p class="text-white-50 mb-0">Partidos jugados</p>
-                                                </div>
-                                                <div class="col-md-3 p-4 border-end border-bottom" style="border-color: #3f495e !important;">
-                                                    <h2 class="text-success mb-1">7</h2>
-                                                    <p class="text-white-50 mb-0">Partidos creados</p>
-                                                </div>
-                                                <div class="col-md-3 p-4 border-end border-bottom" style="border-color: #3f495e !important;">
-                                                    <h2 class="text-success mb-1">3</h2>
-                                                    <p class="text-white-50 mb-0">Equipos</p>
-                                                </div>
-                                                <div class="col-md-3 p-4 border-bottom" style="border-color: #3f495e !important;">
-                                                    <h2 class="text-success mb-1">4.8</h2>
-                                                    <p class="text-white-50 mb-0">Valoración media</p>
-                                                </div>
-                                                <div class="col-md-3 p-4 border-end" style="border-color: #3f495e !important;">
-                                                    <h2 class="text-success mb-1">13</h2>
-                                                    <p class="text-white-50 mb-0">Victorias</p>
-                                                </div>
-                                                <div class="col-md-3 p-4 border-end" style="border-color: #3f495e !important;">
-                                                    <h2 class="text-success mb-1">5</h2>
-                                                    <p class="text-white-50 mb-0">Empates</p>
-                                                </div>
-                                                <div class="col-md-3 p-4 border-end" style="border-color: #3f495e !important;">
-                                                    <h2 class="text-success mb-1">6</h2>
-                                                    <p class="text-white-50 mb-0">Derrotas</p>
-                                                </div>
-                                                <div class="col-md-3 p-4">
-                                                    <h2 class="text-success mb-1">87%</h2>
-                                                    <p class="text-white-50 mb-0">Asistencia</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush" style="background-color: transparent;">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
+                                            <span class="text-white-50">Nombre</span>
+                                            <span class="text-white">{{ user.nombre|default:"No especificado" }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
+                                            <span class="text-white-50">Email</span>
+                                            <span class="text-white">{{ user.email }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
+                                            <span class="text-white-50">Fecha de nacimiento</span>
+                                            <span class="text-white">{{ user.fecha_nacimiento|date:"d/m/Y"|default:"No especificada" }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
+                                            <span class="text-white-50">Género</span>
+                                            <span class="text-white">{{ user.get_genero_display|default:"No especificado" }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
+                                            <span class="text-white-50">Posición Preferida</span>
+                                            <span class="text-white">{{ user.get_posicion_display|default:"No especificada" }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
+                                            <span class="text-white-50">Ubicación</span>
+                                            <span class="text-white">{{ user.ubicacion|default:"No especificada" }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
+                                            <span class="text-white-50">Miembro desde</span>
+                                            <span class="text-white">{{ user.date_joined|date:"F Y" }}</span>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Stats Tab (placeholder) -->
+                        <!-- Stats Tab -->
                         <div class="tab-pane fade" id="stats-tab-pane" role="tabpanel" aria-labelledby="stats-tab" tabindex="0">
                             <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                                <div class="card-body p-4 text-center">
-                                    <h5 class="text-white mb-4">Estadísticas detalladas</h5>
-                                    <p class="text-white-50">Aquí se mostrarán las estadísticas detalladas del jugador.</p>
+                                <div class="card-header bg-transparent border-0 py-3">
+                                    <h5 class="text-white mb-0">Mis Estadísticas</h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="row g-0 text-center">
+                                        <div class="col-md-3 col-6 p-3 border-end border-bottom" style="border-color: #3f495e !important;">
+                                            <h4 class="text-success mb-1">{{ user.calificacion|floatformat:0 }}</h4>
+                                            <p class="text-white-50 mb-0">ELO Actual</p>
+                                        </div>
+                                        <div class="col-md-3 col-6 p-3 border-end border-bottom" style="border-color: #3f495e !important;">
+                                            <h4 class="text-success mb-1">{{ user.partidos_jugados }}</h4>
+                                            <p class="text-white-50 mb-0">Partidos Jugados</p>
+                                        </div>
+                                        <div class="col-md-3 col-6 p-3 border-end border-bottom" style="border-color: #3f495e !important;">
+                                            <h4 class="text-success mb-1">{{ user.victorias }}</h4>
+                                            <p class="text-white-50 mb-0">Victorias</p>
+                                        </div>
+                                        <div class="col-md-3 col-6 p-3 border-bottom" style="border-color: #3f495e !important;">
+                                            <h4 class="text-warning mb-1">{{ user.empates }}</h4>
+                                            <p class="text-white-50 mb-0">Empates</p>
+                                        </div>
+                                        <div class="col-md-3 col-6 p-3 border-end" style="border-color: #3f495e !important;">
+                                            <h4 class="text-danger mb-1">{{ user.derrotas }}</h4>
+                                            <p class="text-white-50 mb-0">Derrotas</p>
+                                        </div>
+                                        {% with total_partidos=user.partidos_jugados %}
+                                            {% if total_partidos > 0 %}
+                                                <div class="col-md-3 col-6 p-3 border-end" style="border-color: #3f495e !important;">
+                                                    <h4 class="text-info mb-1">{{ user.victorias}}</h4>
+                                                    <p class="text-white-50 mb-0">% Victorias</p>
+                                                </div>
+                                            {% else %}
+                                                <div class="col-md-3 col-6 p-3 border-end" style="border-color: #3f495e !important;">
+                                                    <h4 class="text-info mb-1">N/A</h4>
+                                                    <p class="text-white-50 mb-0">% Victorias</p>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                        {# Puedes añadir más estadísticas aquí #}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- History Tab (placeholder) -->
-                        <div class="tab-pane fade" id="history-tab-pane" role="tabpanel" aria-labelledby="history-tab" tabindex="0">
+                        <!-- ELO History Tab (placeholder) -->
+                        <div class="tab-pane fade" id="elo-history-tab-pane" role="tabpanel" aria-labelledby="elo-history-tab" tabindex="0">
                             <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                                <div class="card-body p-4 text-center">
-                                    <h5 class="text-white mb-4">Historial de partidos</h5>
-                                    <p class="text-white-50">Aquí se mostrará el historial de partidos del jugador.</p>
+                                <div class="card-body p-4">
+                                    <h5 class="text-white mb-3">Historial de Calificación (ELO)</h5>
+                                    <p class="text-white-50">Próximamente: Gráfico de evolución de tu ELO y listado de cambios por partido.</p>
                                 </div>
                             </div>
                         </div>
@@ -250,19 +188,9 @@
                         <!-- Teams Tab (placeholder) -->
                         <div class="tab-pane fade" id="teams-tab-pane" role="tabpanel" aria-labelledby="teams-tab" tabindex="0">
                             <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                                <div class="card-body p-4 text-center">
-                                    <h5 class="text-white mb-4">Equipos</h5>
-                                    <p class="text-white-50">Aquí se mostrarán los equipos del jugador.</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Reviews Tab (placeholder) -->
-                        <div class="tab-pane fade" id="reviews-tab-pane" role="tabpanel" aria-labelledby="reviews-tab" tabindex="0">
-                            <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                                <div class="card-body p-4 text-center">
-                                    <h5 class="text-white mb-4">Valoraciones</h5>
-                                    <p class="text-white-50">Aquí se mostrarán las valoraciones del jugador.</p>
+                                <div class="card-body p-4">
+                                    <h5 class="text-white mb-3">Mis Equipos</h5>
+                                    <p class="text-white-50">Próximamente: Listado de equipos a los que perteneces.</p>
                                 </div>
                             </div>
                         </div>
@@ -272,4 +200,22 @@
         </div>
     </div>
 </div>
+
+<script>
+
+    //SE HARÁ DESDE EL BACKEND EN SU MOMENTO
+    document.addEventListener('DOMContentLoaded', function() {
+        const fechaNacimientoStr = "{{ user.fecha_nacimiento|date:'Y-m-d' }}";
+        if (fechaNacimientoStr) {
+            const fechaNacimiento = new Date(fechaNacimientoStr);
+            const hoy = new Date();
+            let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+            const m = hoy.getMonth() - fechaNacimiento.getMonth();
+            if (m < 0 || (m === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+                edad--;
+            }
+            
+        }
+    });
+</script>
 {% endblock %}

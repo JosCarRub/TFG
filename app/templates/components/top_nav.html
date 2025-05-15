@@ -12,12 +12,11 @@
                 <span class="input-group-text bg-dark border-0 text-success">
                     <i class="fas fa-search"></i>
                 </span>
-                <input type="search" class="form-control bg-gray text-black border-0" placeholder="Buscar partidos, jugadores, equipos..." aria-label="Search">
             </div>
         </form>
         
         <!-- Notifications -->
-        <div class="dropdown me-3">
+        <!-- <div class="dropdown me-3">
             <a class="btn btn-dark position-relative" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-bell text-white"></i>
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -37,7 +36,7 @@
                             </div>
                         </div>
                     </a>
-            </li>
+                </li>
                 <li>
                     <a class="dropdown-item" href="#">
                         <div class="d-flex align-items-center">
@@ -71,9 +70,9 @@
                     <a class="dropdown-item text-center" href="#">Ver todas las notificaciones</a>
                 </li>
             </ul>
-        </div>
+        </div> -->
         
-        <!-- Messages -->
+        <!-- Messages
         <div class="dropdown me-3">
             <a class="btn btn-dark position-relative" href="#" role="button" id="messagesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-envelope text-white"></i>
@@ -105,19 +104,27 @@
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item text-center" href="#">Ver todos los mensajes</a></li>
             </ul>
-        </div>
+        </div> -->
         
         <!-- User dropdown -->
         <div class="dropdown">
             <a class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://via.placeholder.com/32" alt="Avatar" width="32" height="32" class="rounded-circle me-2">
-                <span>Carlos</span>
+                {% if current_user_avatar_url %}
+                    <img src="{{ current_user_avatar_url }}" alt="Avatar" width="32" height="32" class="rounded-circle me-2">
+                {% else %}
+                    <img src="https://via.placeholder.com/32" alt="Avatar" width="32" height="32" class="rounded-circle me-2"> {# Fallback por si algo falla #}
+                {% endif %}
+                <span>{{ current_user_nombre|default:user.username }}</span> {# Muestra el nombre, o el email si el nombre no está #}
             </a>
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark text-small" aria-labelledby="userDropdown">
                 <li><a class="dropdown-item" href="{% url 'perfil' %}">Mi perfil</a></li>
-                <li><a class="dropdown-item" href="#">Configuración</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
+                <li>
+                    <form action="{% url 'logout' %}" method="post" class="dropdown-item p-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link text-white-50 w-100 text-start px-3">Cerrar Sesión</button>
+                    </form>
+                </li>
             </ul>
         </div>
     </div>

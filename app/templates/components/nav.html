@@ -8,10 +8,14 @@
     <hr>
     <!-- User profile preview -->
     <div class="d-flex align-items-center mb-3">
-        <img src="https://via.placeholder.com/50" class="rounded-circle me-2" width="50" height="50" alt="Avatar">
+        {% if current_user_avatar_url %}
+            <img src="{{ current_user_avatar_url }}" class="rounded-circle me-2" width="50" height="50" alt="Avatar">
+        {% else %}
+            <img src="https://via.placeholder.com/50" class="rounded-circle me-2" width="50" height="50" alt="Avatar"> 
+        {% endif %}
         <div>
-            <h6 class="mb-0 text-white">Carlos Rodríguez</h6>
-            <span class="text-success">Centrocampista</span>
+            <h6 class="mb-0 text-white">{{ current_user_nombre|default:user.username }}</h6>
+            <span class="text-success">{{ current_user_posicion }}</span>
         </div>
     </div>
     <hr>
@@ -69,17 +73,17 @@
     <hr>
     <!-- Settings and logout -->
     <ul class="nav nav-pills flex-column">
-        <li>
+        <!-- <li>
             <a href="{% url 'torneos' %}" class="nav-link text-white">
                 <i class="fas fa-cog me-2"></i>
                 Configuración
             </a>
-        </li>
+        </li> -->
         <li>
-            <a href="{% url 'torneos' %}" class="nav-link text-white">
-                <i class="fas fa-sign-out-alt me-2"></i>
-                Cerrar sesión
-            </a>
+            <form action="{% url 'logout' %}" method="post" class="w-20">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning w-100">Cerrar Sesión</button>
+            </form>
         </li>
     </ul>
 </div>

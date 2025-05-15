@@ -5,12 +5,15 @@ urlpatterns = [
     path('', Landing.as_view(), name='landing'),
 
 #REGISTRO
-    path('login', Login.as_view(), name='login'),
+    path('registro',UserRegister.as_view(), name='registro' ),
+
+#PERFIL
+    path('perfil', Perfil.as_view(), name='perfil'),
+    path('update_profile',UserUpdateProfile.as_view(), name='update_profile'),
     
 
 
 
-    path('perfil', Perfil.as_view(), name='perfil'),
 
     path('home', Home.as_view(), name='home'),
     #SECCIONES
