@@ -4,47 +4,72 @@
 {% include "components/landing_nav.html" %}
 
 <!-- Hero Section -->
-<section id="hero" class="position-relative bg-black text-white overflow-hidden d-flex align-items-center" style="min-height: 75vh;">
-    <!-- Background Image -->
-     <!-- <div class="position-absolute w-100 h-100 top-0 start-0 opacity-15" style="z-index: 1;">
-        <img src="https://sportrenders.com/wp-content/uploads/2023/06/Ronaldo-Brasil-World-Cup-Imagen-PNG-Futbol-Sport-Renders.png" alt="Fútbol Background" class="position-absolute start-0 bottom-0 h-100" style="object-fit: contain;">
-    </div>  -->
-
-    <!-- <div class="position-absolute w-100 h-100 top-0 end-0" style="width: 22%; z-index: 1; opacity: 0.35;">
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBJ_SKKcYRh-kOQRlTldxlPKLdsIK-4Tctw9rwrsPeslt6vN5QKEmutvf_Rcb37nOMlEkC_XLPBFo8AzXvtYoKt7jZ7ERpKOAxa6P7bXRYcXBMoZhv4R-CpDIRjNg5J8v2FrolifO74bk/s1600/juan_riquelme_Renders_12789521442.png" alt="Riquelme" class="position-absolute end-0 bottom-0 h-100" style="object-fit: contain;">
-    </div> -->
-
-    <div class="position-absolute w-100 h-100 top-0 end-0" style="width: 22%; z-index: 1; opacity: 0.55;">
-        <img src="https://sportrenders.com/wp-content/uploads/2024/03/Ronaldo-Nazario-PNG-Inter-Football-Render.png" alt="Ronaldo" class="position-absolute end-0 bottom-0 h-100" style="object-fit: contain;">
+<section id="hero" class="position-relative bg-black text-white overflow-hidden d-flex align-items-center" style="min-height: 85vh;">
+    <!-- Overlay con gradiente dinámico -->
+    <div class="position-absolute w-100 h-100 top-0 start-0" style="background: linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(19,38,19,0.85) 100%); z-index: 1;"></div>
+    
+    <!-- Patrón de fondo estilo cancha -->
+    <div class="position-absolute w-100 h-100 top-0 start-0" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAwIiBoZWlnaHQ9IjEwMDAiIHZpZXdCb3g9IjAgMCAxMDAwIDEwMDAiPjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNTAwIiB4PSIxMDAiIHk9IjI1MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDQwLDE2Nyw2OSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iNTAwIiBjeT0iNTAwIiByPSI4MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDQwLDE2Nyw2OSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIyIi8+PHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIzMDAiIHg9IjEwMCIgeT0iMzUwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoNDAsMTY3LDY5LDAuMDUpIiBzdHJva2Utd2lkdGg9IjIiLz48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjMwMCIgeD0iNzIwIiB5PSIzNTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSg0MCwxNjcsNjksMC4wNSkiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg=='); background-size: cover; background-position: center; z-index: 1; opacity: 0.1;"></div>
+    
+    <!-- Líneas de balón animadas -->
+    <div class="position-absolute w-100 h-100" style="z-index: 1; opacity: 0.05;">
+        <div class="position-absolute" style="top: 20%; left: 10%;">
+            <div style="width: 200px; height: 200px; border: 2px dashed rgba(40,167,69,0.5); border-radius: 50%; transform: rotate(25deg);"></div>
+        </div>
+        <div class="position-absolute" style="bottom: 15%; right: 15%; animation: float 6s ease-in-out infinite 1s;">
+            <div style="width: 150px; height: 150px; border: 2px dashed rgba(40,167,69,0.5); border-radius: 50%; transform: rotate(-15deg);"></div>
+        </div>
     </div>
-
     
-
-    <!-- <div class="position-absolute w-100 h-100 top-0 start-0" style="width: 22%; z-index: 1; opacity: 0.75;">
-        <img src="https://sportrenders.com/wp-content/uploads/2023/06/Henry-Image-PNG-Render-Arsenal-Futbol-Sport-Renders.png" alt="titi" class="position-absolute start-0 bottom-0 h-100" style="object-fit: contain;">
-    </div> -->
+    <!-- Imagen de Ronaldo con efectos -->
+    <div class="position-absolute w-100 h-100 top-0 end-0" style="width: 22%; z-index: 1; opacity: 0.75; animation: fadeInRight 1.2s ease-out forwards;">
+        <img src="https://sportrenders.com/wp-content/uploads/2024/03/Ronaldo-Nazario-PNG-Inter-Football-Render.png" alt="Ronaldo" class="position-absolute end-0 bottom-0 h-100" style="object-fit: contain; filter: drop-shadow(0 0 20px rgba(40,167,69,0.3));">
+        
+        <!-- Efecto de resplandor detrás de Ronaldo -->
+        <div class="position-absolute top-50 end-0 translate-middle-y" style="width: 200px; height: 500px; background: radial-gradient(ellipse at center, rgba(40,167,69,0.2) 0%, rgba(40,167,69,0) 70%); z-index: -1; filter: blur(20px);"></div>
+    </div>
     
-    <!-- Content -->
+    <!-- Content con animaciones secuenciales -->
     <div class="container py-5 text-center position-relative" style="z-index: 2;">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-4">Conecta, Juega, Gana</h1>
-                <p class="lead mb-5">Encuentra partidos de fútbol cerca de ti, conecta con otros jugadores y disfruta del deporte rey sin preocuparte por nada más que jugar y disfrutar.</p>
-                <div class="d-flex justify-content-center gap-2">
-                    <a href="{% url 'login' %}" class="btn btn-success btn-lg">
-                        Únete ahora
+                       
+                <h1 class="display-3 fw-bold mb-4" style= "text-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                    <span class="d-inline-block">Conecta,</span>
+                    <span class="d-inline-block">Juega,</span>
+                    <span class="d-inline-block text-success">Gana</span>
+                </h1>
+                
+                <p class="lead mb-5">Encuentra partidos de fútbol cerca de ti, conecta con otros jugadores y disfruta del deporte rey sin preocuparte por nada más que <span class="typed-text fw-bold text-success">jugar y ganar.</span></p>
+                
+                <div class="d-flex justify-content-center gap-3">
+                    <!-- Botón principal con efecto de pulso -->
+                    <a href="{% url 'login' %}" class="btn btn-success btn-lg px-4 py-3 position-relative" style="box-shadow: 0 8px 25px rgba(40,167,69,0.3); overflow: hidden;">
+                        <span class="position-absolute top-0 start-0 w-100 h-100 rounded" style="background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%); z-index: 0;"></span>
+                        <span class="position-relative" style="z-index: 1;"><i class="fas fa-futbol me-2"></i> Únete ahora</span>
                     </a>
-                    <a href="{% url 'home' %}" class="btn btn-outline-light btn-lg ">
-                        Cómo funciona
+                    
+                    <!-- Botón secundario con efecto de borde animado -->
+                    <a href="{% url 'home' %}" class="btn btn-outline-light btn-lg px-4 py-3 position-relative" style="border-width: 2px; overflow: hidden;">
+                        <span class="position-relative" style="z-index: 1;"><i class="fas fa-info-circle me-2"></i> Cómo funciona</span>
                     </a>
                 </div>
+                
+                
             </div>
         </div>
     </div>
+    
+    <!-- Divisor de onda SVG animado -->
+    <div class="position-absolute bottom-0 start-0 w-100" style="z-index: 3;">
+        <svg id="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" preserveAspectRatio="none" style="width: 100%; height: 80px;">
+            <path fill="#1a202c" fill-opacity="1" d="M0,64L48,80C96,96,192,128,288,128C384,128,480,96,576,80C672,64,768,64,864,69.3C960,75,1056,85,1152,80C1248,75,1344,53,1392,42.7L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"></path>
+        </svg>
+    </div>
 </section>
 
-<!-- Features Section -->
-<!-- Features Section - Retro-Modern Style -->
+
+
 <section id="caracteristicas" class="py-5 position-relative overflow-hidden" style="background-color: #1a202c !important; min-height: 55vh;">
     <!-- Decorative Elements - Soccer Elements -->
     <div class="position-absolute top-0 start-0 w-100 h-100" style="z-index: 1; opacity: 0.05;">
@@ -136,17 +161,7 @@
                     
                 </div>
             </div>
-        </div>
-
-        <!-- CTA Row -->
-        <div class="row mt-5">
-            <div class="col-12 text-center">
-                <a href="#como-funciona" class="btn btn-outline-success btn-lg px-4 py-2 wow animate__animated animate__fadeIn" data-wow-delay="0.7s">
-                    <span>Descubre todas las funcionalidades</span>
-                    <i class="fas fa-angle-right ms-2"></i>
-                </a>
-            </div>
-        </div>
+        </div>        
     </div>
 </section>
 
@@ -286,4 +301,72 @@
         </div>
     </div>
 </footer>
+<style>
+    /* Animaciones básicas */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeInLeft {
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes fadeInRight {
+        from { opacity: 0; transform: translateX(50px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    /* Animaciones avanzadas */
+    @keyframes pulse {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40,167,69,0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(40,167,69,0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40,167,69,0); }
+    }
+    
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+        100% { transform: translateY(0px); }
+    }
+    
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+        60% { transform: translateY(-5px); }
+    }
+    
+    @keyframes shimmer {
+        0% { opacity: 0.8; }
+        50% { opacity: 1; }
+        100% { opacity: 0.8; }
+    }
+    
+    @keyframes borderMove {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(300%); }
+    }
+    
+    /* Estilos para botones con efecto hover */
+    .btn {
+        transition: all 0.3s ease;
+    }
+    
+    .btn-success:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(40,167,69,0.4) !important;
+    }
+    
+    .btn-outline-light:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(255,255,255,0.1) !important;
+    }
+</style>
+
 {% endblock %}
