@@ -20,11 +20,11 @@
                         <div class="card-body p-0">
                             <!-- Cover image -->
                             <div class="position-relative">
-                                <img src="{% if user.banner_perfil %}{{ user.banner_perfil.url }}{% else %}{% static 'images/default_banner.jpg' %}{% endif %}" class="w-100" style="height: 200px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px;" alt="Banner del perfil">
+                                <img src="{% if user.banner_perfil %}{{ user.banner_perfil.url }}{% else %}{% static 'images/banner_default.png' %}{% endif %}" class="w-100" style="height: 200px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px;" alt="Banner del perfil">
                                 <!-- Profile image -->
                                 <div class="position-absolute" style="bottom: -50px; left: 30px;">
                                     <div class="position-relative">
-                                        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static 'images/default_avatar.png' %}{% endif %}" class="rounded-circle border border-4 border-dark" width="100" height="100" alt="Avatar de {{ user.nombre }}">
+                                        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static '/images/avatar_default.png' %}{% endif %}" class="rounded-circle border border-4 border-dark" width="100" height="100" alt="Avatar de {{ user.nombre }}">
                                     </div>
                                 </div>
                             </div>
@@ -101,7 +101,7 @@
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
                                             <span class="text-white-50">Email</span>
-                                            <span class="text-white">{{ user.email }}</span>
+                                            <span class="text-white">{{ user.username }}</span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
                                             <span class="text-white-50">Fecha de nacimiento</span>
@@ -119,10 +119,10 @@
                                             <span class="text-white-50">Ubicación</span>
                                             <span class="text-white">{{ user.ubicacion|default:"No especificada" }}</span>
                                         </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
+                                        <!-- <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
                                             <span class="text-white-50">Miembro desde</span>
                                             <span class="text-white">{{ user.date_joined|date:"F Y" }}</span>
-                                        </li>
+                                        </li> -->
                                     </ul>
                                 </div>
                             </div>

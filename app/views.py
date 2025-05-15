@@ -4,7 +4,7 @@ from django.views.generic import ListView ,TemplateView, CreateView, DetailView,
 from django.contrib import messages
 from django.contrib.auth.views import LoginView
 
-from .forms import UserRegisterForm, UserUpdateProfilelForm
+from .forms import PartidoForm, UserRegisterForm, UserUpdateProfilelForm
 from .models import *
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import *
@@ -60,6 +60,37 @@ class UserUpdateProfile(LoginRequiredMixin, UpdateView):
         messages.error(self.request, 'No ha sido posible actuliazar tu perfil, revisa los campos que has querido actulizar por que debe haber un error.')
 
         return super().form_invalid(form)
+
+class CrearPartidos(LoginRequiredMixin, CreateView):
+    model = Partido
+    form_class = PartidoForm
+    template_name = 'crear_partidos.html' 
+    success_url = reverse_lazy('buscar_partidos')
+
+    def get_success_url(self):
+        #crear detalle_partido? prguntar ji
+        return reverse_lazy('buscar_partidos')
+
+
+    def form_valid(self, form):
+
+        form.instance.creador = self.request.user
+        
+        if form.cleaned_data['fecha'] < timezone.now():
+             form.add_error('fecha', 'La fecha del partido no puede ser en el pasado.')
+             return self.form_invalid(form)
+
+        self.object = form.save()
+
+        self.object.jugadores.add(self.request.user)
+        
+        messages.success(self.request, f"¡Partido en '{self.object.cancha.nombre_cancha}' creado con éxito para el {self.object.fecha.strftime('%d/%m/%Y a las %H:%M')}!")
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
     
 
 
@@ -72,8 +103,6 @@ class BuscarPartidos(LoginRequiredMixin, TemplateView):
 class Torneos(LoginRequiredMixin, TemplateView):
     template_name = 'torneos.html'
 
-class CrearPartidos(LoginRequiredMixin, TemplateView):
-    template_name = 'crear_partidos.html'
 
 class Canchas(LoginRequiredMixin, TemplateView):
     template_name = 'canchas.html'
