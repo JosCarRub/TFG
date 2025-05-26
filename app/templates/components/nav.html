@@ -14,7 +14,7 @@
             <img src="https://via.placeholder.com/50" class="rounded-circle me-2" width="50" height="50" alt="Avatar"> 
         {% endif %}
         <div>
-            <h6 class="mb-0 text-white">{{ current_user_nombre|default:user.username }}</h6>
+            <h6 class="mb-0 text-white">{{ user.nombre }}</h6>
             <span class="text-success">{{ current_user_posicion }}</span>
         </div>
     </div>
@@ -58,7 +58,7 @@
             </a>
         </li>
         <li>
-            <a href="{% url 'canchas' %}" class="nav-link text-white">
+            <a href="{% url 'canchas_lista' %}" class="nav-link text-white">
                 <i class="fas fa-map-marker-alt me-2"></i>
                 Canchas
             </a>

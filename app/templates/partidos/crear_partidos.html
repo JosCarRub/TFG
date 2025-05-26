@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %} {# Si usas crispy-forms #}
+
+{% block base %}
+<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
+    {% include "components/nav.html" %}
+
+    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
+        {% include "components/top_nav.html" %}
+        
+        <div class="container-fluid p-4 bg-dark">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <h4 class="text-white mb-2">{{ titulo_pagina|default:"Crear un nuevo partido" }}</h4>
+                            <p class="text-white-50 mb-0">Completa el formulario para organizar un partido y encontrar jugadores</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm" style="background-color: #6f7173; border-radius: 15px;">
+                        <div class="card-body p-4 p-md-5">
+                            <form method="post" enctype="multipart/form-data"> 
+                                {% csrf_token %}
+                                
+                                {{ form | crispy }}
+                                 
+                                <div class="d-flex justify-content-end mt-4">
+                                    <a href="{% url 'buscar_partidos' %}" class="btn btn-outline-light me-2">Cancelar</a>
+                                    <button type="submit" class="btn btn-success btn-lg">
+                                        <i class="fas fa-check-circle me-2"></i>Crear Partido
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección de Consejos -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <h5 class="text-white mb-3">Consejos para organizar un buen partido</h5>
+                            <div class="row g-4">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

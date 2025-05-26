@@ -2,6 +2,9 @@ from django import forms
 from .models import *
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
+from django.utils import timezone as now_timezone
+from datetime import datetime, time, timezone
+from django.utils.timezone import make_aware
 
 class UserRegisterForm(UserCreationForm):
     class Meta:
@@ -35,73 +38,141 @@ class UserUpdateProfilelForm(forms.ModelForm):
 
 class PartidoForm(forms.ModelForm):
     
-    fecha = forms.DateTimeField(
-        widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control bg-dark text-white border-secondary'}),
-        label="Fecha y Hora del Partido"
+    dia_partido = forms.DateField(
+        widget=forms.DateInput(
+            attrs={
+                'type': 'date',
+                'class': 'form-control bg-dark text-white border-secondary',
+                
+            }
+        ),
+        label="Día del Partido"
     )
-    # el campo del form pista usara un ModelChoiceField por defecto, que renderiza como un <select>
+
+    HORARIOS_CHOICES = [] #PONER TAMBIEN EN EL MODELO
+    for hora in range(10, 23): 
+        HORARIOS_CHOICES.append((time(hora, 0).strftime('%H:%M'), f"{hora:02d}:00"))
+        
+
+    hora_inicio_partido = forms.ChoiceField(
+        choices=HORARIOS_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-select bg-dark text-white border-secondary'}),
+        label="Hora de Inicio del Partido"
+    )
+
     cancha = forms.ModelChoiceField(
-        queryset=Cancha.objects.filter(disponible=True).order_by('nombre_cancha'), # Mostrar solo canchas disponibles
+        queryset=Cancha.objects.filter(disponible=True).order_by('nombre_cancha'),
         widget=forms.Select(attrs={'class': 'form-select bg-dark text-white border-secondary'}),
-        label="Cancha"
-    )
-    tipo = forms.ChoiceField(
-        choices=Partido.TIPO_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-select bg-dark text-white border-secondary'}),
-        label="Tipo de Partido (Formato)"
+        label="Cancha",
+        empty_label="Selecciona una cancha"
     )
     
-    NIVEL_CHOICES = [ 
-        ('', 'Cualquier nivel'),
-        ('PRINCIPIANTE', 'Principiante'),
-        ('INTERMEDIO', 'Intermedio'),
-        ('AVANZADO', 'Avanzado'),
-        ('PRO', 'Profesional/Muy Alto'),
-    ]
     nivel = forms.ChoiceField(
-        choices=NIVEL_CHOICES,
-        required=False, #
-        widget=forms.Select(attrs={'class': 'form-select bg-dark text-white border-secondary'}),
-        label="Nivel Estimado"
-    )
-
-    modalidad = forms.ChoiceField(
-        choices=Partido.MODALIDAD_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-select bg-dark text-white border-secondary'}),
-        label="Modalidad"
-    )
-
-    max_jugadores = forms.IntegerField(
-        min_value=2, #aunque ya lo tengo en bbdd es bueno tenerlo aqui tmbien
-        widget=forms.NumberInput(attrs={'class': 'form-control bg-dark text-white border-secondary', 'placeholder': 'Ej: 10'}),
-        label="Máximo de Jugadores"
-    )
-    costo = forms.DecimalField(
+        choices=Partido.NIVEL_CHOICES,
         required=False,
-        widget=forms.NumberInput(attrs={'class': 'form-control bg-dark text-white border-secondary', 'placeholder': '0.00'}),
-        label="Costo por Jugador (€)"
-    )
-
-
-    metodo_pago = forms.ChoiceField(
-        choices=Partido.METODO_PAGO_CHOICES,
-        required=False,
-        widget=forms.Select(attrs={'class': 'form-select bg-dark text-white border-secondary'}),
-        label="Método de Pago"
-    )
-
-    comentarios = forms.CharField(
-        required=False,
-        widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control bg-dark text-white border-secondary', 'placeholder': 'Reglas especiales, qué color deben llevar los equipos, etc...'}),
-        label="Comentarios Adicionales"
+        widget=forms.Select(),
+        label="Nivel Estimado del Partido"
     )
 
     class Meta:
         model = Partido
         fields = [
-            'fecha', 'cancha', 'tipo', 'nivel', 'modalidad',
+            'cancha', 'tipo', 'nivel', 'modalidad',
             'max_jugadores', 'costo', 'metodo_pago', 'comentarios'
         ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        dia = cleaned_data.get('dia_partido')
+        hora_str = cleaned_data.get('hora_inicio_partido') 
+        cancha = cleaned_data.get('cancha')
+
+        if not dia:
+            self.add_error('dia_partido', "Debes seleccionar un día para el partido.")
+            return cleaned_data
+        
+        if not hora_str:
+            self.add_error('hora_inicio_partido', "Debes seleccionar una hora de inicio.")
+            return cleaned_data
+
+        # Convertir la hora_str a un objeto time
+        try:
+            hora_obj = datetime.strptime(hora_str, '%H:%M').time()
+        except ValueError:
+            self.add_error('hora_inicio_partido', "Hora de inicio inválida.")
+            return cleaned_data
+
+        # Combinar día y hora para crear el datetime de inicio
+        naive_datetime = datetime.combine(dia, hora_obj)
+        fecha_inicio = make_aware(naive_datetime)
+
+        # Validar que la fecha de inicio no sea en el pasado
+        if fecha_inicio < now_timezone.now():
+            self.add_error('dia_partido', 'La fecha y hora de inicio del partido no puede ser en el pasado.')
+            self.add_error('hora_inicio_partido', 'La fecha y hora de inicio del partido no puede ser en el pasado.')
+            return cleaned_data # Detener si la fecha es inválida
+
+        # Guardar el datetime combinado en cleaned_data para que la vista lo use
+        cleaned_data['fecha'] = fecha_inicio
+
+        
+        if cancha: 
+            fecha_fin_propuesta = fecha_inicio + timedelta(hours=1)
+
+            partidos_conflictivos_query = Partido.objects.filter(
+                cancha=cancha,
+                estado__in=['PROGRAMADO', 'EN_CURSO'],
+                fecha__lt=fecha_fin_propuesta, 
+            )
+
+            if self.instance and self.instance.pk: 
+                partidos_conflictivos_query = partidos_conflictivos_query.exclude(pk=self.instance.pk)
+            
+            for partido_existente in partidos_conflictivos_query:
+                fin_existente = partido_existente.fecha + timedelta(hours=1)
+                if fin_existente > fecha_inicio:
+                    self.add_error('hora_inicio_partido', forms.ValidationError(
+                        f"La cancha '{cancha.nombre_cancha}' ya está reservada de "
+                        f"{partido_existente.fecha.strftime('%H:%M')} a {fin_existente.strftime('%H:%M')} "
+                        f"el {partido_existente.fecha.strftime('%d/%m/%Y')}. "
+                        f"Por favor, elige otro horario o cancha.",
+                        code='solapamiento'
+                    ))
+                    self.add_error('cancha', "Horario no disponible.")
+                    break 
+        
+        # Lógica de costo y método de pago 
+        costo = cleaned_data.get("costo")
+        metodo_pago = cleaned_data.get("metodo_pago")
+        if costo is not None:
+            if costo > 0 and metodo_pago == 'GRATIS':
+                self.add_error('metodo_pago', 'Si el partido tiene un costo, el método de pago no puede ser "Gratis".')
+            elif costo == 0 and metodo_pago != 'GRATIS' and metodo_pago is not None:
+                 cleaned_data['metodo_pago'] = 'GRATIS'
+        elif metodo_pago != 'GRATIS' and metodo_pago is not None:
+             self.add_error('costo', 'Debes especificar un costo o seleccionar "Gratis" como método de pago si el campo costo está vacío.')
+
+        return cleaned_data
+    
+class CanchasForm(forms.ModelForm):
+    class Meta:
+        model = Cancha
+        fields = ['nombre_cancha', 'ubicacion', 'tipo', 'propiedad', 'superficie',
+                 'costo_partido', 'descripcion', 'disponible', 'imagen']
+        
+        def __init__(self, *args, **kwargs):
+            super(CanchasForm, self).__init__(*args, **kwargs)
+        
+            # Nombres personalizados para los campos
+            self.fields['nombre_cancha'].label = "Nombre de la cancha"
+            self.fields['ubicacion'].label = "Dirección completa"
+            self.fields['tipo'].label = "Tipo de cancha"
+            self.fields['propiedad'].label = "Tipo de propiedad"
+            self.fields['costo_por_hora'].label = "Precio por hora"
+            self.fields['descripcion'].label = "Descripción"
+            self.fields['disponible'].label = "Disponible para reservas"
+            self.fields['imagen'].label = "Imagen de la cancha"
+        
 
         
     

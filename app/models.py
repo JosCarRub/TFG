@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
@@ -6,6 +7,9 @@ import uuid
 
 
 from django.db import models
+
+
+#EXPLICAR JI EL PORQUÉ DE LOS ID, ASÍ SE PUEDE 'ENGAÑAR AL USUARIO'
 
 class User(AbstractUser):
     TIPO_GENERO = [
@@ -67,21 +71,31 @@ class Cancha(models.Model):
         ('PUBLICA', 'Pública'),
         ('PRIVADA', 'Privada'),
     ]
+
+    SUPERFICIE_CHOICES = [
+        ('FUTBOL SALA','Fútbol sala'),
+        ('CESPED ARTIFICIAL','Césped artificial'),
+        ('CESPED NATURAL','Césped natural'),
+        ('TIERRA','Tierra'),
+        ('CEMENTO','Cemento')
+    ]
     
     id_cancha = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     nombre_cancha = models.CharField(max_length=100)
     ubicacion = models.CharField(max_length=255)
     tipo = models.CharField(max_length=4, choices=TIPO_CHOICES)
+    superficie = models.CharField(max_length=50,choices=SUPERFICIE_CHOICES)
     propiedad = models.CharField(max_length=7, choices=PROPIEDAD_CHOICES)
-    costo_por_hora = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    costo_partido = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     descripcion = models.TextField(null=True, blank=True)
     disponible = models.BooleanField(default=True, null=True, blank=True)
-    imagen = models.ImageField(upload_to='canchas_pictures/', null=True, blank=True)
+    imagen = models.ImageField(upload_to='images/canchas_pictures/', null=True, blank=True)
     
     def __str__(self):
-        return f"{self.nombre} - {self.get_tipo_display()}"
+        return f"{self.nombre_cancha} - {self.get_tipo_display()}"
 
 class Equipo(models.Model):
+
     TIPO_EQUIPO_CHOICES = [
         ('PARTIDO', 'Equipo para un partido'),
         ('TORNEO', 'Equipo para torneo'),
@@ -89,7 +103,7 @@ class Equipo(models.Model):
     ]
     
     id_equipo = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    nombre = models.CharField(max_length=100)
+    nombre_equipo = models.CharField(max_length=100)
     capitan = models.ForeignKey(User, on_delete=models.CASCADE, related_name='get_user_captain')
     jugadores = models.ManyToManyField(User, related_name='equipos')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -123,7 +137,7 @@ class Torneo(models.Model):
     ]
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    nombre = models.CharField(max_length=100)
+    nombre_torneo = models.CharField(max_length=100)
     descripcion = models.TextField()
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
@@ -150,6 +164,14 @@ class Partido(models.Model):
         ('TORNEO', 'Partido de Torneo'),
     ]
     
+    NIVEL_CHOICES = [ 
+        ('', 'Cualquier nivel'),
+        ('PRINCIPIANTE', 'Principiante'),
+        ('INTERMEDIO', 'Intermedio'),
+        ('AVANZADO', 'Avanzado'),
+        ('PRO', 'Profesional/Muy Alto'),
+    ]
+
     ESTADO_CHOICES = [
         ('PROGRAMADO', 'Programado'),
         ('EN_CURSO', 'En curso'),
@@ -162,12 +184,12 @@ class Partido(models.Model):
         ('Bizum', 'Bizum'),
         ('GRATIS', 'Gratuito'),
     ]
-    
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    fecha = models.DateTimeField()
+
+    id_partido = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    fecha = models.DateTimeField(verbose_name="Fecha y Hora de Inicio")
     cancha = models.ForeignKey(Cancha, on_delete=models.CASCADE, related_name='get_cancha_partido')
     tipo = models.CharField(max_length=4, choices=TIPO_CHOICES)
-    nivel = models.CharField(max_length=50, blank=True, null=True)
+    nivel = models.CharField(max_length=50, choices=NIVEL_CHOICES, blank=True, null=True)
     modalidad = models.CharField(max_length=11, choices=MODALIDAD_CHOICES, blank=True, null=True)
     max_jugadores = models.PositiveIntegerField(validators=[MinValueValidator(2)])
     costo = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True, null=True)
@@ -182,6 +204,19 @@ class Partido(models.Model):
     torneo = models.ForeignKey(Torneo, on_delete=models.SET_NULL, null=True, blank=True, related_name='get_torneo_partido')
     calificacion_actualizada = models.BooleanField(default=False)
     comentarios = models.TextField(blank=True, null=True)
+
+    @property
+    def fecha_fin_calculada(self): # Propiedad para calcular la hora de finalización (1 hora después)
+        if self.fecha:
+            return self.fecha + timedelta(hours=1)
+        return None
+
+    def __str__(self):
+        hora_inicio_str = self.fecha.strftime('%d/%m/%Y %H:%M') if self.fecha else "Fecha no definida"
+        hora_fin_str = self.fecha_fin_calculada.strftime('%H:%M') if self.fecha_fin_calculada else ""
+        nombre_cancha_str = self.cancha.nombre_cancha if self.cancha else "Cancha no definida"
+        
+        return f"Partido en {nombre_cancha_str} - {hora_inicio_str} a {hora_fin_str}"
 
     def actualizar_calificaciones(self):
         if self.calificacion_actualizada or self.modalidad == 'AMISTOSO':
