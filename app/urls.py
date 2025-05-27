@@ -11,15 +11,19 @@ urlpatterns = [
     path('perfil', Perfil.as_view(), name='perfil'),
     path('update_profile',UserUpdateProfile.as_view(), name='update_profile'),
     
-
+#PARTIDOS
     path('crear_partidos', CrearPartidos.as_view(), name='crear_partidos'),
+
+    path('buscar_partidos/', BuscarPartidos.as_view(), name='buscar_partidos'),
+    path('partido/<uuid:partido_id>/inscribirse/', InscribirsePartidoView.as_view(), name='inscribirse_partido'),
+    path('partido/<uuid:pk>/', DetallePartidoView.as_view(), name='detalle_partido'),
 
 
     path('home', Home.as_view(), name='home'),
     #SECCIONES
 
 
-    path('buscar_partidos', BuscarPartidos.as_view(), name='buscar_partidos'),
+    
     
     path('torneos', Torneos.as_view(), name='torneos'),
     

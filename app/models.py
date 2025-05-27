@@ -1,4 +1,5 @@
 from datetime import timedelta
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
@@ -187,6 +188,12 @@ class Partido(models.Model):
 
     id_partido = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     fecha = models.DateTimeField(verbose_name="Fecha y Hora de Inicio")
+    fecha_limite_inscripcion = models.DateTimeField(
+        verbose_name="Fecha Límite de Inscripción",
+        blank=True, null=True,
+        help_text="Hasta cuándo se pueden inscribir los jugadores. Si se deja en blanco, se calculará una hora antes del partido."
+    )
+
     cancha = models.ForeignKey(Cancha, on_delete=models.CASCADE, related_name='get_cancha_partido')
     tipo = models.CharField(max_length=4, choices=TIPO_CHOICES)
     nivel = models.CharField(max_length=50, choices=NIVEL_CHOICES, blank=True, null=True)
@@ -210,13 +217,29 @@ class Partido(models.Model):
         if self.fecha:
             return self.fecha + timedelta(hours=1)
         return None
-
-    def __str__(self):
-        hora_inicio_str = self.fecha.strftime('%d/%m/%Y %H:%M') if self.fecha else "Fecha no definida"
-        hora_fin_str = self.fecha_fin_calculada.strftime('%H:%M') if self.fecha_fin_calculada else ""
-        nombre_cancha_str = self.cancha.nombre_cancha if self.cancha else "Cancha no definida"
+    
+    @property
+    def inscripcion_abierta(self): #Determina si la inscripción al partido sigue abierta.
         
-        return f"Partido en {nombre_cancha_str} - {hora_inicio_str} a {hora_fin_str}"
+        ahora = timezone.now()
+        limite = self.fecha_limite_inscripcion_efectiva
+        return self.estado == 'PROGRAMADO' and ahora < limite and self.jugadores.count() < self.max_jugadores
+    
+    @property
+    def fecha_limite_inscripcion_efectiva(self): #Devuelve la fecha límite de inscripción, calculándola si no está definida.
+        
+        if self.fecha_limite_inscripcion:
+            return self.fecha_limite_inscripcion
+        if self.fecha:
+            return self.fecha - timedelta(hours=1) # Por defecto, 1 hora antes del partido
+        return None
+    
+    def save(self, *args, **kwargs): # Calcular fecha_limite_inscripcion por defecto si no se provee
+
+        if not self.fecha_limite_inscripcion and self.fecha:
+            self.fecha_limite_inscripcion = self.fecha - timedelta(hours=1)
+        super().save(*args, **kwargs)
+
 
     def actualizar_calificaciones(self):
         if self.calificacion_actualizada or self.modalidad == 'AMISTOSO':
@@ -274,6 +297,12 @@ class Partido(models.Model):
 
 
 
+    def __str__(self):
+        hora_inicio_str = self.fecha.strftime('%d/%m/%Y %H:%M') if self.fecha else "Fecha no definida"
+        hora_fin_str = self.fecha_fin_calculada.strftime('%H:%M') if self.fecha_fin_calculada else ""
+        nombre_cancha_str = self.cancha.nombre_cancha if self.cancha else "Cancha no definida"
+        
+        return f"Partido en {nombre_cancha_str} - {hora_inicio_str} a {hora_fin_str}"
     
     def __str__(self):
         if self.equipo_local and self.equipo_visitante:

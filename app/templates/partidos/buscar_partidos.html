@@ -1,36 +1,28 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block base %}
 <div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
-   <!-- Sidebar Navigation -->
    {% include "components/nav.html" %}
 
-   <!-- Main Content Area -->
    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
-       <!-- Top Navigation Bar -->
        {% include "components/top_nav.html" %}
        
-       <!-- Available Matches Section -->
        <div class="container-fluid p-4 bg-dark">
-           <!-- Section Header -->
+           <!-- ... (Cabecera y Filtros sin cambios significativos) ... -->
            <div class="row mb-4">
                <div class="col-12">
                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
                        <div class="card-body p-4">
                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
                                <div>
-                                   <h4 class="card-title text-white mb-1">Partidos disponibles</h4>
+                                   <h4 class="card-title text-white mb-1">{{ titulo_pagina|default:"Partidos Disponibles" }}</h4>
                                    <p class="card-text text-white-50">Encuentra partidos cerca de ti y únete a la comunidad</p>
                                </div>
                                <div class="mt-3 mt-md-0">
-                                   <button class="btn btn-sm btn-dark me-2" id="listViewBtn" title="Vista de lista">
-                                       <i class="fas fa-list-ul"></i>
-                                   </button>
-                                   <button class="btn btn-sm btn-success" id="mapViewBtn" title="Vista de mapa">
-                                       <i class="fas fa-map-marked-alt"></i>
-                                   </button>
-                                   <button class="btn btn-success ms-3" data-bs-toggle="modal" data-bs-target="#createMatchModal">
+                                   <a href="{% url 'crear_partidos' %}" class="btn btn-success ms-3">
                                        <i class="fas fa-plus-circle me-2"></i>Crear partido
-                                   </button>
+                                   </a>
                                </div>
                            </div>
                        </div>
@@ -38,570 +30,102 @@
                </div>
            </div>
 
-           <!-- Quick Filters -->
-           <div class="row mb-4">
-               <div class="col-12">
-                   <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                       <div class="card-body p-3">
-                           <div class="d-flex justify-content-between align-items-center flex-wrap">
-                               <div class="d-flex flex-wrap gap-2 mb-3 mb-md-0">
-                                   <button class="btn btn-success">Todos</button>
-                                   <button class="btn btn-dark">Hoy</button>
-                                   <button class="btn btn-dark">Mañana</button>
-                                   <button class="btn btn-dark">Este fin de semana</button>
-                                   <button class="btn btn-outline-light" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
-                                       <i class="fas fa-filter me-2"></i>Filtros avanzados
-                                   </button>
-                               </div>
-                               <div class="dropdown">
-                                   <button class="btn btn-dark dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                       <i class="fas fa-sort me-2"></i>Ordenar por
-                                   </button>
-                                   <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="sortDropdown">
-                                       <li><a class="dropdown-item active" href="#"><i class="fas fa-star me-2"></i>Relevancia</a></li>
-                                       <li><a class="dropdown-item" href="#"><i class="fas fa-map-marker-alt me-2"></i>Distancia</a></li>
-                                       <li><a class="dropdown-item" href="#"><i class="fas fa-calendar me-2"></i>Fecha</a></li>
-                                       <li><a class="dropdown-item" href="#"><i class="fas fa-euro-sign me-2"></i>Precio</a></li>
-                                       <li><a class="dropdown-item" href="#"><i class="fas fa-users me-2"></i>Plazas disponibles</a></li>
-                                   </ul>
-                               </div>
-                           </div>
-                       </div>
-                   </div>
-               </div>
-           </div>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
 
-           <!-- Advanced Filters (Collapsible) -->
-           <div class="collapse mb-4" id="advancedFilters">
-               <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                   <div class="card-body p-4">
-                       <div class="row g-3">
-                           <div class="col-md-6 col-lg-3">
-                               <label class="form-label text-white">Distancia</label>
-                               <select class="form-select bg-dark text-white border-secondary">
-                                   <option>Cualquier distancia</option>
-                                   <option>1 km</option>
-                                   <option>5 km</option>
-                                   <option>10 km</option>
-                                   <option>20 km</option>
-                               </select>
-                           </div>
-                           <div class="col-md-6 col-lg-3">
-                               <label class="form-label text-white">Tipo de partido</label>
-                               <select class="form-select bg-dark text-white border-secondary">
-                                   <option>Todos los tipos</option>
-                                   <option>Casual</option>
-                                   <option>Competitivo</option>
-                                   <option>Mixto</option>
-                                   <option>Liga</option>
-                               </select>
-                           </div>
-                           <div class="col-md-6 col-lg-3">
-                               <label class="form-label text-white">Formato</label>
-                               <select class="form-select bg-dark text-white border-secondary">
-                                   <option>Todos los formatos</option>
-                                   <option>5 vs 5</option>
-                                   <option>7 vs 7</option>
-                                   <option>11 vs 11</option>
-                                   <option>Fútbol sala</option>
-                               </select>
-                           </div>
-                           <div class="col-md-6 col-lg-3">
-                               <label class="form-label text-white">Nivel</label>
-                               <select class="form-select bg-dark text-white border-secondary">
-                                   <option>Todos los niveles</option>
-                                   <option>Principiante</option>
-                                   <option>Intermedio</option>
-                                   <option>Avanzado</option>
-                               </select>
-                           </div>
-                           <div class="col-md-6 col-lg-3">
-                               <label class="form-label text-white">Precio</label>
-                               <select class="form-select bg-dark text-white border-secondary">
-                                   <option>Cualquier precio</option>
-                                   <option>Gratis</option>
-                                   <option>Hasta 5€</option>
-                                   <option>5-10€</option>
-                                   <option>Más de 10€</option>
-                               </select>
-                           </div>
-                           <div class="col-md-6 col-lg-3">
-                               <label class="form-label text-white">Superficie</label>
-                               <select class="form-select bg-dark text-white border-secondary">
-                                   <option>Todas las superficies</option>
-                                   <option>Césped natural</option>
-                                   <option>Césped artificial</option>
-                                   <option>Fútbol sala</option>
-                                   <option>Tierra</option>
-                               </select>
-                           </div>
-                           <div class="col-md-6 col-lg-3">
-                               <label class="form-label text-white">Fecha</label>
-                               <input type="date" class="form-control bg-dark text-white border-secondary">
-                           </div>
-                           <div class="col-md-6 col-lg-3 d-flex align-items-end">
-                               <div class="form-check">
-                                   <input class="form-check-input bg-dark border-secondary" type="checkbox" id="availableSpotsOnly">
-                                   <label class="form-check-label text-white" for="availableSpotsOnly">
-                                       Solo partidos con plazas disponibles
-                                   </label>
-                               </div>
-                           </div>
-                           <div class="col-12 text-end mt-3">
-                               <button class="btn btn-outline-light me-2">Limpiar filtros</button>
-                               <button class="btn btn-success">Aplicar filtros</button>
-                           </div>
-                       </div>
-                   </div>
-               </div>
-           </div>
-
-           <!-- Results Count -->
-           <div class="d-flex justify-content-between align-items-center mb-4">
-               <p class="text-white mb-0">
-                   <strong>24</strong> <span class="text-white-50">partidos encontrados</span>
-               </p>
-               <p class="text-white-50 mb-0">
-                   <i class="fas fa-map-marker-alt text-success me-1"></i> Mostrando partidos cerca de <strong>Madrid</strong>
-               </p>
-           </div>
-
-           <!-- List View (Active by default) -->
            <div id="listView">
-               <div class="row g-4">
-                   <!-- Match Card 1 -->
-                   <div class="col-md-6 col-xl-4">
-                       <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
-                           <div class="position-relative">
-                               <div class="position-absolute top-0 start-0 m-3">
-                                   <span class="badge bg-success">Abierto</span>
-                               </div>
-                               <div class="position-absolute top-0 end-0 m-3">
-                                   <span class="badge bg-dark">
-                                       <i class="fas fa-map-marker-alt me-1"></i> 1.2 km
-                                   </span>
-                               </div>
-                               <div class="bg-dark text-center py-4">
-                                   <div class="bg-success bg-opacity-10 rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                                       <i class="fas fa-futbol text-success fs-1"></i>
-                                   </div>
-                               </div>
-                           </div>
-                           <div class="card-body p-4">
-                               <h5 class="text-white mb-2">Partido amistoso en Campo Norte</h5>
-                               <div class="d-flex align-items-center mb-3">
-                                   <i class="fas fa-calendar-alt text-success me-2"></i>
-                                   <span class="text-white">Hoy, 19:00 - 20:30</span>
-                               </div>
-                               <div class="d-flex align-items-center mb-3">
-                                   <i class="fas fa-map-marker-alt text-success me-2"></i>
-                                   <span class="text-white">Campo Municipal Norte, Madrid</span>
-                               </div>
-                               <div class="row mb-3">
-                                   <div class="col-6">
-                                       <div class="d-flex align-items-center">
-                                           <i class="fas fa-users text-success me-2"></i>
-                                           <span class="text-white">7 vs 7</span>
-                                       </div>
-                                   </div>
-                                   <div class="col-6">
-                                       <div class="d-flex align-items-center">
-                                           <i class="fas fa-signal text-success me-2"></i>
-                                           <span class="text-white">Nivel medio</span>
-                                       </div>
-                                   </div>
-                               </div>
-                               <div class="row mb-3">
-                                   <div class="col-6">
-                                       <div class="d-flex align-items-center">
-                                           <i class="fas fa-euro-sign text-success me-2"></i>
-                                           <span class="text-white">5€/persona</span>
-                                       </div>
-                                   </div>
-                                   <div class="col-6">
-                                       <div class="d-flex align-items-center">
-                                           <i class="fas fa-leaf text-success me-2"></i>
-                                           <span class="text-white">Césped artificial</span>
-                                       </div>
-                                   </div>
-                               </div>
-                               <div class="mb-3">
-                                   <div class="d-flex justify-content-between mb-1">
-                                       <span class="text-white">Jugadores</span>
-                                       <span class="text-white">8/14</span>
-                                   </div>
-                                   <div class="progress bg-dark">
-                                       <div class="progress-bar bg-success" role="progressbar" style="width: 57%"></div>
-                                   </div>
-                               </div>
-                               <div class="d-flex mt-3">
-                                   <div class="d-flex me-auto">
-                                       <img src="https://via.placeholder.com/32" class="rounded-circle border border-dark" width="32" height="32" alt="Player">
-                                       <img src="https://via.placeholder.com/32" class="rounded-circle border border-dark ms-n2" width="32" height="32" alt="Player">
-                                       <img src="https://via.placeholder.com/32" class="rounded-circle border border-dark ms-n2" width="32" height="32" alt="Player">
-                                       <div class="bg-dark rounded-circle border border-dark ms-n2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                                           <span class="text-white small">+5</span>
-                                       </div>
-                                   </div>
-                                   <button class="btn btn-success">
-                                       <i class="fas fa-plus-circle me-2"></i>Unirse
-                                   </button>
-                               </div>
-                           </div>
-                       </div>
-                   </div>
+                {% if partidos_info_list %} {# Cambiado a partidos_info_list #}
+                    <div class="row g-4">
+                        {% for item_info in partidos_info_list %} {# Iterar sobre la nueva variable #}
+                            {% with partido=item_info.partido es_creador=item_info.es_creador esta_inscrito=item_info.esta_inscrito inscripcion_esta_abierta=item_info.inscripcion_esta_abierta plazas_disponibles=item_info.plazas_disponibles %}
+                            <div class="col-md-6 col-xl-4">
+                                <div class="card border-0 shadow-sm h-100 {% if es_creador %}border-2 border-primary{% elif esta_inscrito %}border-2 border-success{% endif %}" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
+                                    <div class="position-relative">
+                                        <div class="bg-dark text-center py-4">
+                                            <div class="bg-success bg-opacity-10 rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                                <i class="fas fa-futbol text-success fs-1"></i>
+                                            </div>
+                                        </div>
+                                        {% if es_creador %}
+                                            <span class="position-absolute top-0 start-0 m-2 badge bg-primary">Tu Partido</span>
+                                        {% elif esta_inscrito %}
+                                            <span class="position-absolute top-0 start-0 m-2 badge bg-success">Inscrito</span>
+                                        {% elif not inscripcion_esta_abierta and partido.jugadores.count >= partido.max_jugadores %}
+                                            <span class="position-absolute top-0 start-0 m-2 badge bg-danger">Completo</span>
+                                        {% elif not inscripcion_esta_abierta %}
+                                            <span class="position-absolute top-0 start-0 m-2 badge bg-secondary">Inscripción Cerrada</span>
+                                        {% endif %}
+                                        <span class="position-absolute top-0 end-0 m-2 badge bg-info">{{ partido.get_modalidad_display|default:"Amistoso" }}</span>
+                                    </div>
+                                    <div class="card-body p-4 d-flex flex-column">
+                                        <h5 class="text-white mb-2">
+                                            <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="text-white text-decoration-none stretched-link">
+                                                Partido en {{ partido.cancha.nombre_cancha }}
+                                            </a>
+                                        </h5>
+                                        <div class="text-white-50 small mb-1"><i class="fas fa-calendar-alt text-success me-1"></i> {{ partido.fecha|date:"d/m/Y H:i" }}</div>
+                                        <div class="text-white-50 small mb-1"><i class="fas fa-clock text-success me-1"></i> Límite inscripción: {{ partido.fecha_limite_inscripcion_efectiva|date:"d/m/Y H:i" }}</div>
+                                        <div class="text-white-50 small mb-2"><i class="fas fa-map-marker-alt text-success me-1"></i> {{ partido.cancha.ubicacion }}</div>
+                                        <div class="text-white-50 small mb-2"><i class="fas fa-running text-success me-1"></i> {{ partido.get_tipo_display }} | Nivel: {{ partido.get_nivel_display|default:"Todos" }}</div>
 
-                   <!-- Match Card 2 -->
-                   <div class="col-md-6 col-xl-4">
-                       <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
-                           <div class="position-relative">
-                               <div class="position-absolute top-0 start-0 m-3">
-                                   <span class="badge bg-warning text-dark">Casi lleno</span>
-                               </div>
-                               <div class="position-absolute top-0 end-0 m-3">
-                                   <span class="badge bg-dark">
-                                       <i class="fas fa-map-marker-alt me-1"></i> 3.5 km
-                                   </span>
-                               </div>
-                               <div class="bg-dark text-center py-4">
-                                   <div class="bg-info bg-opacity-10 rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                                       <i class="fas fa-futbol text-info fs-1"></i>
-                                   </div>
-                               </div>
-                           </div>
-                           <div class="card-body p-4">
-                               <h5 class="text-white mb-2">Liga barrial - Jornada 5</h5>
-                               <div class="d-flex align-items-center mb-3">
-                                   <i class="fas fa-calendar-alt text-info me-2"></i>
-                                   <span class="text-white">Mañana, 10:00 - 12:00</span>
-                               </div>
-                               <div class="d-flex align-items-center mb-3">
-                                   <i class="fas fa-map-marker-alt text-info me-2"></i>
-                                   <span class="text-white">Estadio Central, Madrid</span>
-                               </div>
-                               <div class="row mb-3">
-                                   <div class="col-6">
-                                       <div class="d-flex align-items-center">
-                                           <i class="fas fa-users text-info me-2"></i>
-                                           <span class="text-white">11 vs 11</span>
-                                       </div>
-                                   </div>
-                                   <div class="col-6">
-                                       <div class="d-flex align-items-center">
-                                           <i class="fas fa-signal text-info me-2"></i>
-                                           <span class="text-white">Nivel avanzado</span>
-                                       </div>
-                                   </div>
-                               </div>
-                               <div class="row mb-3">
-                                   <div class="col-6">
-                                       <div class="d-flex align-items-center">
-                                           <i class="fas fa-euro-sign text-info me-2"></i>
-                                           <span class="text-white">8€/persona</span>
-                                       </div>
-                                   </div>
-                                   <div class="col-6">
-                                       <div class="d-flex align-items-center">
-                                           <i class="fas fa-leaf text-info me-2"></i>
-                                           <span class="text-white">Césped natural</span>
-                                       </div>
-                                   </div>
-                               </div>
-                               <div class="mb-3">
-                                   <div class="d-flex justify-content-between mb-1">
-                                       <span class="text-white">Jugadores</span>
-                                       <span class="text-white">20/22</span>
-                                   </div>
-                                   <div class="progress bg-dark">
-                                       <div class="progress-bar bg-info" role="progressbar" style="width: 91%"></div>
-                                   </div>
-                               </div>
-                               <div class="d-flex mt-3">
-                                   <div class="d-flex me-auto">
-                                       <img src="https://via.placeholder.com/32" class="rounded-circle border border-dark" width="32" height="32" alt="Player">
-                                       <img src="https://via.placeholder.com/32" class="rounded-circle border border-dark ms-n2" width="32" height="32" alt="Player">
-                                       <img src="https://via.placeholder.com/32" class="rounded-circle border border-dark ms-n2" width="32" height="32" alt="Player">
-                                       <div class="bg-dark rounded-circle border border-dark ms-n2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                                           <span class="text-white small">+17</span>
-                                       </div>
-                                   </div>
-                                   <button class="btn btn-info">
-                                       <i class="fas fa-plus-circle me-2"></i>Unirse
-                                   </button>
-                               </div>
-                           </div>
-                       </div>
-                   </div>
-
-                   <!-- Match Card 3 -->
-                   <div class="col-md-6 col-xl-4">
-                       <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
-                           <div class="position-relative">
-                               <div class="position-absolute top-0 start-0 m-3">
-                                   <span class="badge bg-success">Abierto</span>
-                               </div>
-                               <div class="position-absolute top-0 end-0 m-3">
-                                   <span class="badge bg-dark">
-                                       <i class="fas fa-map-marker-alt me-1"></i> 0.7 km
-                                   </span>
-                               </div>
-                               <div class="bg-dark text-center py-4">
-                                   <div class="bg-warning bg-opacity-10 rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                                       <i class="fas fa-futbol text-warning fs-1"></i>
-                                   </div>
-                               </div>
-                           </div>
-                           <div class="card-body p-4">
-                               <h5 class="text-white mb-2">Fútbol 5 en "El Barrio"</h5>
-                               <div class="d-flex align-items-center mb-3">
-                                   <i class="fas fa-calendar-alt text-warning me-2"></i>
-                                   <span class="text-white">Viernes, 19:30 - 21:00</span>
-                               </div>
-                               <div class="d-flex align-items-center mb-3">
-                                   <i class="fas fa-map-marker-alt text-warning me-2"></i>
-                                   <span class="text-white">Cancha "El Barrio", Madrid</span>
-                               </div>
-                               <div class="row mb-3">
-                                   <div class="col-6">
-                                       <div class="d-flex align-items-center">
-                                           <i class="fas fa-users text-warning me-2"></i>
-                                           <span class="text-white">5 vs 5</span>
-                                       </div>
-                                   </div>
-                                   <div class="col-6">
-                                       <div class="d-flex align-items-center">
-                                           <i class="fas fa-signal text-warning me-2"></i>
-                                           <span class="text-white">Todos los niveles</span>
-                                       </div>
-                                   </div>
-                               </div>
-                               <div class="row mb-3">
-                                   <div class="col-6">
-                                       <div class="d-flex align-items-center">
-                                           <i class="fas fa-euro-sign text-warning me-2"></i>
-                                           <span class="text-white">Gratis</span>
-                                       </div>
-                                   </div>
-                                   <div class="col-6">
-                                       <div class="d-flex align-items-center">
-                                           <i class="fas fa-leaf text-warning me-2"></i>
-                                           <span class="text-white">Fútbol sala</span>
-                                       </div>
-                                   </div>
-                               </div>
-                               <div class="mb-3">
-                                   <div class="d-flex justify-content-between mb-1">
-                                       <span class="text-white">Jugadores</span>
-                                       <span class="text-white">6/10</span>
-                                   </div>
-                                   <div class="progress bg-dark">
-                                       <div class="progress-bar bg-warning" role="progressbar" style="width: 60%"></div>
-                                   </div>
-                               </div>
-                               <div class="d-flex mt-3">
-                                   <div class="d-flex me-auto">
-                                       <img src="https://via.placeholder.com/32" class="rounded-circle border border-dark" width="32" height="32" alt="Player">
-                                       <img src="https://via.placeholder.com/32" class="rounded-circle border border-dark ms-n2" width="32" height="32" alt="Player">
-                                       <img src="https://via.placeholder.com/32" class="rounded-circle border border-dark ms-n2" width="32" height="32" alt="Player">
-                                       <img src="https://via.placeholder.com/32" class="rounded-circle border border-dark ms-n2" width="32" height="32" alt="Player">
-                                        <div class="bg-dark rounded-circle border border-dark ms-n2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                                            <span class="text-white small">+3</span>
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between mb-1">
+                                                <span class="text-white small">Jugadores:</span>
+                                                <span class="text-white small">{{ partido.jugadores.count }}/{{ partido.max_jugadores }}</span>
+                                            </div>
+                                            <div class="progress bg-dark" style="height: 10px;">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: {% widthratio partido.jugadores.count partido.max_jugadores 100 %}%"></div>
+                                            </div>
+                                            {% if inscripcion_esta_abierta %}
+                                                <small class="text-success">{{ plazas_disponibles }} plazas disponibles</small>
+                                            {% elif partido.jugadores.count >= partido.max_jugadores %}
+                                                <small class="text-danger">Partido completo</small>
+                                            {% else %}
+                                                <small class="text-warning">Inscripción cerrada</small>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="mt-auto">
+                                            {% if es_creador %}
+                                                <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="btn btn-primary w-100">
+                                                    <i class="fas fa-cog me-2"></i>Gestionar Partido
+                                                </a>
+                                            {% elif esta_inscrito %}
+                                                <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="btn btn-outline-light w-100">
+                                                    <i class="fas fa-eye me-2"></i>Ver Detalles
+                                                </a>
+                                                <!-- Podrías añadir un botón para desinscribirse aquí -->
+                                            {% elif inscripcion_esta_abierta %}
+                                                <form action="{% url 'inscribirse_partido' partido_id=partido.id_partido %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-success w-100">
+                                                        <i class="fas fa-user-plus me-2"></i>Inscribirse
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="btn btn-secondary w-100 disabled" aria-disabled="true">
+                                                    No disponible
+                                                </a>
+                                            {% endif %}
                                         </div>
                                     </div>
-                                    <button class="btn btn-warning text-dark">
-                                        <i class="fas fa-plus-circle me-2"></i>Unirse
-                                    </button>
                                 </div>
                             </div>
-                        </div>
+                            {% endwith %}
+                        {% endfor %}
                     </div>
-
-                    <!-- Puedes añadir más tarjetas de partidos aquí -->
-                </div>
-
-                <!-- Pagination -->
-                <div class="d-flex justify-content-center mt-5">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination">
-                            <li class="page-item disabled">
-                                <a class="page-link bg-dark border-secondary text-secondary" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-                            <li class="page-item active"><a class="page-link bg-success border-success" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link bg-dark border-secondary text-white" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link bg-dark border-secondary text-white" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link bg-dark border-secondary text-white" href="#" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-
-            <!-- Map View (Hidden by default) -->
-            <div id="mapView" style="display: none;">
-                <div class="card border-0 shadow-sm bg-dark" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
-                    <div class="card-body p-0">
-                        <div style="height: 600px; background-color: #1a202c; position: relative;">
-                            <!-- Esto sería reemplazado por la implementación real del mapa -->
-                            <div class="d-flex justify-content-center align-items-center h-100">
-                                <div class="text-center">
-                                    <i class="fas fa-map-marked-alt text-success mb-3" style="font-size: 3rem;"></i>
-                                    <h5 class="text-white">Mapa de partidos</h5>
-                                    <p class="text-white-50">Aquí se cargaría el mapa interactivo con los partidos marcados</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Controles de ejemplo que aparecerían sobre el mapa -->
-                            <div class="position-absolute" style="top: 10px; right: 10px;">
-                                <div class="btn-group-vertical">
-                                    <button class="btn btn-dark" title="Acercar">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                    <button class="btn btn-dark" title="Alejar">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div class="position-absolute" style="bottom: 20px; right: 20px;">
-                                <button class="btn btn-success" title="Mi ubicación">
-                                    <i class="fas fa-location-arrow"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                    <!-- ... (Paginación) ... -->
+                {% else %}
+                    <!-- ... (Mensaje de no hay partidos) ... -->
+                {% endif %}
+           </div>
+       </div>
+   </div>
 </div>
-
-<!-- Modal para crear partido -->
-<div class="modal fade" id="createMatchModal" tabindex="-1" aria-labelledby="createMatchModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0" style="background-color: #2d3748; border-radius: 15px;">
-            <div class="modal-header border-bottom border-secondary">
-                <h5 class="modal-title text-white" id="createMatchModalLabel">Crear nuevo partido</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="mb-3">
-                        <label for="matchTitle" class="form-label text-white">Título del partido</label>
-                        <input type="text" class="form-control bg-dark text-white border-secondary" id="matchTitle" placeholder="Ej: Partido amistoso 5vs5">
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="matchDate" class="form-label text-white">Fecha</label>
-                            <input type="date" class="form-control bg-dark text-white border-secondary" id="matchDate">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="matchStartTime" class="form-label text-white">Hora inicio</label>
-                            <input type="time" class="form-control bg-dark text-white border-secondary" id="matchStartTime">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="matchEndTime" class="form-label text-white">Hora fin</label>
-                            <input type="time" class="form-control bg-dark text-white border-secondary" id="matchEndTime">
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="matchLocation" class="form-label text-white">Ubicación</label>
-                            <select class="form-select bg-dark text-white border-secondary" id="matchLocation">
-                                <option selected disabled>Selecciona una cancha</option>
-                                <option value="1">Campo Municipal Norte</option>
-                                <option value="2">Estadio Central</option>
-                                <option value="3">Cancha "El Barrio"</option>
-                                <option value="4">Polideportivo Sur</option>
-                                <option value="5">Campo San Jorge</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="matchType" class="form-label text-white">Tipo de partido</label>
-                            <select class="form-select bg-dark text-white border-secondary" id="matchType">
-                                <option selected disabled>Selecciona un formato</option>
-                                <option value="5v5">Fútbol 5 (5 vs 5)</option>
-                                <option value="7v7">Fútbol 7 (7 vs 7)</option>
-                                <option value="11v11">Fútbol 11 (11 vs 11)</option>
-                                <option value="sala">Fútbol sala (5 vs 5)</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="matchSkillLevel" class="form-label text-white">Nivel de habilidad</label>
-                            <select class="form-select bg-dark text-white border-secondary" id="matchSkillLevel">
-                                <option selected disabled>Nivel requerido</option>
-                                <option value="principiante">Principiante</option>
-                                <option value="intermedio">Intermedio</option>
-                                <option value="avanzado">Avanzado</option>
-                                <option value="todos">Todos los niveles</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="matchPrice" class="form-label text-white">Precio por jugador</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-dark text-white border-secondary">€</span>
-                                <input type="number" class="form-control bg-dark text-white border-secondary" id="matchPrice" placeholder="0.00">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="matchDescription" class="form-label text-white">Descripción</label>
-                        <textarea class="form-control bg-dark text-white border-secondary" id="matchDescription" rows="3" placeholder="Describe el partido, reglas especiales, equipamiento necesario, etc."></textarea>
-                    </div>
-                    
-                    <div class="form-check mb-3">
-                        <input class="form-check-input bg-dark border-secondary" type="checkbox" id="matchPrivate">
-                        <label class="form-check-label text-white-50" for="matchPrivate">
-                            Partido privado (solo invitados)
-                        </label>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer border-top border-secondary">
-                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-success">
-                    <i class="fas fa-plus-circle me-2"></i>Crear partido
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Script para alternar entre vista de lista y mapa -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const listViewBtn = document.getElementById('listViewBtn');
-        const mapViewBtn = document.getElementById('mapViewBtn');
-        const listView = document.getElementById('listView');
-        const mapView = document.getElementById('mapView');
-        
-        listViewBtn.addEventListener('click', function() {
-            listView.style.display = 'block';
-            mapView.style.display = 'none';
-            listViewBtn.classList.add('btn-success');
-            listViewBtn.classList.remove('btn-dark');
-            mapViewBtn.classList.add('btn-dark');
-            mapViewBtn.classList.remove('btn-success');
-        });
-        
-        mapViewBtn.addEventListener('click', function() {
-            listView.style.display = 'none';
-            mapView.style.display = 'block';
-            mapViewBtn.classList.add('btn-success');
-            mapViewBtn.classList.remove('btn-dark');
-            listViewBtn.classList.add('btn-dark');
-            listViewBtn.classList.remove('btn-success');
-        });
-    });
-</script>
 {% endblock %}

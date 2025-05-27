@@ -2,7 +2,7 @@ from django import forms
 from .models import *
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-from django.utils import timezone as now_timezone
+from django.utils import timezone as django_timezone
 from datetime import datetime, time, timezone
 from django.utils.timezone import make_aware
 
@@ -87,6 +87,10 @@ class PartidoForm(forms.ModelForm):
         hora_str = cleaned_data.get('hora_inicio_partido') 
         cancha = cleaned_data.get('cancha')
 
+        dia_limite_str = cleaned_data.get('fecha_limite_inscripcion_dia')
+        hora_limite_str = cleaned_data.get('fecha_limite_inscripcion_hora')
+
+
         if not dia:
             self.add_error('dia_partido', "Debes seleccionar un día para el partido.")
             return cleaned_data
@@ -107,13 +111,30 @@ class PartidoForm(forms.ModelForm):
         fecha_inicio = make_aware(naive_datetime)
 
         # Validar que la fecha de inicio no sea en el pasado
-        if fecha_inicio < now_timezone.now():
+        if fecha_inicio < django_timezone.now():
             self.add_error('dia_partido', 'La fecha y hora de inicio del partido no puede ser en el pasado.')
             self.add_error('hora_inicio_partido', 'La fecha y hora de inicio del partido no puede ser en el pasado.')
             return cleaned_data # Detener si la fecha es inválida
 
         # Guardar el datetime combinado en cleaned_data para que la vista lo use
         cleaned_data['fecha'] = fecha_inicio
+
+        if dia_limite_str and hora_limite_str: # Si el usuario proporcionó ambos
+            try:
+                hora_limite_obj = datetime.strptime(hora_limite_str, '%H:%M').time()
+                naive_limite_dt = datetime.combine(dia_limite_str, hora_limite_obj)
+                fecha_limite = django_timezone.make_aware(naive_limite_dt)
+                if fecha_limite >= fecha_inicio:
+                    self.add_error('fecha_limite_inscripcion_dia', 'La fecha límite de inscripción debe ser anterior a la fecha del partido.')
+                else:
+                    cleaned_data['fecha_limite_inscripcion'] = fecha_limite
+            except ValueError:
+                self.add_error('fecha_limite_inscripcion_hora', 'Hora límite de inscripción inválida.')
+        elif dia_limite_str or hora_limite_str: # Si solo proporcionó uno
+             self.add_error('fecha_limite_inscripcion_dia', 'Debes proporcionar tanto el día como la hora para la fecha límite, o dejar ambos en blanco para usar el valor por defecto (1h antes del partido).')
+        else:
+            # Si se dejan en blanco, el modelo lo calculará en save()
+            cleaned_data['fecha_limite_inscripcion'] = None # Indicar que se use el default del modelo/save
 
         
         if cancha: 
