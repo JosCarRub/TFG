@@ -89,7 +89,7 @@
                                     </div>
                                     <p class="text-white-50 small mb-3 flex-grow-1">{{ cancha.descripcion|truncatewords:20|default:"Sin descripción." }}</p>
                                     <div class="mt-auto d-flex justify-content-between">
-                                        <a href="#" class="btn btn-outline-light btn-sm"> {/* Reemplazar # con URL de detalle de cancha */}
+                                        <a href="{% url 'detalle_cancha' pk_cancha=cancha.id_cancha %}" class="btn btn-outline-light btn-sm">
                                             <i class="fas fa-info-circle me-1"></i>Detalles
                                         </a>
                                         {% if cancha.propiedad == 'PRIVADA' %}
@@ -101,7 +101,8 @@
                                 </div>
                             </div>
                         </div>
-                        {% endfor %}
+                                                
+                    {% endfor %}
                     {% else %}
                         <div class="col-12">
                             <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">

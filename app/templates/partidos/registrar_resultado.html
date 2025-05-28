@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block base %}
+<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
+    {% include "components/nav.html" %}
+    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
+        {% include "components/top_nav.html" %}
+        <div class="container-fluid p-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-6 col-md-8">
+                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px; color: white;">
+                        <div class="card-header bg-transparent border-bottom border-secondary py-3">
+                            <h4 class="mb-0 text-center">{{ titulo_pagina }}</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="text-white-50">Estás registrando el resultado para el partido del <strong>{{ partido.fecha|date:"d/m/Y \a \l\a\s H:i" }}</strong> en <strong>{{ partido.cancha.nombre_cancha }}</strong>.</p>
+                            
+                            {% if partido.equipo_local and partido.equipo_visitante %}
+                                <p class="text-center h5 mb-3">
+                                    {{ partido.equipo_local.nombre_equipo|default:"Equipo Local" }} vs {{ partido.equipo_visitante.nombre_equipo|default:"Equipo Visitante" }}
+                                </p>
+                            {% else %}
+                                <p class="text-center text-warning small">
+                                    Nota: Los equipos no están asignados a este partido. Las calificaciones ELO no se actualizarán.
+                                </p>
+                            {% endif %}
+
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form|crispy }}
+                                <div class="d-flex justify-content-end mt-4">
+                                    <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="btn btn-outline-light me-2">Cancelar</a>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-save me-2"></i>Guardar Resultado
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

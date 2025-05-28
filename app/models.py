@@ -94,6 +94,7 @@ class Cancha(models.Model):
     
     def __str__(self):
         return f"{self.nombre_cancha} - {self.get_tipo_display()}"
+    
 
 class Equipo(models.Model):
 

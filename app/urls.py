@@ -17,21 +17,25 @@ urlpatterns = [
     path('buscar_partidos/', BuscarPartidos.as_view(), name='buscar_partidos'),
     path('partido/<uuid:partido_id>/inscribirse/', InscribirsePartidoView.as_view(), name='inscribirse_partido'),
     path('partido/<uuid:pk>/', DetallePartidoView.as_view(), name='detalle_partido'),
+    path('partido/<uuid:pk>/registrar_resultado/', RegistrarResultadoPartidoView.as_view(), name='registrar_resultado_partido'),
+
 
 
     path('home', Home.as_view(), name='home'),
     #SECCIONES
 
 
-    
-    
+
+    #CANCHAS
+    path('canchas/', CanchasView.as_view(), name='canchas_lista'), 
+    path('canchas/registrar/', RegistrarCanchaView.as_view(), name='canchas_registrar'),
+    path('cancha/<uuid:pk_cancha>/', DetalleCanchaView.as_view(), name='detalle_cancha'),
+
+
     path('torneos', Torneos.as_view(), name='torneos'),
     
     path('estadisticas', Estadisticas.as_view(), name='estadisticas'),
 
-    #CANCHAS
-    path('canchas/', CanchasView.as_view(), name='canchas_lista'), # Para listar las canchas
-    path('canchas/registrar/', RegistrarCanchaView.as_view(), name='canchas_registrar'),
 
     
 
