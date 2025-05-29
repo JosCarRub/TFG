@@ -1,13 +1,16 @@
-from datetime import timezone
+from datetime import timezone as django_timezone
 from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView ,TemplateView, CreateView, DetailView, UpdateView, DeleteView, FormView, View
 from django.contrib import messages
 from django.contrib.auth.views import LoginView
-from django.db.models import Count, Case, When, BooleanField
+from django.db.models import Count, Case, When, F, Q, DateTimeField, ExpressionWrapper
 from django.shortcuts import get_object_or_404, redirect
 
+
 from django.contrib.auth import get_user_model
+
+from app.forms import AsignarEquiposForm, CanchasForm, PartidoForm, ResultadoPartidoForm, UserRegisterForm, UserUpdateProfilelForm
 
 
 from .forms import *
@@ -74,96 +77,116 @@ class CrearPartidos(LoginRequiredMixin, CreateView):
     model = Partido
     form_class = PartidoForm
     template_name = 'partidos/crear_partidos.html'
-    success_url = reverse_lazy('buscar_partidos')
+    # success_url se define en get_success_url para redirigir al detalle
+
+    def get_form_kwargs(self):
+        """Pasar el usuario al formulario si es necesario para filtrar querysets."""
+        kwargs = super().get_form_kwargs()
+        # kwargs['user'] = self.request.user # Descomentar si PartidoForm necesita el usuario
+        return kwargs
 
     def form_valid(self, form):
+
         form.instance.creador = self.request.user
         
+        # La fecha y fecha_limite_inscripcion ya deberían estar en cleaned_data
+        # gracias al método clean() del formulario.
         if 'fecha' in form.cleaned_data:
             form.instance.fecha = form.cleaned_data['fecha']
         else:
-            messages.error(self.request, "Error: Fecha del partido no procesada.")
+            messages.error(self.request, "Error crítico: La fecha del partido no se pudo procesar.")
             return self.form_invalid(form)
 
-        # Asignar fecha_limite_inscripcion si vino del formulario
-        # Si es None, el método save() del modelo Partido lo calculará por defecto
-        if 'fecha_limite_inscripcion' in form.cleaned_data:
+        if 'fecha_limite_inscripcion' in form.cleaned_data and form.cleaned_data['fecha_limite_inscripcion'] is not None:
             form.instance.fecha_limite_inscripcion = form.cleaned_data['fecha_limite_inscripcion']
+        # Si es None, el save() del modelo Partido lo calculará
         
-        response = super().form_valid(form)
+        # Si se seleccionaron equipos permanentes en el form, se asignan aquí
+        # Esto asume que tu PartidoForm tiene campos 'equipo_local' y 'equipo_visitante' que son ModelChoiceFields
+        # y que están en Meta.fields o los asignas desde cleaned_data
+        if form.cleaned_data.get('equipo_local'):
+            form.instance.equipo_local = form.cleaned_data['equipo_local']
+        if form.cleaned_data.get('equipo_visitante'):
+            form.instance.equipo_visitante = form.cleaned_data['equipo_visitante']
+
+        self.object = form.save() # Guardar el partido
         
-        if self.object:
-            self.object.jugadores.add(self.request.user)
+        # Añadir al creador como jugador
+        self.object.jugadores.add(self.request.user)
+
+        # Si se seleccionaron equipos permanentes, añadir sus jugadores al partido (si hay plazas)
+        # Esta lógica podría ser más compleja (ej. no añadir si el jugador ya está)
+        if self.object.equipo_local:
+            for jugador in self.object.equipo_local.jugadores.all():
+                if self.object.jugadores.count() < self.object.max_jugadores:
+                    self.object.jugadores.add(jugador) 
+                else: break
+        if self.object.equipo_visitante:
+             for jugador in self.object.equipo_visitante.jugadores.all():
+                if self.object.jugadores.count() < self.object.max_jugadores:
+                    self.object.jugadores.add(jugador)
+                else: break
         
         messages.success(self.request, f"¡Partido en '{self.object.cancha.nombre_cancha}' creado con éxito para el {self.object.fecha.strftime('%d/%m/%Y a las %H:%M')}!")
-        return response
-    
+        return redirect(self.get_success_url()) # Usar redirect con get_success_url
+
+    def get_success_url(self):
+        return reverse('detalle_partido', kwargs={'pk': self.object.id_partido})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo_pagina'] = "Organizar Nuevo Partido (Duración: 1 hora)"
+        return context
 
 class BuscarPartidos(LoginRequiredMixin, ListView):
     model = Partido
     template_name = 'partidos/buscar_partidos.html'
-    context_object_name = 'partidos_info_list' # Cambiado para evitar confusión con el original
+    context_object_name = 'partidos_info_list'
     paginate_by = 9
 
     def get_queryset(self):
         ahora = django_timezone.now()
-        # Partidos programados que aún no han pasado su fecha límite de inscripción efectiva
-        # y que tienen plazas disponibles.
         queryset = Partido.objects.filter(
-            estado='PROGRAMADO',
-            # fecha_limite_inscripcion_efectiva > ahora (esto se hará con annotate y Case/When)
-            # o podemos filtrar después de anotar
+            estado='PROGRAMADO'
         ).annotate(
             num_jugadores_inscritos=Count('jugadores'),
-            # Calculamos la fecha_limite_efectiva aquí para poder filtrar
-            # Si fecha_limite_inscripcion es NULL, usamos fecha - 1 hora
             limite_inscripcion_calculada=Case(
-                When(fecha_limite_inscripcion__isnull=False, then=models.F('fecha_limite_inscripcion')),
-                default=models.ExpressionWrapper(models.F('fecha') - timedelta(hours=1), output_field=models.DateTimeField())
+                When(fecha_limite_inscripcion__isnull=False, then=F('fecha_limite_inscripcion')),
+                default=ExpressionWrapper(F('fecha') - timedelta(hours=1), output_field=DateTimeField())
             )
         ).filter(
-            limite_inscripcion_calculada__gt=ahora, # Inscripción aún no ha cerrado
-            num_jugadores_inscritos__lt=models.F('max_jugadores') # Plazas disponibles
-        ).order_by('fecha')
-        
-        # No excluimos los partidos del usuario aquí, lo manejaremos en el contexto
-
+            limite_inscripcion_calculada__gt=ahora,
+            num_jugadores_inscritos__lt=F('max_jugadores')
+        ).select_related('cancha', 'creador').prefetch_related('jugadores').order_by('fecha')
+        # No excluimos partidos del creador aquí, se maneja en el template/contexto
         return queryset
     
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs) # Esto ya poblará 'partidos_info_list'
+        context = super().get_context_data(**kwargs)
         context['titulo_pagina'] = "Encuentra Partidos"
         
-        # Procesar la lista de partidos para añadir información contextual
         partidos_procesados = []
-        # 'object_list' es el nombre por defecto que ListView usa para el queryset paginado
-        # si no se define context_object_name o si se quiere el queryset original.
-        # En nuestro caso, ListView ya usa 'partidos_info_list' por context_object_name.
-        for partido in context['partidos_info_list']: 
-            es_creador = (partido.creador == self.request.user)
-            esta_inscrito = self.request.user in partido.jugadores.all()
-            
-            # Usamos la propiedad del modelo para determinar si la inscripción está abierta
-            # La propiedad ya considera el estado, el límite y las plazas.
-            inscripcion_esta_abierta = partido.inscripcion_abierta 
-
-            plazas_disponibles = partido.max_jugadores - partido.num_jugadores_inscritos
+        for partido_obj in context['partidos_info_list']: # ListView usa object_list, pero context_object_name lo renombra
+            es_creador = (partido_obj.creador == self.request.user)
+            esta_inscrito = self.request.user in partido_obj.jugadores.all()
+            inscripcion_esta_abierta = partido_obj.inscripcion_abierta 
+            plazas_disponibles = partido_obj.max_jugadores - partido_obj.num_jugadores_inscritos
 
             partidos_procesados.append({
-                'partido': partido,
+                'partido': partido_obj,
                 'es_creador': es_creador,
                 'esta_inscrito': esta_inscrito,
                 'inscripcion_esta_abierta': inscripcion_esta_abierta,
                 'plazas_disponibles': plazas_disponibles,
             })
-        context['partidos_info_list'] = partidos_procesados # Reemplazamos con la lista procesada
+        context['partidos_info_list'] = partidos_procesados
         return context
 
-class DetallePartidoView(LoginRequiredMixin, DetailView): # DetailView puede manejar POST si lo sobrescribes
+class DetallePartidoView(LoginRequiredMixin, DetailView):
     model = Partido
     template_name = 'partidos/detalle_partido.html'
     context_object_name = 'partido'
-    pk_url_kwarg = 'pk' 
+    pk_url_kwarg = 'pk' # Coincide con <uuid:pk> en tu URL
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -172,20 +195,23 @@ class DetallePartidoView(LoginRequiredMixin, DetailView): # DetailView puede man
 
         context['titulo_pagina'] = f"Detalles: {partido.cancha.nombre_cancha} - {partido.fecha.strftime('%d/%m %H:%M')}"
         context['es_creador'] = (partido.creador == usuario_actual)
-        context['esta_inscrito'] = usuario_actual in partido.jugadores.all()
+        context['esta_inscrito'] = usuario_actual in partido.jugadores.all() # Verifica si el usuario está en el M2M
         context['inscripcion_esta_abierta'] = partido.inscripcion_abierta
         
         jugadores_inscritos_list = partido.jugadores.all().order_by('nombre')
         context['jugadores_inscritos_list'] = jugadores_inscritos_list
         context['plazas_disponibles'] = partido.max_jugadores - partido.jugadores.count()
 
-        if context['es_creador'] and partido.estado == 'PROGRAMADO':
-            # Pasar el formulario de asignación de equipos al contexto
-            # Pasamos los jugadores inscritos y el partido para pre-rellenar si ya hay equipos
+        if context['es_creador'] and partido.estado == 'PROGRAMADO' and not partido.equipo_local:
+            # Solo mostrar el form de asignación si el usuario es creador, el partido está programado
+            # Y AÚN NO SE HAN ASIGNADO EQUIPOS PERMANENTES (si esa es la lógica que quieres)
+            # O si quieres permitir re-asignar, quita la condición de not partido.equipo_local
             context['form_asignar_equipos'] = AsignarEquiposForm(
                 jugadores_inscritos=jugadores_inscritos_list,
                 partido=partido 
             )
+        else:
+            context['form_asignar_equipos'] = None
         return context
 
     def post(self, request, *args, **kwargs):
@@ -199,65 +225,70 @@ class DetallePartidoView(LoginRequiredMixin, DetailView): # DetailView puede man
         if partido.estado != 'PROGRAMADO':
             messages.error(request, "Solo se pueden asignar equipos a partidos programados.")
             return redirect('detalle_partido', pk=partido.id_partido)
+        
+        # Si el partido ya tiene equipos permanentes asignados, no permitir re-asignar con este form
+        if partido.equipo_local and partido.equipo_visitante and \
+           partido.equipo_local.tipo_equipo == 'PERMANENTE' and partido.equipo_visitante.tipo_equipo == 'PERMANENTE':
+            messages.info(request, "Este partido ya tiene equipos permanentes asignados. Para cambiar jugadores, edita los equipos directamente.")
+            return redirect('detalle_partido', pk=partido.id_partido)
 
-        # Procesar el formulario de asignación de equipos
+
         form_asignar = AsignarEquiposForm(request.POST, jugadores_inscritos=partido.jugadores.all(), partido=partido)
 
         if form_asignar.is_valid():
             jugadores_equipo_local_ids = []
             jugadores_equipo_visitante_ids = []
 
-            for jugador_obj in partido.jugadores.all(): # 'jugador_obj' para evitar confusión con la variable 'jugador' del bucle en el template
+            for jugador_obj in partido.jugadores.all():
                 asignacion = form_asignar.cleaned_data.get(f'jugador_{jugador_obj.id}')
                 if asignacion == 'local':
                     jugadores_equipo_local_ids.append(jugador_obj.id)
                 elif asignacion == 'visitante':
                     jugadores_equipo_visitante_ids.append(jugador_obj.id)
             
-            
+            # Validación básica de número de jugadores (opcional, como dijiste que no por ahora)
+            # if len(jugadores_equipo_local_ids) < 1 or len(jugadores_equipo_visitante_ids) < 1:
+            #     messages.error(request, "Debes asignar al menos un jugador a cada equipo para guardar la formación.")
+            #     context = self.get_context_data(**kwargs)
+            #     context['form_asignar_equipos'] = form_asignar
+            #     return self.render_to_response(context)
 
-            # Crear o actualizar equipos temporales para el partido
+            # Crear o actualizar equipos de tipo 'PARTIDO'
+            sufijo_nombre = f"{partido.cancha.nombre_cancha[:10]}_{partido.fecha.strftime('%d%m%y%H%M')}"
+
             # Equipo Local
-            if partido.equipo_local:
+            if partido.equipo_local and partido.equipo_local.tipo_equipo == 'PARTIDO':
                 equipo_local = partido.equipo_local
-                
-                equipo_local.jugadores.set(User.objects.filter(id__in=jugadores_equipo_local_ids))
             else:
                 equipo_local = Equipo.objects.create(
-                    nombre_equipo=f"Locales - {partido.cancha.nombre_cancha} {partido.fecha.strftime('%d%m%y%H%M')}",
-                    capitan=partido.creador,
-                    tipo_equipo='PARTIDO'
+                    nombre_equipo=f"Locales - {sufijo_nombre}",
+                    capitan=partido.creador, tipo_equipo='PARTIDO'
                 )
-                equipo_local.jugadores.set(User.objects.filter(id__in=jugadores_equipo_local_ids)) # Igual aquí
-                partido.equipo_local = equipo_local
+            equipo_local.jugadores.set(User.objects.filter(id__in=jugadores_equipo_local_ids))
+            partido.equipo_local = equipo_local
 
             # Equipo Visitante
-            if partido.equipo_visitante:
+            if partido.equipo_visitante and partido.equipo_visitante.tipo_equipo == 'PARTIDO':
                 equipo_visitante = partido.equipo_visitante
-                equipo_visitante.jugadores.set(User.objects.filter(id__in=jugadores_equipo_visitante_ids)) # Igual aquí
             else:
                 equipo_visitante = Equipo.objects.create(
-                    nombre_equipo=f"Visitantes - {partido.cancha.nombre_cancha} {partido.fecha.strftime('%d%m%y%H%M')}",
-                    capitan=partido.creador, 
-                    tipo_equipo='PARTIDO'
+                    nombre_equipo=f"Visitantes - {sufijo_nombre}",
+                    capitan=partido.creador, tipo_equipo='PARTIDO'
                 )
-                equipo_visitante.jugadores.set(User.objects.filter(id__in=jugadores_equipo_visitante_ids)) # Igual aquí
-                partido.equipo_visitante = equipo_visitante
+            equipo_visitante.jugadores.set(User.objects.filter(id__in=jugadores_equipo_visitante_ids))
+            partido.equipo_visitante = equipo_visitante
             
             partido.save()
             messages.success(request, "Equipos asignados correctamente al partido.")
             return redirect('detalle_partido', pk=partido.id_partido)
         else:
-            # Si el formulario no es válido, re-renderizar la página con los errores
-            # Es un poco más complejo pasar el form con errores de vuelta al DetailView
-            # Una forma es guardar los errores en messages o re-renderizar el contexto.
-            for field, errors in form_asignar.errors.items():
-                for error in errors:
-                    messages.error(request, f"Error en asignación: {error}")
-            # Recargamos el contexto para que el formulario con errores se muestre
-            context = self.get_context_data(**kwargs) # Obtener contexto base
-            context['form_asignar_equipos'] = form_asignar # Sobrescribir con el form con errores
+            context = self.get_context_data(**kwargs)
+            context['form_asignar_equipos'] = form_asignar
+            messages.error(request, "Hubo errores al asignar los equipos. Revisa las asignaciones.")
             return self.render_to_response(context)
+    
+
+
 
 
     
@@ -408,11 +439,123 @@ class DetalleCanchaView(LoginRequiredMixin, DetailView):
         return context
     
 
+
+
+
+
+
+
+
+
+
+
+#EQUIPOS
+
+class CrearEquipoPermanenteView(LoginRequiredMixin, CreateView):
+    model = Equipo
+    form_class = EquipoPermanenteForm
+    template_name = 'equipos/crear_equipo_permanente.html' # Nueva plantilla
+    # success_url = reverse_lazy('lista_mis_equipos') # O al detalle del equipo creado
+
+    def form_valid(self, form):
+        form.instance.capitan = self.request.user
+        form.instance.tipo_equipo = 'PERMANENTE'
+        form.instance.activo = True 
+        
+        self.object = form.save() # Guardar el equipo primero
+
+        # Añadir al capitán como jugador del equipo
+        self.object.jugadores.add(self.request.user)
+
+        # Si tienes 'jugadores_iniciales' en el form:
+        # jugadores_iniciales = form.cleaned_data.get('jugadores_iniciales')
+        # if jugadores_iniciales:
+        #     self.object.jugadores.add(*jugadores_iniciales)
+        
+        messages.success(self.request, f"¡Equipo '{self.object.nombre_equipo}' creado con éxito!")
+        return redirect(reverse_lazy('detalle_equipo', kwargs={'pk': self.object.id_equipo}))
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo_pagina'] = "Crear Nuevo Equipo Permanente"
+        return context
+
+class MisEquiposListView(LoginRequiredMixin, ListView):
+    model = Equipo
+    template_name = 'equipos/mis_equipos_lista.html' # Nueva plantilla
+    context_object_name = 'equipos_list'
+    paginate_by = 10
+
+    def get_queryset(self):
+        # Equipos permanentes donde el usuario es capitán O es un jugador
+        return Equipo.objects.filter(
+            tipo_equipo='PERMANENTE',
+            activo=True
+        ).filter(
+            Q(capitan=self.request.user) | Q(jugadores=self.request.user)
+        ).distinct().order_by('-fecha_creacion')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo_pagina'] = "Mis Equipos Permanentes"
+        return context
+
+class DetalleEquipoView(LoginRequiredMixin, DetailView):
+    model = Equipo
+    template_name = 'equipos/detalle_equipo.html' # Nueva plantilla
+    context_object_name = 'equipo'
+    pk_url_kwarg = 'pk' # Asumiendo que la URL usa <uuid:pk>
+
+    def get_queryset(self):
+        # Solo permitir ver equipos permanentes activos
+        return super().get_queryset().filter(tipo_equipo='PERMANENTE', activo=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        equipo = self.get_object()
+        context['titulo_pagina'] = f"Perfil del Equipo: {equipo.nombre_equipo}"
+        context['es_capitan'] = (equipo.capitan == self.request.user)
+        context['es_miembro'] = self.request.user in equipo.jugadores.all()
+        # Aquí podrías añadir estadísticas del equipo, próximos partidos, etc.
+        # context['partidos_jugados_equipo'] = Partido.objects.filter(Q(equipo_local=equipo) | Q(equipo_visitante=equipo), estado='FINALIZADO').order_by('-fecha')
+        return context
+    
+# app/views.py
+class EditarEquipoPermanenteView(LoginRequiredMixin, UpdateView):
+    model = Equipo
+    form_class = EquipoPermanenteForm # Puedes reusar el mismo form
+    template_name = 'equipos/editar_equipo_permanente.html' # Nueva plantilla
+    pk_url_kwarg = 'pk'
+
+    def get_queryset(self):
+        # El capitán solo puede editar sus equipos permanentes y activos
+        return super().get_queryset().filter(capitan=self.request.user, tipo_equipo='PERMANENTE', activo=True)
+
+    def form_valid(self, form):
+        messages.success(self.request, f"Equipo '{form.instance.nombre_equipo}' actualizado con éxito.")
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy('detalle_equipo', kwargs={'pk': self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo_pagina'] = f"Editar Equipo: {self.object.nombre_equipo}"
+        return context
+
+
+
+
+
+
+
+    
+
 #SECCIONES
 
 
-class Torneos(LoginRequiredMixin, TemplateView):
-    template_name = 'torneos.html'
+
 
 
 class Estadisticas(LoginRequiredMixin, TemplateView):

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block base %}
+<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
+    {% include "components/nav.html" %}
+    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
+        {% include "components/top_nav.html" %}
+        <div class="container-fluid p-4">
+            <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px; color: white;">
+                <div class="position-relative">
+                    <img src="{% if equipo.team_banner %}{{ equipo.team_banner.url }}{% else %}{% static 'images/banner_equipo_default.jpg' %}{% endif %}" class="card-img-top" alt="Banner de {{ equipo.nombre_equipo }}" style="height: 250px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                    <div class="position-absolute bottom-0 start-0 p-3 d-flex align-items-end" style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); width:100%; border-bottom-left-radius: 15px;">
+                        {% if equipo.team_shield %}
+                            <img src="{{ equipo.team_shield.url }}" class="rounded-circle me-3" alt="Escudo" width="100" height="100" style="border: 3px solid #dee2e6; margin-bottom: -30px; background-color: #2d3748;">
+                        {% else %}
+                            <div class="rounded-circle bg-secondary me-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; border: 3px solid #dee2e6; margin-bottom: -30px;">
+                                <i class="fas fa-users fa-3x text-white-50"></i>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <h2 class="text-white mb-0">{{ equipo.nombre_equipo }}</h2>
+                            <p class="text-white-50 mb-0">Capitán: {{ equipo.capitan.nombre }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4" style="margin-top: 40px;"> {# Espacio para el escudo superpuesto #}
+                    <div class="d-flex justify-content-end mb-3">
+                        {% if es_capitan %}
+                            <a href="{% url 'editar_equipo_permanente' pk=equipo.id_equipo %}" class="btn btn-outline-warning btn-sm me-2"><i class="fas fa-edit"></i> Editar Equipo</a>
+                            {# Botón para gestionar miembros, invitar, etc. #}
+                            <a href="#" class="btn btn-outline-info btn-sm"><i class="fas fa-user-plus"></i> Gestionar Miembros</a>
+                        {% elif not es_miembro %}
+                            {# Lógica para solicitar unirse al equipo #}
+                            <a href="#" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> Solicitar Unirse</a>
+                        {% else %}
+                            <span class="badge bg-success p-2"><i class="fas fa-check"></i> Eres Miembro</span>
+                            {# Lógica para abandonar equipo #}
+                        {% endif %}
+                    </div>
+
+                    <h5 class="text-success">Descripción</h5>
+                    <p class="text-white-75">{{ equipo.descripcion|linebreaksbr|default:"Este equipo aún no tiene una descripción." }}</p>
+                    
+                    <hr class="border-secondary">
+
+                    <h5 class="text-success">Miembros del Equipo ({{ equipo.jugadores.count }})</h5>
+                    <div class="row g-3">
+                        {% for jugador in equipo.jugadores.all %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="d-flex align-items-center p-2 rounded" style="background-color: #3a4454;">
+                                <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" class="rounded-circle me-2" width="40" height="40" alt="{{ jugador.nombre }}">
+                                <div>
+                                    <span class="text-white">{{ jugador.nombre }}</span><br>
+                                    <small class="text-white-50">{{ jugador.get_posicion_display|default:"Sin posición" }}</small>
+                                </div>
+                                {% if jugador == equipo.capitan %}
+                                    <span class="badge bg-primary ms-auto">Capitán</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-white-50">Este equipo aún no tiene jugadores asignados (además del capitán).</p>
+                        {% endfor %}
+                    </div>
+                    
+                    <hr class="border-secondary mt-4">
+                    <h5 class="text-success">Estadísticas del Equipo (Próximamente)</h5>
+                    <p class="text-white-50">Aquí se mostrarán los partidos jugados, victorias, ELO promedio del equipo, etc.</p>
+
+                </div>
+                <div class="card-footer bg-transparent border-top border-secondary text-center py-3">
+                    <a href="{% url 'lista_mis_equipos' %}" class="btn btn-outline-light"><i class="fas fa-arrow-left me-2"></i>Volver a Mis Equipos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

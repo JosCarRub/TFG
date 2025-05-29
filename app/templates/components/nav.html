@@ -46,39 +46,17 @@
             </a>
         </li>
         <li>
-            <a href="{% url 'torneos' %}" class="nav-link text-white">
-                <i class="fas fa-users me-2"></i>
-                Mis equipos
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'torneos' %}" class="nav-link text-white">
-                <i class="fas fa-calendar-alt me-2"></i>
-                Mis partidos
-            </a>
-        </li>
-        <li>
             <a href="{% url 'canchas_lista' %}" class="nav-link text-white">
                 <i class="fas fa-map-marker-alt me-2"></i>
                 Canchas
             </a>
         </li>
-        <li>
-            <a href="{% url 'torneos' %}" class="nav-link text-white">
-                <i class="fas fa-trophy me-2"></i>
-                Torneos
-            </a>
-        </li>
+        
     </ul>
     <hr>
     <!-- Settings and logout -->
     <ul class="nav nav-pills flex-column">
-        <!-- <li>
-            <a href="{% url 'torneos' %}" class="nav-link text-white">
-                <i class="fas fa-cog me-2"></i>
-                Configuración
-            </a>
-        </li> -->
+        
         <li>
             <form action="{% url 'logout' %}" method="post" class="w-20">
                 {% csrf_token %}
@@ -119,7 +97,6 @@
         '/equipos': '.fas.fa-users',
         '/mis_partidos': '.fas.fa-calendar-alt:nth-of-type(2)',
         '/canchas': '.fas.fa-map-marker-alt',
-        '/torneos': '.fas.fa-trophy',
         '/configuracion': '.fas.fa-cog',
         '/logout': '.fas.fa-sign-out-alt'
     };

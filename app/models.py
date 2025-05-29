@@ -100,7 +100,6 @@ class Equipo(models.Model):
 
     TIPO_EQUIPO_CHOICES = [
         ('PARTIDO', 'Equipo para un partido'),
-        ('TORNEO', 'Equipo para torneo'),
         ('PERMANENTE', 'Equipo permanente'),
     ]
     
@@ -124,35 +123,6 @@ class Equipo(models.Model):
             return 1000.0
         return sum(j.calificacion for j in jugadores) / jugadores.count() 
 
-class Torneo(models.Model):
-    ESTADO_CHOICES = [
-        ('PENDIENTE', 'Pendiente'),
-        ('EN_CURSO', 'En curso'),
-        ('FINALIZADO', 'Finalizado'),
-        ('CANCELADO', 'Cancelado'),
-    ]
-    
-    TIPO_CHOICES = [
-        ('SALA', 'Fútbol Sala'),
-        ('F7', 'Fútbol 7'),
-        ('F11', 'Fútbol 11'),
-    ]
-    
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    nombre_torneo = models.CharField(max_length=100)
-    descripcion = models.TextField()
-    fecha_inicio = models.DateField()
-    fecha_fin = models.DateField()
-    equipos = models.ManyToManyField(Equipo, related_name='torneos')
-    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='PENDIENTE')
-    tipo = models.CharField(max_length=4, choices=TIPO_CHOICES)
-    costo_inscripcion = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    premio = models.CharField(max_length=255, blank=True)
-    num_max_equipos = models.PositiveIntegerField(default=8)
-    
-    def __str__(self):
-        return f"{self.nombre} ({self.get_estado_display()})"
-
 class Partido(models.Model):
     TIPO_CHOICES = [
         ('SALA', 'Fútbol Sala'),
@@ -163,7 +133,6 @@ class Partido(models.Model):
     MODALIDAD_CHOICES = [
         ('AMISTOSO', 'Amistoso'),
         ('COMPETITIVO', 'Competitivo'),
-        ('TORNEO', 'Partido de Torneo'),
     ]
     
     NIVEL_CHOICES = [ 
@@ -203,13 +172,12 @@ class Partido(models.Model):
     costo = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True, null=True)
     metodo_pago = models.CharField(max_length=13, choices=METODO_PAGO_CHOICES, blank=True, null=True)
     creador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='get_user_creador')
-    jugadores = models.ManyToManyField(User, related_name='partidos', blank=True)
+    jugadores = models.ManyToManyField(User, related_name='get_jugadores_partido', blank=True)
     equipo_local = models.ForeignKey(Equipo, on_delete=models.SET_NULL, null=True, blank=True, related_name='get_equipo_local')
     equipo_visitante = models.ForeignKey(Equipo, on_delete=models.SET_NULL, null=True, blank=True, related_name='get_equipo_visitante')
     goles_local = models.PositiveIntegerField(null=True, blank=True)
     goles_visitante = models.PositiveIntegerField(null=True, blank=True)
     estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='PROGRAMADO')
-    torneo = models.ForeignKey(Torneo, on_delete=models.SET_NULL, null=True, blank=True, related_name='get_torneo_partido')
     calificacion_actualizada = models.BooleanField(default=False)
     comentarios = models.TextField(blank=True, null=True)
 
@@ -304,11 +272,6 @@ class Partido(models.Model):
         nombre_cancha_str = self.cancha.nombre_cancha if self.cancha else "Cancha no definida"
         
         return f"Partido en {nombre_cancha_str} - {hora_inicio_str} a {hora_fin_str}"
-    
-    def __str__(self):
-        if self.equipo_local and self.equipo_visitante:
-            return f"{self.equipo_local} vs {self.equipo_visitante} - {self.fecha.strftime('%d/%m/%Y %H:%M')}"
-        return f"Partido en {self.cancha.nombre} - {self.fecha.strftime('%d/%m/%Y %H:%M')}"
 
 class Resultado(models.Model):
     partido = models.OneToOneField(Partido, on_delete=models.CASCADE, related_name='get_partido_resultado')
@@ -322,7 +285,6 @@ class Resultado(models.Model):
 class Inscripcion(models.Model):
     TIPO_CHOICES = [
         ('JUGADOR_PARTIDO', 'Jugador a Partido'),
-        ('EQUIPO_TORNEO', 'Equipo a Torneo'),
     ]
     
     ESTADO_CHOICES = [
@@ -340,9 +302,7 @@ class Inscripcion(models.Model):
     jugador = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='get_jugador_inscripcion')
     partido = models.ForeignKey(Partido, on_delete=models.CASCADE, null=True, blank=True, related_name='get_partido_inscripcion')
     
-    # Para inscripciones de equipos a torneos
-    equipo = models.ForeignKey(Equipo, on_delete=models.CASCADE, null=True, blank=True, related_name='get_equipo_inscripcionTorneo')
-    torneo = models.ForeignKey(Torneo, on_delete=models.CASCADE, null=True, blank=True, related_name='get_jugador_inscripcionTorneo')
+    
     
     pago_confirmado = models.BooleanField(default=False)
     comentarios = models.TextField(blank=True)
@@ -350,7 +310,7 @@ class Inscripcion(models.Model):
     def __str__(self):
         if self.tipo == 'JUGADOR_PARTIDO':
             return f"{self.jugador.username} - {self.partido}"
-        return f"{self.equipo.nombre} - {self.torneo.nombre}"
+
 
 class HistorialELO(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='get_user_historialElo')
