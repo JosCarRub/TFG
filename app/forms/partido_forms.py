@@ -1,40 +1,15 @@
+from datetime import datetime, time, timedelta
 from django import forms
-from .models import *
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import get_user_model
+from app.models.cancha import Cancha
+from app.models.partido import Partido
+
+
 from django.utils import timezone as django_timezone
-from datetime import datetime, time, timezone
 from django.utils.timezone import make_aware
 
-class UserRegisterForm(UserCreationForm):
-    class Meta:
-        model = get_user_model()
-        fields = ( 'username', 'nombre')
 
+# PartidoForm && ResultadoPartidoForm
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')  
-        if email and User.objects.filter(email=email).exclude(id=self.instance.id).exists():
-            raise forms.ValidationError('El email introducido ya está registrado, ¡debes introducir otro!')
-        return email
-
-class UserUpdateProfilelForm(forms.ModelForm):
-
-    fecha_nacimiento = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),required=False)
-    imagen_perfil = forms.ImageField(required=False) 
-    banner_perfil = forms.ImageField(required=False)
-    
-    class Meta:
-        model = User
-        fields = ('nombre','fecha_nacimiento', 'genero','posicion','ubicacion', 'imagen_perfil', 'banner_perfil' )
-
-    def __init__(self, *args, **kwargs):
-
-        super(UserUpdateProfilelForm, self).__init__(*args, **kwargs)
-        
-        self.fields['nombre'].widget.attrs.update({'placeholder': 'Tu nombre completo'})
-
-        self.fields['ubicacion'].widget.attrs.update({'placeholder': 'Ciudad, Provincia'})
 
 class PartidoForm(forms.ModelForm):
     
@@ -174,36 +149,10 @@ class PartidoForm(forms.ModelForm):
              self.add_error('costo', 'Debes especificar un costo o seleccionar "Gratis" como método de pago si el campo costo está vacío.')
 
         return cleaned_data
-    
-class AsignarEquiposForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        jugadores_inscritos = kwargs.pop('jugadores_inscritos', None)
-        partido = kwargs.pop('partido', None)
-        super().__init__(*args, **kwargs)
 
-        EQUIPO_CHOICES = [
-            ('', 'Sin Asignar'), 
-            ('local', 'Equipo Local'),
-            ('visitante', 'Equipo Visitante'),
-        ]
 
-        if jugadores_inscritos:
-            for jugador in jugadores_inscritos:
-                initial_assignment = ''
-                if partido and partido.equipo_local and jugador in partido.equipo_local.jugadores.all():
-                    initial_assignment = 'local'
-                elif partido and partido.equipo_visitante and jugador in partido.equipo_visitante.jugadores.all():
-                    initial_assignment = 'visitante'
-                
 
-                self.fields[f'jugador_{jugador.id}'] = forms.ChoiceField(
-                    choices=EQUIPO_CHOICES,
-                    required=False,
-                    label=jugador.nombre,
-                    initial=initial_assignment,
-                    widget=forms.Select(attrs={'class': 'form-select form-select-sm mb-1 d-none player-assignment-select', 'data-jugador-id': jugador.id}) 
-                )
-    
+
 
 class ResultadoPartidoForm(forms.Form):
     goles_local = forms.IntegerField(
@@ -216,27 +165,3 @@ class ResultadoPartidoForm(forms.Form):
         min_value=0,
         widget=forms.NumberInput(attrs={'class': 'form-control bg-dark text-white border-secondary', 'placeholder': '0'})
     )
-
-    
-class CanchasForm(forms.ModelForm):
-    class Meta:
-        model = Cancha
-        fields = ['nombre_cancha', 'ubicacion', 'tipo', 'propiedad', 'superficie',
-                 'costo_partido', 'descripcion', 'disponible', 'imagen']
-        
-        def __init__(self, *args, **kwargs):
-            super(CanchasForm, self).__init__(*args, **kwargs)
-        
-            # Nombres personalizados para los campos
-            self.fields['nombre_cancha'].label = "Nombre de la cancha"
-            self.fields['ubicacion'].label = "Dirección completa"
-            self.fields['tipo'].label = "Tipo de cancha"
-            self.fields['propiedad'].label = "Tipo de propiedad"
-            self.fields['costo_por_hora'].label = "Precio por hora"
-            self.fields['descripcion'].label = "Descripción"
-            self.fields['disponible'].label = "Disponible para reservas"
-            self.fields['imagen'].label = "Imagen de la cancha"
-        
-
-        
-    

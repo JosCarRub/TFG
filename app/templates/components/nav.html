@@ -46,13 +46,13 @@
             </a>
         </li>
         <li>
-            <a href="{% url 'torneos' %}" class="nav-link text-white">
+            <a href="#" class="nav-link text-white">
                 <i class="fas fa-users me-2"></i>
                 Mis equipos
             </a>
         </li>
         <li>
-            <a href="{% url 'torneos' %}" class="nav-link text-white">
+            <a href="#" class="nav-link text-white">
                 <i class="fas fa-calendar-alt me-2"></i>
                 Mis partidos
             </a>
@@ -63,22 +63,12 @@
                 Canchas
             </a>
         </li>
-        <li>
-            <a href="{% url 'torneos' %}" class="nav-link text-white">
-                <i class="fas fa-trophy me-2"></i>
-                Torneos
-            </a>
-        </li>
+        
     </ul>
     <hr>
     <!-- Settings and logout -->
     <ul class="nav nav-pills flex-column">
-        <!-- <li>
-            <a href="{% url 'torneos' %}" class="nav-link text-white">
-                <i class="fas fa-cog me-2"></i>
-                Configuración
-            </a>
-        </li> -->
+       
         <li>
             <form action="{% url 'logout' %}" method="post" class="w-20">
                 {% csrf_token %}
