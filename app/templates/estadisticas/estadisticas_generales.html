@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load attribute_filters %}
+{% load static %}
+
+{% block base %}
+<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
+    {% include "components/nav.html" %}
+
+    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
+        {% include "components/top_nav.html" %}
+        
+        <div class="container-fluid p-4">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                                <div>
+                                    <h4 class="text-white mb-1">{{ titulo_pagina|default:"Estadísticas" }}</h4>
+                                    <p class="text-white-50 mb-md-0">Rankings y datos de la comunidad.</p>
+                                </div>
+                                <!-- Filtro de Periodo -->
+                                <div class="btn-group mt-3 mt-md-0" role="group" aria-label="Filtro de periodo">
+                                    <a href="?periodo=7dias" class="btn btn-sm {% if periodo_actual_param == '7dias' %}btn-success{% else %}btn-outline-success{% endif %}">7 Días</a>
+                                    <a href="?periodo=30dias" class="btn btn-sm {% if periodo_actual_param == '30dias' %}btn-success{% else %}btn-outline-success{% endif %}">Último Mes</a>
+                                    <a href="?periodo=todo" class="btn btn-sm {% if periodo_actual_param == 'todo' %}btn-success{% else %}btn-outline-success{% endif %}">Todo</a>
+                                </div>
+                            </div>
+                             {% if periodo_seleccionado != "Todo el tiempo" %}
+                                <p class="text-center text-white-50 mt-2"><small>Mostrando estadísticas para: <strong>{{ periodo_seleccionado }}</strong></small></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="row g-4">
+                <!-- Columna Izquierda: Jugadores -->
+                <div class="col-lg-6">
+                    <!-- Top ELO Jugadores -->
+                    <div class="card mb-4" style="background-color: #2d3748; border-radius: 10px; color:white;">
+                        <div class="card-header bg-transparent border-bottom-0 pt-3 pb-0">
+                            <h5 class="text-warning"><i class="fas fa-star me-2"></i>Top 10 Jugadores por ELO</h5>
+                        </div>
+                        <div class="card-body p-3">
+                            {% if top_elo_jugadores %}
+                                <ul class="list-group list-group-flush">
+                                    {% for jugador in top_elo_jugadores %}
+                                    <li class="list-group-item bg-transparent border-secondary text-white d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" class="rounded-circle me-2" width="30" height="30" alt="{{ jugador.nombre }}">
+                                            {{ forloop.counter }}. {{ jugador.nombre }}
+                                        </span>
+                                        <span class="badge bg-warning text-dark">{{ jugador.calificacion|floatformat:0 }} ELO</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {# <div class="text-center mt-2"><a href="#" class="btn btn-sm btn-outline-light">Ver ranking ELO completo</a></div> #}
+                            {% else %}
+                                <p class="text-white-50">No hay datos de ELO para mostrar.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Jugadores más Activos -->
+                    <div class="card" style="background-color: #2d3748; border-radius: 10px; color:white;">
+                        <div class="card-header bg-transparent border-bottom-0 pt-3 pb-0">
+                            <h5 class="text-info"><i class="fas fa-running me-2"></i>Top 10 Jugadores Más Activos <small class="text-white-50">({{ periodo_seleccionado }})</small></h5>
+                        </div>
+                        <div class="card-body p-3">
+                            {% if top_jugadores_activos %}
+                                <ul class="list-group list-group-flush">
+                                    {% for jugador in top_jugadores_activos %}
+                                    <li class="list-group-item bg-transparent border-secondary text-white d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" class="rounded-circle me-2" width="30" height="30" alt="{{ jugador.nombre }}">
+                                            {{ forloop.counter }}. {{ jugador.nombre }}
+                                        </span>
+                                        <span class="badge bg-info text-dark">{{ jugador.num_partidos_periodo }} Partidos</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {# <div class="text-center mt-2"><a href="#" class="btn btn-sm btn-outline-light">Ver ranking de actividad completo</a></div> #}
+                            {% else %}
+                                <p class="text-white-50">No hay datos de actividad de jugadores para este periodo.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Equipos y Canchas -->
+                <div class="col-lg-6">
+                    <!-- Top Equipos -->
+                    <div class="card mb-4" style="background-color: #2d3748; border-radius: 10px; color:white;">
+                        <div class="card-header bg-transparent border-bottom-0 pt-3 pb-0">
+                            <h5 class="text-primary"><i class="fas fa-users me-2"></i>Top 10 Equipos <small class="text-white-50">({{ periodo_seleccionado }})</small></h5>
+                            <small class="text-white-50 d-block">Ordenados por victorias, luego por partidos jugados.</small>
+                        </div>
+                        <div class="card-body p-3">
+                            {% if top_equipos_activos %}
+                                <ul class="list-group list-group-flush">
+                                    {% for equipo_stat in top_equipos_activos %}
+                                    <li class="list-group-item bg-transparent border-secondary text-white d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <img src="{% if equipo_stat.team_shield %}{{ equipo_stat.team_shield.url }}{% else %}{% static 'images/shield_default.png' %}{% endif %}" class="rounded-circle me-2" width="30" height="30" alt="Escudo">
+                                            {{ forloop.counter }}. {{ equipo_stat.nombre_equipo }}
+                                        </span>
+                                        <span class="badge bg-primary">
+                                            {% if periodo_actual_param == 'todo' and equipo_stat|hasattr:'victorias_permanente' %}
+                                                {{ equipo_stat.victorias_permanente }} Vic. / {{ equipo_stat.partidos_jugados_permanente }} Jug.
+                                            {% elif equipo_stat|hasattr:'victorias_periodo' %}
+                                                {{ equipo_stat.victorias_periodo }} Vic. / {{ equipo_stat.partidos_jugados_periodo }} Jug.
+                                            {% elif equipo_stat|hasattr:'num_victorias' %}
+                                                {{ equipo_stat.num_victorias }} Vic. / {{ equipo_stat.num_partidos }} Jug.
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {# <div class="text-center mt-2"><a href="#" class="btn btn-sm btn-outline-light">Ver ranking de equipos completo</a></div> #}
+                            {% else %}
+                                <p class="text-white-50">No hay datos de equipos para este periodo.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Canchas más Populares -->
+                    <div class="card" style="background-color: #2d3748; border-radius: 10px; color:white;">
+                        <div class="card-header bg-transparent border-bottom-0 pt-3 pb-0">
+                            <h5 class="text-success-emphasis"><i class="fas fa-map-marked-alt me-2"></i>Top 10 Canchas Más Populares <small class="text-white-50">({{ periodo_seleccionado }})</small></h5>
+                        </div>
+                        <div class="card-body p-3">
+                            {% if top_canchas_populares %}
+                                <ul class="list-group list-group-flush">
+                                    {% for cancha_stat in top_canchas_populares %}
+                                    <li class="list-group-item bg-transparent border-secondary text-white d-flex justify-content-between align-items-center">
+                                        <span>
+                                            <i class="fas fa-map-pin me-2 text-success-emphasis"></i>
+                                            {{ forloop.counter }}. {{ cancha_stat.nombre_cancha }}
+                                        </span>
+                                        <span class="badge bg-success-subtle text-dark-emphasis">{{ cancha_stat.num_partidos_cancha }} Partidos</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {# <div class="text-center mt-2"><a href="#" class="btn btn-sm btn-outline-light">Ver listado completo de canchas</a></div> #}
+                            {% else %}
+                                <p class="text-white-50">No hay datos de popularidad de canchas para este periodo.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

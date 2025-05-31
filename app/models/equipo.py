@@ -22,6 +22,9 @@ class Equipo(models.Model):
     tipo_equipo = models.CharField(max_length=10, choices=TIPO_EQUIPO_CHOICES)
     activo = models.BooleanField(default=True)
 
+    partidos_jugados_permanente = models.PositiveIntegerField(default=0)
+    victorias_permanente = models.PositiveIntegerField(default=0)
+
     partido_asociado = models.ForeignKey("app.Partido", on_delete=models.CASCADE, null=True, blank=True, related_name='get_partido_equipos')
     
     def __str__(self):

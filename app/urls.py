@@ -1,4 +1,6 @@
 from django.urls import path
+
+
 from .views import *
 
 urlpatterns = [
@@ -18,7 +20,7 @@ urlpatterns = [
     path('update_profile',UserUpdateProfile.as_view(), name='update_profile'),
     
 ##---------- PARTIDOS --------------------------------------------------------------------------------------------
-    path('crear_partidos', CrearPartidos.as_view(), name='crear_partidos'),
+    path('crear_partidos/', CrearPartidos.as_view(), name='crear_partidos'),
     path('buscar_partidos/', BuscarPartidos.as_view(), name='buscar_partidos'),
     path('partido/<uuid:partido_id>/inscribirse/', InscribirsePartidoView.as_view(), name='inscribirse_partido'),
     path('partido/<uuid:pk>/', DetallePartidoView.as_view(), name='detalle_partido'),
@@ -36,6 +38,15 @@ urlpatterns = [
     path('equipos/mis_equipos/', MisEquiposListView.as_view(), name='lista_mis_equipos'), 
     path('equipo/<uuid:pk>/', DetalleEquipoView.as_view(), name='detalle_equipo'), 
     path('equipo/<uuid:pk>/editar/', EditarEquipoPermanenteView.as_view(), name='editar_equipo_permanente'),
+
+##---------- MIS PARTIDOS --------------------------------------------------------------------------------------------
+
+    path('mis_partidos/', MisPartidosView.as_view(), name='mis_partidos'),
+
+##---------- ESTADISTICAS GENEREALES --------------------------------------------------------------------------------------------
+
+    path('estadisticas/', EstadisticasView.as_view(), name='estadisticas_generales'),
+
 
 
 ]

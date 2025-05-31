@@ -3,6 +3,8 @@ from .commons_views import Landing, Home, Estadisticas
 from .partido_views import CrearPartidos, BuscarPartidos,DetallePartidoView, InscribirsePartidoView, RegistrarResultadoPartidoView
 from .user_views import UserRegister,Perfil, UserUpdateProfile
 from .equipo_views import CrearEquipoPermanenteView, MisEquiposListView, DetalleEquipoView, EditarEquipoPermanenteView
+from .estadisticas_views import EstadisticasView
+from .mis_partidos_views import MisPartidosView
 
 
 __all__ = [
@@ -24,4 +26,6 @@ __all__ = [
     "MisEquiposListView",
     "DetalleEquipoView",
     "EditarEquipoPermanenteView",
+    "MisPartidosView",
+    "EstadisticasView"
 ]

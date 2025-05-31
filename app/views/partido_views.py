@@ -182,38 +182,6 @@ class DetallePartidoView(LoginRequiredMixin, DetailView): # DetailView puede man
                 elif asignacion == 'visitante':
                     jugadores_equipo_visitante_ids.append(jugador_obj.id)
             
-            
-
-            # Crear o actualizar equipos temporales para el partido
-            # Equipo Local
-            # if partido.equipo_local:
-            #     equipo_local = partido.equipo_local
-                
-            #     equipo_local.jugadores.set(User.objects.filter(id__in=jugadores_equipo_local_ids))
-            # else:
-            #     equipo_local = Equipo.objects.create(
-            #         nombre_equipo=f"Locales - {partido.cancha.nombre_cancha} {partido.fecha.strftime('%d%m%y%H%M')}",
-            #         capitan=partido.creador,
-            #         tipo_equipo='PARTIDO'
-            #     )
-            #     equipo_local.jugadores.set(User.objects.filter(id__in=jugadores_equipo_local_ids)) # Igual aquí
-            #     partido.equipo_local = equipo_local
-
-            # # Equipo Visitante
-            # if partido.equipo_visitante:
-            #     equipo_visitante = partido.equipo_visitante
-            #     equipo_visitante.jugadores.set(User.objects.filter(id__in=jugadores_equipo_visitante_ids)) # Igual aquí
-            # else:
-            #     equipo_visitante = Equipo.objects.create(
-            #         nombre_equipo=f"Visitantes - {partido.cancha.nombre_cancha} {partido.fecha.strftime('%d%m%y%H%M')}",
-            #         capitan=partido.creador, 
-            #         tipo_equipo='PARTIDO'
-            #     )
-            #     equipo_visitante.jugadores.set(User.objects.filter(id__in=jugadores_equipo_visitante_ids)) # Igual aquí
-            #     partido.equipo_visitante = equipo_visitante
-            
-            # partido.save()
-            # messages.success(request, "Equipos asignados correctamente al partido.")
 
             if partido.equipo_local and partido.equipo_local.tipo_equipo == 'PERMANENTE':
                 messages.info(request, "Este partido ya tiene un equipo local permanente asignado. No se puede reasignar aquí.")
@@ -290,6 +258,8 @@ class InscribirsePartidoView(LoginRequiredMixin, View):
 
         return redirect('buscar_partidos') # O a 'mis_partidos' o detalle del partido
     
+
+    
 class RegistrarResultadoPartidoView(LoginRequiredMixin, FormView):
     form_class = ResultadoPartidoForm
     template_name = 'partidos/registrar_resultado.html' 
@@ -327,21 +297,15 @@ class RegistrarResultadoPartidoView(LoginRequiredMixin, FormView):
         goles_visitante = form.cleaned_data['goles_visitante']
 
         partido = self.partido
-        partido.goles_local = goles_local
-        partido.goles_visitante = goles_visitante
-        partido.estado = 'FINALIZADO'
-        partido.save() # Guardar los goles y el nuevo estado
-
-        # Actualizar calificaciones ELO
-        # Solo si la modalidad no es AMISTOSO y los equipos están definidos
+        # Llamar al nuevo método en el modelo Partido
+        partido.registrar_resultado_y_actualizar_stats(goles_local, goles_visitante)
+        
         if partido.modalidad != 'AMISTOSO' and partido.equipo_local and partido.equipo_visitante:
-            partido.actualizar_calificaciones() # Llama a tu método del modelo
             messages.success(self.request, "Resultado registrado y calificaciones ELO actualizadas.")
+        elif partido.modalidad == 'AMISTOSO':
+            messages.success(self.request, "Resultado del partido amistoso registrado (ELO no afectado).")
         else:
-            if partido.modalidad == 'AMISTOSO':
-                messages.success(self.request, "Resultado del partido amistoso registrado (ELO no afectado).")
-            else:
-                messages.warning(self.request, "Resultado registrado, pero no se pudieron actualizar las calificaciones ELO (faltan equipos o es amistoso).")
+            messages.warning(self.request, "Resultado registrado, pero no se pudieron actualizar las calificaciones ELO (faltan equipos o es amistoso).")
         
         return redirect('detalle_partido', pk=partido.id_partido)
 

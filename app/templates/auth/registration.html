@@ -5,12 +5,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - FieldConnect</title>
+    <title>Registro - FieldConnect</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="{% static 'css/login_styles.css' %}" rel="stylesheet">
-
+    <link href="{% static 'css/registration_styles.css' %}" rel="stylesheet">
 </head>
 <body>
     <!-- Navbar -->
@@ -22,58 +21,53 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav ms-auto">
-                    <a class="nav-btn-register" href="{% url 'registro' %}">
-                        <i class="fas fa-user-plus"></i>
-                        Registrarse
+                    <a class="nav-link-auth" href="{% url 'login' %}">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Iniciar sesión
                     </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Login Section -->
-    <section class="login-section">
+    <!-- Register Section -->
+    <section class="register-section">
         <!-- Background Elements -->
-        <div class="login-bg-pattern"></div>
+        <div class="register-bg-pattern"></div>
         
         <!-- Hero Image -->
-        <div class="login-hero-image d-none d-xl-block">
-            <img src="https://sportrenders.com/wp-content/uploads/2023/11/Ronaldinho-Render-PNG-Barcelona-Imagen-Transparente-Sport-Renders.png" alt="Ronaldinho" loading="lazy">
-            <div class="login-image-glow"></div>
+        <div class="register-hero-image d-none d-xl-block">
+            <img src="https://sportrenders.com/wp-content/uploads/2023/06/David-Beckham-Image-PNG-Render-Manchester-United-Futbol-Sport-Renders.png" alt="David Beckham" loading="lazy">
+            <div class="register-image-glow"></div>
         </div>
         
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-md-10 col-lg-8 col-xl-6">
-                    <div class="login-card fade-in">
-                        <div class="login-card-header">
-                            <h1 class="login-title">Bienvenido de nuevo</h1>
-                            <div class="login-divider"></div>
-                            <p class="login-subtitle">
-                                Ingresa tus datos para acceder a tu cuenta y conectarte con jugadores de tu zona
+                <div class="col-md-10 col-lg-8">
+                    <div class="register-card fade-in">
+                        <div class="register-card-header">
+                            <h1 class="register-title">Crea tu cuenta</h1>
+                            <div class="register-divider"></div>
+                            <p class="register-subtitle">
+                                Únete a la comunidad y empieza a disfrutar del fútbol como antes
                             </p>
                         </div>
                         
-                        <form action="{% url 'login' %}" method="post" id="loginForm" class="login-form">
+                        <form method="post" enctype="multipart/form-data" class="register-form">
                             {% csrf_token %}
                             
                             <div class="form-grid">
                                 {{ form | crispy }}
                             </div>
                             
-                            <div class="login-remember">
-                                <input type="checkbox" class="form-check-input" id="remember-me">
-                                <label class="form-check-label" for="remember-me">Recordarme</label>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-login">
-                                <i class="fas fa-sign-in-alt"></i>
-                                Iniciar sesión
+                            <button type="submit" class="btn btn-register">
+                                <i class="fas fa-user-plus"></i>
+                                Crear cuenta
                             </button>
                             
-                            <div class="login-footer">
-                                <p>¿No tienes una cuenta? 
-                                    <a href="{% url 'registro' %}" class="login-link">Regístrate ahora</a>
+                            <div class="register-footer">
+                                <p>¿Ya tienes una cuenta? 
+                                    <a href="{% url 'login' %}" class="register-link">Inicia sesión</a>
                                 </p>
                             </div>
                         </form>
@@ -84,7 +78,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="login-footer-section">
+    <footer class="register-footer-section">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">

@@ -10,7 +10,7 @@ from app.models.user import User
 #REGISTRO
 class UserRegister(CreateView):
     form_class = UserRegisterForm
-    template_name = 'registration/registro.html'
+    template_name = 'auth/registration.html'
     success_url = reverse_lazy('home')
 
     def form_valid(self, form):

@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 # LANDING
 class Landing(TemplateView):
-    template_name = 'landing.html'
+    template_name = 'global/landing_page.html'
 
 
 #HOME

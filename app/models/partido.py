@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.core.validators import MinValueValidator
 
 from app.models.historial import HistorialELO
+from app.models.user import User
 
 
 
@@ -58,7 +59,7 @@ class Partido(models.Model):
     costo = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True, null=True)
     metodo_pago = models.CharField(max_length=13, choices=METODO_PAGO_CHOICES, blank=True, null=True)
     creador = models.ForeignKey("app.User", on_delete=models.CASCADE, related_name='get_user_creador')
-    jugadores = models.ManyToManyField("app.User", related_name='partidos', blank=True)
+    jugadores = models.ManyToManyField("app.User", related_name='get_jugadores_partido', blank=True)
     equipo_local = models.ForeignKey("app.Equipo", on_delete=models.SET_NULL, null=True, blank=True, related_name='get_equipo_local')
     equipo_visitante = models.ForeignKey("app.Equipo", on_delete=models.SET_NULL, null=True, blank=True, related_name='get_equipo_visitante')
     goles_local = models.PositiveIntegerField(null=True, blank=True)
@@ -149,6 +150,61 @@ class Partido(models.Model):
 
         self.calificacion_actualizada = True
         self.save(update_fields=['calificacion_actualizada'])
+
+    def registrar_resultado_y_actualizar_stats(self, goles_local, goles_visitante):
+        if self.estado == 'FINALIZADO':
+        # Podrías permitir actualizar un resultado, pero cuidado con recalcular ELO y stats
+        # messages.info(request, "El resultado de este partido ya fue registrado.")
+        # return
+            pass
+
+        self.goles_local = goles_local
+        self.goles_visitante = goles_visitante
+        self.estado = 'FINALIZADO'
+    
+    # Actualizar estadísticas de equipos permanentes
+        if self.equipo_local and self.equipo_local.tipo_equipo == 'PERMANENTE':
+            self.equipo_local.partidos_jugados_permanente += 1
+            if self.goles_local > self.goles_visitante:
+                self.equipo_local.victorias_permanente += 1
+
+            self.equipo_local.save()
+
+        if self.equipo_visitante and self.equipo_visitante.tipo_equipo == 'PERMANENTE':
+            self.equipo_visitante.partidos_jugados_permanente += 1
+            if self.goles_visitante > self.goles_local:
+                self.equipo_visitante.victorias_permanente += 1
+            self.equipo_visitante.save()
+
+    
+    
+    # Por ejemplo:
+        jugadores_del_partido = list(self.equipo_local.jugadores.all()) + list(self.equipo_visitante.jugadores.all()) if self.equipo_local and self.equipo_visitante else list(self.jugadores.all())
+    
+        for jugador_obj in User.objects.filter(pk__in=[j.pk for j in set(jugadores_del_partido)]): # set() para evitar duplicados
+            jugador_obj.partidos_jugados +=1
+            if self.equipo_local and jugador_obj in self.equipo_local.jugadores.all():
+                if self.goles_local > self.goles_visitante:
+                    jugador_obj.victorias +=1
+                elif self.goles_local == self.goles_visitante:
+                    jugador_obj.empates +=1
+                else:
+                    jugador_obj.derrotas +=1
+            elif self.equipo_visitante and jugador_obj in self.equipo_visitante.jugadores.all():
+                if self.goles_visitante > self.goles_local:
+                    jugador_obj.victorias +=1
+                elif self.goles_local == self.goles_visitante:
+                    jugador_obj.empates +=1
+                else:
+                    jugador_obj.derrotas +=1
+            jugador_obj.save()
+
+
+        self.save() # Guardar el partido con resultado y estado
+    
+    # Llamar a la actualización de ELO si no es amistoso
+        if self.modalidad != 'AMISTOSO':
+            self.actualizar_calificaciones()
 
 
 

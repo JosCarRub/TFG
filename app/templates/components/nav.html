@@ -3,7 +3,7 @@
     <!-- Logo and brand -->
     <a href="{% url 'home' %}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
         {% include 'components/svg/logo.html' %}
-        <span class="fs-4 fw-bold">XXX</span>
+        <span class="fs-4 fw-bold">De Rabona</span>
     </a>
     <hr>
     <!-- User profile preview -->
@@ -40,7 +40,7 @@
             </a>
         </li>
         <li>
-            <a href="{% url 'estadisticas' %}" class="nav-link text-white">
+            <a href="{% url 'estadisticas_generales' %}" class="nav-link text-white">
                 <i class="fas fa-calendar-alt me-2"></i>
                 Estadísticas
             </a>
@@ -52,7 +52,7 @@
             </a>
         </li>
         <li>
-            <a href="#" class="nav-link text-white">
+            <a href="{% url 'mis_partidos' %}" class="nav-link text-white">
                 <i class="fas fa-calendar-alt me-2"></i>
                 Mis partidos
             </a>
