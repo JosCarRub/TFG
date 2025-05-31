@@ -1,0 +1,311 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard - DeRabona{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Dashboard Styles -->
+    <link href="{% static 'css/dashboard_styles.css' %}" rel="stylesheet">
+    
+    <!-- Additional CSS -->
+    {% block extra_css %}{% endblock %}
+    
+    <style>
+        /* Base layout styles */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-canvas, #0f0f1a);
+            color: var(--text-primary, #f8fafc);
+            margin: 0;
+            overflow-x: hidden;
+        }
+        
+        /* Layout container */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Main content area */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+            transition: margin-left 0.3s ease;
+        }
+        
+        /* Top navigation */
+        .top-nav {
+            background: var(--bg-surface, #1e1e2d) !important;
+            border-bottom: 1px solid var(--border-subtle, #374151);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        .top-nav .navbar-brand {
+            font-weight: 600;
+            color: var(--text-primary, #f8fafc);
+        }
+        
+        /* Search bar styles */
+        .search-input {
+            background: var(--bg-canvas, #0f0f1a);
+            border: 1px solid var(--border-subtle, #374151);
+            color: var(--text-primary, #f8fafc);
+            border-radius: 0.5rem;
+        }
+        
+        .search-input:focus {
+            background: var(--bg-canvas, #0f0f1a);
+            border-color: var(--primary, #00d4b1);
+            color: var(--text-primary, #f8fafc);
+            box-shadow: 0 0 0 2px rgba(0, 212, 177, 0.2);
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-muted, #94a3b8);
+        }
+        
+        .input-group-text {
+            background: var(--bg-canvas, #0f0f1a) !important;
+            border: 1px solid var(--border-subtle, #374151) !important;
+            color: var(--primary, #00d4b1) !important;
+        }
+        
+        /* User dropdown styles */
+        .dropdown-menu-dark {
+            background: var(--bg-elevated, #262636);
+            border: 1px solid var(--border-subtle, #374151);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+        }
+        
+        .dropdown-item {
+            color: var(--text-secondary, #cbd5e1);
+            transition: all 0.2s ease;
+        }
+        
+        .dropdown-item:hover {
+            background: var(--bg-canvas, #0f0f1a);
+            color: var(--primary, #00d4b1);
+        }
+        
+        /* Content area */
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+            background: var(--bg-canvas, #0f0f1a);
+        }
+        
+        /* Mobile sidebar toggle */
+        .sidebar-toggle {
+            background: var(--bg-elevated, #262636) !important;
+            border: 1px solid var(--border-subtle, #374151) !important;
+            color: var(--text-primary, #f8fafc) !important;
+        }
+        
+        .sidebar-toggle:hover {
+            background: var(--bg-canvas, #0f0f1a) !important;
+            color: var(--primary, #00d4b1) !important;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 991.98px) {
+            .main-content {
+                margin-left: 0;
+            }
+            
+            #dashboard-sidebar {
+                transform: translateX(-100%);
+            }
+            
+            #dashboard-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+        }
+        
+        /* Mobile overlay */
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 90;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" id="mobileOverlay"></div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navigation Bar -->
+            <nav class="navbar navbar-expand-lg navbar-dark p-3 top-nav">
+                <div class="container-fluid">
+                    <!-- Sidebar Toggle -->
+                    <button class="btn sidebar-toggle d-lg-none me-3" type="button" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <!-- Search Bar -->
+                    <form class="d-flex flex-grow-1 me-auto mb-2 mb-lg-0 mx-lg-3" method="GET" action="{% url 'buscar_partidos' %}">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input 
+                                type="text" 
+                                class="form-control search-input" 
+                                placeholder="Buscar partidos, canchas, jugadores..." 
+                                name="q"
+                                value="{{ request.GET.q }}"
+                            >
+                        </div>
+                    </form>
+                
+                    <!-- User dropdown -->
+                    <div class="dropdown">
+                        <a class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" 
+                           href="#" 
+                           id="userDropdown" 
+                           role="button" 
+                           data-bs-toggle="dropdown" 
+                           aria-expanded="false">
+                            {% if current_user_avatar_url %}
+                                <img src="{{ current_user_avatar_url }}" alt="Avatar" width="32" height="32" class="rounded-circle me-2">
+                            {% else %}
+                                <img src="https://via.placeholder.com/32" alt="Avatar" width="32" height="32" class="rounded-circle me-2">
+                            {% endif %}
+                            <span>{{ current_user_nombre|default:user.username }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark text-small" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{% url 'perfil' %}">
+                                <i class="fas fa-user me-2"></i>Mi perfil
+                            </a></li>
+                            
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{% url 'logout' %}" method="post" class="dropdown-item p-0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-link text-white-50 w-100 text-start px-3">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            
+            <!-- Content Area -->
+            <main class="content-area">
+                {% block breadcrumbs %}{% endblock %}
+                
+                {% if messages %}
+                    <div class="mb-4">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                {% block content %}
+                <div class="row">
+                    <div class="col-12">
+                        <h1 class="mb-4">Dashboard Principal</h1>
+                        <p>Contenido del dashboard...</p>
+                    </div>
+                </div>
+                {% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Dashboard JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile sidebar toggle
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('dashboard-sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            if (sidebarToggle && sidebar && overlay) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('mobile-open');
+                    overlay.classList.toggle('active');
+                });
+                
+                // Close sidebar when clicking overlay
+                overlay.addEventListener('click', function() {
+                    sidebar.classList.remove('mobile-open');
+                    overlay.classList.remove('active');
+                });
+                
+                // Close sidebar on window resize if screen becomes large
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth >= 992) {
+                        sidebar.classList.remove('mobile-open');
+                        overlay.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Enhanced search functionality
+            const searchInput = document.querySelector('.search-input');
+            if (searchInput) {
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        this.closest('form').submit();
+                    }
+                });
+            }
+            
+            // Auto-hide messages after 5 seconds
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        });
+    </script>
+    
+    <!-- Additional JavaScript -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

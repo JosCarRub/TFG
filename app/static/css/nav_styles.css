@@ -1,0 +1,264 @@
+/* ======= Top Navigation Styles ======= */
+#top-navbar {
+    background: var(--bg-surface) !important;
+    border-bottom: 1px solid var(--border-subtle);
+    backdrop-filter: blur(12px);
+    padding: 1rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    font-family: var(--font-family);
+}
+
+/* Sidebar Toggle Button */
+#top-navbar-toggle {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+#top-navbar-toggle:hover {
+    background: var(--bg-canvas);
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-1px);
+}
+
+#top-navbar-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 212, 177, 0.2);
+}
+
+/* Search Form */
+#top-navbar-search-form {
+    max-width: 500px;
+}
+
+#top-navbar-search-icon {
+    background: var(--bg-canvas) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-right: none !important;
+    color: var(--primary) !important;
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm) !important;
+}
+
+#top-navbar-search-input {
+    background: var(--bg-canvas);
+    border: 1px solid var(--border-subtle);
+    border-left: none;
+    color: var(--text-primary);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 0.625rem 1rem;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+#top-navbar-search-input:focus {
+    background: var(--bg-canvas);
+    border-color: var(--primary);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 2px rgba(0, 212, 177, 0.1);
+    outline: none;
+}
+
+#top-navbar-search-input::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Focus state for search icon when input is focused */
+#top-navbar-search-input:focus + #top-navbar-search-icon,
+#top-navbar-search-input:focus ~ #top-navbar-search-icon {
+    border-color: var(--primary);
+}
+
+/* User Dropdown Toggle */
+#top-navbar-user-toggle {
+    color: var(--text-primary);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    background: transparent;
+    border: 1px solid transparent;
+}
+
+#top-navbar-user-toggle:hover {
+    color: var(--text-primary);
+    background: var(--bg-canvas);
+    border-color: var(--border-subtle);
+    text-decoration: none;
+}
+
+#top-navbar-user-toggle:focus {
+    color: var(--text-primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 212, 177, 0.2);
+}
+
+/* User Avatar */
+#top-navbar-user-avatar {
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--border-subtle);
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+#top-navbar-user-toggle:hover #top-navbar-user-avatar {
+    border-color: var(--primary);
+}
+
+/* User Name */
+#top-navbar-user-name {
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-right: 0.25rem;
+}
+
+/* Dropdown Chevron */
+#top-navbar-user-toggle .fa-chevron-down {
+    font-size: 0.75rem;
+    transition: var(--transition);
+}
+
+#top-navbar-user-toggle[aria-expanded="true"] .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+#top-navbar-dropdown-menu {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 0.5rem 0;
+    min-width: 200px;
+    box-shadow: var(--shadow-lg);
+    margin-top: 0.5rem;
+}
+
+/* Dropdown Items */
+#top-navbar-profile-link,
+#top-navbar-settings-link {
+    color: var(--text-secondary);
+    padding: 0.625rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+}
+
+#top-navbar-profile-link:hover,
+#top-navbar-settings-link:hover {
+    background: var(--bg-canvas);
+    color: var(--primary);
+}
+
+#top-navbar-profile-link i,
+#top-navbar-settings-link i {
+    width: 16px;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+#top-navbar-profile-link:hover i,
+#top-navbar-settings-link:hover i {
+    color: var(--primary);
+}
+
+/* Dropdown Divider */
+#top-navbar-divider {
+    border-color: var(--border-subtle);
+    margin: 0.5rem 0;
+}
+
+/* Logout Button */
+#top-navbar-logout-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.625rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-family: var(--font-family);
+}
+
+#top-navbar-logout-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+#top-navbar-logout-btn i {
+    width: 16px;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+#top-navbar-logout-btn:hover i {
+    color: #ef4444;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+    #top-navbar {
+        padding: 0.75rem 1rem;
+    }
+    
+    #top-navbar-search-form {
+        max-width: none;
+        margin: 0.5rem 0;
+    }
+    
+    #top-navbar-user-name {
+        display: none;
+    }
+    
+    #top-navbar-user-toggle .fa-chevron-down {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 575.98px) {
+    #top-navbar-search-form {
+        margin: 0.75rem 0;
+    }
+    
+    #top-navbar-search-input {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
+
+/* Animation for dropdown */
+#top-navbar-dropdown-menu {
+    animation: dropdownFadeIn 0.2s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Focus states for accessibility */
+#top-navbar-profile-link:focus,
+#top-navbar-settings-link:focus,
+#top-navbar-logout-btn:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+}

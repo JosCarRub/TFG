@@ -10,13 +10,12 @@ urlpatterns = [
 
     path('', Landing.as_view(), name='landing'),
     path('home', Home.as_view(), name='home'),
-    path('estadisticas', Estadisticas.as_view(), name='estadisticas'),
 
 #---------- REGISTRO --------------------------------------------------------------------------------------------
     path('registro',UserRegister.as_view(), name='registro' ),
 
 ##---------- PERFIL --------------------------------------------------------------------------------------------
-    path('perfil', Perfil.as_view(), name='perfil'),
+    path('perfil/', Perfil.as_view(), name='perfil'),
     path('update_profile',UserUpdateProfile.as_view(), name='update_profile'),
     
 ##---------- PARTIDOS --------------------------------------------------------------------------------------------

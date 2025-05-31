@@ -1,38 +1,55 @@
 <!-- Top Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark p-3" style="background-color: #1E293B;">
+<nav id="top-navbar" class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
         <!-- Sidebar Toggle -->
-        <button class="btn btn-dark d-lg-none me-3" type="button">
+        <button id="top-navbar-toggle" class="d-lg-none me-3" type="button">
             <i class="fas fa-bars"></i>
         </button>
         
         <!-- Search Bar -->
-        <form class="d-flex flex-grow-1 me-auto mb-2 mb-lg-0 mx-lg-3">
+        <form id="top-navbar-search-form" class="d-flex flex-grow-1 me-auto mb-2 mb-lg-0 mx-lg-3" method="GET" action="{% url 'buscar_partidos' %}">
             <div class="input-group">
-                <span class="input-group-text bg-dark border-0 text-success">
+                <span id="top-navbar-search-icon" class="input-group-text">
                     <i class="fas fa-search"></i>
                 </span>
+                <input 
+                    id="top-navbar-search-input" 
+                    type="text" 
+                    class="form-control" 
+                    placeholder="Buscar partidos, canchas, jugadores..." 
+                    name="q"
+                    value="{{ request.GET.q }}"
+                >
             </div>
         </form>
-    
         
         <!-- User dropdown -->
-        <div class="dropdown">
-            <a class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <div id="top-navbar-user-dropdown" class="dropdown">
+            <a id="top-navbar-user-toggle" class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {% if current_user_avatar_url %}
-                    <img src="{{ current_user_avatar_url }}" alt="Avatar" width="32" height="32" class="rounded-circle me-2">
+                    <img src="{{ current_user_avatar_url }}" id="top-navbar-user-avatar" alt="Avatar" class="rounded-circle me-2">
                 {% else %}
-                    <img src="https://via.placeholder.com/32" alt="Avatar" width="32" height="32" class="rounded-circle me-2"> {# Fallback por si algo falla #}
+                    <img src="https://via.placeholder.com/32" id="top-navbar-user-avatar" alt="Avatar" class="rounded-circle me-2">
                 {% endif %}
-                <span>{{ current_user_nombre|default:user.username }}</span> {# Muestra el nombre, o el email si el nombre no está #}
+                <span id="top-navbar-user-name">{{ current_user_nombre|default:user.username }}</span>
+                <i class="fas fa-chevron-down ms-2"></i>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark text-small" aria-labelledby="userDropdown">
-                <li><a class="dropdown-item" href="{% url 'perfil' %}">Mi perfil</a></li>
-                <li><hr class="dropdown-divider"></li>
+            <ul id="top-navbar-dropdown-menu" class="dropdown-menu dropdown-menu-end text-small" aria-labelledby="top-navbar-user-toggle">
+                <li>
+                    <a id="top-navbar-profile-link" class="dropdown-item" href="{% url 'perfil' %}">
+                        <i class="fas fa-user me-2"></i>
+                        Mi perfil
+                    </a>
+                </li>
+                
+                <li><hr id="top-navbar-divider" class="dropdown-divider"></li>
                 <li>
                     <form action="{% url 'logout' %}" method="post" class="dropdown-item p-0">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-link text-white-50 w-100 text-start px-3">Cerrar Sesión</button>
+                        <button id="top-navbar-logout-btn" type="submit" class="w-100 text-start">
+                            <i class="fas fa-sign-out-alt me-2"></i>
+                            Cerrar Sesión
+                        </button>
                     </form>
                 </li>
             </ul>
