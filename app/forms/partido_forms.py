@@ -1,7 +1,9 @@
 from datetime import datetime, time, timedelta
 from django import forms
 from app.models.cancha import Cancha
+from app.models.equipo import Equipo
 from app.models.partido import Partido
+from django.db.models import Q
 
 
 from django.utils import timezone as django_timezone
@@ -34,6 +36,21 @@ class PartidoForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-select bg-dark text-white border-secondary'}),
         label="Hora de Inicio del Partido"
     )
+    equipo_local = forms.ModelChoiceField(
+        queryset=Equipo.objects.filter(tipo_equipo='PERMANENTE', activo=True), 
+        required=False,
+        label="Equipo Local (Opcional)",
+        widget=forms.Select(attrs={'class': 'form-select bg-dark text-white border-secondary'}),
+        empty_label=" (Ninguno - Partido Abierto/Equipos por formar)"
+    )
+
+    equipo_visitante = forms.ModelChoiceField(
+        queryset=Equipo.objects.filter(tipo_equipo='PERMANENTE', activo=True), 
+        required=False,
+        label="Equipo Visitante (Opcional)",
+        widget=forms.Select(attrs={'class': 'form-select bg-dark text-white border-secondary'}),
+        empty_label=" (Ninguno - Partido Abierto/Equipos por formar)"
+    )
 
     cancha = forms.ModelChoiceField(
         queryset=Cancha.objects.filter(disponible=True).order_by('nombre_cancha'),
@@ -53,8 +70,20 @@ class PartidoForm(forms.ModelForm):
         model = Partido
         fields = [
             'cancha', 'tipo', 'nivel', 'modalidad',
-            'max_jugadores', 'costo', 'metodo_pago', 'comentarios'
+            'max_jugadores', 'costo', 'metodo_pago', 'comentarios',
+            'equipo_local', 'equipo_visitante'
         ]
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        #para 'equipo_local', solo los equipos del usuario
+        if self.user:
+            self.fields['equipo_local'].queryset = Equipo.objects.filter(
+                Q(capitan=self.user) | Q(jugadores=self.user),
+                tipo_equipo='PERMANENTE', activo=True
+            ).distinct().order_by('nombre_equipo')
+
 
     def clean(self):
         cleaned_data = super().clean()
@@ -64,6 +93,17 @@ class PartidoForm(forms.ModelForm):
 
         dia_limite_str = cleaned_data.get('fecha_limite_inscripcion_dia')
         hora_limite_str = cleaned_data.get('fecha_limite_inscripcion_hora')
+
+
+        equipo_local = cleaned_data.get('equipo_local')
+        equipo_visitante = cleaned_data.get('equipo_visitante')
+
+        #logica para que no existan auto-enfrentamientos
+        if equipo_local and equipo_visitante and equipo_local == equipo_visitante:
+            self.add_error('equipo_visitante', "El equipo visitante no puede ser el mismo que el equipo local.")
+        
+        if (equipo_local and not equipo_visitante) or (not equipo_local and equipo_visitante):
+            self.add_error(None, "Si eliges un equipo permanente, debes seleccionar tanto el local como el visitante, o ninguno para un partido abierto.")
 
 
         if not dia:

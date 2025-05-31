@@ -31,4 +31,11 @@ urlpatterns = [
     path('cancha/<uuid:pk_cancha>/', DetalleCanchaView.as_view(), name='detalle_cancha'),
 
 
+##---------- EQUIPOS --------------------------------------------------------------------------------------------
+    path('equipos/crear_equipo_permanente', CrearEquipoPermanenteView.as_view(), name='crear_equipo_permanente'),
+    path('equipos/mis_equipos/', MisEquiposListView.as_view(), name='lista_mis_equipos'), 
+    path('equipo/<uuid:pk>/', DetalleEquipoView.as_view(), name='detalle_equipo'), 
+    path('equipo/<uuid:pk>/editar/', EditarEquipoPermanenteView.as_view(), name='editar_equipo_permanente'),
+
+
 ]

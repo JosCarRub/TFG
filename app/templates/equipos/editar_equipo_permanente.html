@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block base %}
+<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
+    {% include "components/nav.html" %}
+    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
+        {% include "components/top_nav.html" %}
+        <div class="container-fluid p-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10">
+                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px; color:white;">
+                        <div class="card-header bg-transparent border-0 py-3">
+                            <h4 class="text-white mb-0 text-center">{{ titulo_pagina|default:"Editar Equipo" }}</h4>
+                        </div>
+                        <div class="card-body p-4 p-md-5">
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ form|crispy }}
+                                <div class="d-flex justify-content-end mt-4">
+                                    <a href="{% url 'detalle_equipo' pk=equipo.id_equipo %}" class="btn btn-outline-light me-2">Cancelar</a>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-save me-2"></i>Guardar Cambios
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

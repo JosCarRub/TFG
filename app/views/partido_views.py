@@ -186,35 +186,73 @@ class DetallePartidoView(LoginRequiredMixin, DetailView): # DetailView puede man
 
             # Crear o actualizar equipos temporales para el partido
             # Equipo Local
-            if partido.equipo_local:
-                equipo_local = partido.equipo_local
+            # if partido.equipo_local:
+            #     equipo_local = partido.equipo_local
                 
-                equipo_local.jugadores.set(User.objects.filter(id__in=jugadores_equipo_local_ids))
+            #     equipo_local.jugadores.set(User.objects.filter(id__in=jugadores_equipo_local_ids))
+            # else:
+            #     equipo_local = Equipo.objects.create(
+            #         nombre_equipo=f"Locales - {partido.cancha.nombre_cancha} {partido.fecha.strftime('%d%m%y%H%M')}",
+            #         capitan=partido.creador,
+            #         tipo_equipo='PARTIDO'
+            #     )
+            #     equipo_local.jugadores.set(User.objects.filter(id__in=jugadores_equipo_local_ids)) # Igual aquí
+            #     partido.equipo_local = equipo_local
+
+            # # Equipo Visitante
+            # if partido.equipo_visitante:
+            #     equipo_visitante = partido.equipo_visitante
+            #     equipo_visitante.jugadores.set(User.objects.filter(id__in=jugadores_equipo_visitante_ids)) # Igual aquí
+            # else:
+            #     equipo_visitante = Equipo.objects.create(
+            #         nombre_equipo=f"Visitantes - {partido.cancha.nombre_cancha} {partido.fecha.strftime('%d%m%y%H%M')}",
+            #         capitan=partido.creador, 
+            #         tipo_equipo='PARTIDO'
+            #     )
+            #     equipo_visitante.jugadores.set(User.objects.filter(id__in=jugadores_equipo_visitante_ids)) # Igual aquí
+            #     partido.equipo_visitante = equipo_visitante
+            
+            # partido.save()
+            # messages.success(request, "Equipos asignados correctamente al partido.")
+
+            if partido.equipo_local and partido.equipo_local.tipo_equipo == 'PERMANENTE':
+                messages.info(request, "Este partido ya tiene un equipo local permanente asignado. No se puede reasignar aquí.")
+            elif partido.equipo_visitante and partido.equipo_visitante.tipo_equipo == 'PERMANENTE':
+                messages.info(request, "Este partido ya tiene un equipo visitante permanente asignado. No se puede reasignar aquí.")
             else:
-                equipo_local = Equipo.objects.create(
-                    nombre_equipo=f"Locales - {partido.cancha.nombre_cancha} {partido.fecha.strftime('%d%m%y%H%M')}",
-                    capitan=partido.creador,
-                    tipo_equipo='PARTIDO'
-                )
-                equipo_local.jugadores.set(User.objects.filter(id__in=jugadores_equipo_local_ids)) # Igual aquí
+                sufijo_nombre = f"{partido.cancha.nombre_cancha[:10]}_{partido.fecha.strftime('%d%m%y%H%M')}"
+
+                if partido.equipo_local: # Si ya existe un equipo de tipo PARTIDO para local
+                    equipo_local = partido.equipo_local
+                    equipo_local.nombre_equipo = f"Locales - {sufijo_nombre}" # Actualizar nombre por si acaso
+                    equipo_local.save()
+                else:
+                    equipo_local = Equipo.objects.create(
+                    nombre_equipo=f"Locales - {sufijo_nombre}",
+                    capitan=partido.creador, tipo_equipo='PARTIDO',
+                    partido_asociado=partido # Enlazar al partido
+                    )
+                equipo_local.jugadores.set(User.objects.filter(id__in=jugadores_equipo_local_ids))
                 partido.equipo_local = equipo_local
 
-            # Equipo Visitante
-            if partido.equipo_visitante:
-                equipo_visitante = partido.equipo_visitante
-                equipo_visitante.jugadores.set(User.objects.filter(id__in=jugadores_equipo_visitante_ids)) # Igual aquí
-            else:
-                equipo_visitante = Equipo.objects.create(
-                    nombre_equipo=f"Visitantes - {partido.cancha.nombre_cancha} {partido.fecha.strftime('%d%m%y%H%M')}",
-                    capitan=partido.creador, 
-                    tipo_equipo='PARTIDO'
-                )
-                equipo_visitante.jugadores.set(User.objects.filter(id__in=jugadores_equipo_visitante_ids)) # Igual aquí
-                partido.equipo_visitante = equipo_visitante
-            
-            partido.save()
-            messages.success(request, "Equipos asignados correctamente al partido.")
+                if partido.equipo_visitante: # Si ya existe un equipo de tipo PARTIDO para visitante
+                    equipo_visitante = partido.equipo_visitante
+                    equipo_visitante.nombre_equipo = f"Visitantes - {sufijo_nombre}"
+                    equipo_visitante.save()
+                else:
+                    equipo_visitante = Equipo.objects.create(
+                    nombre_equipo=f"Visitantes - {sufijo_nombre}",
+                    capitan=partido.creador, tipo_equipo='PARTIDO',
+                    partido_asociado=partido # Enlazar al partido
+                    )  
+                    equipo_visitante.jugadores.set(User.objects.filter(id__in=jugadores_equipo_visitante_ids))
+                    partido.equipo_visitante = equipo_visitante
+        
+                partido.save()
+                messages.success(request, "Equipos para el partido asignados/actualizados correctamente.")
+
             return redirect('detalle_partido', pk=partido.id_partido)
+        
         else:
             # Si el formulario no es válido, re-renderizar la página con los errores
             # Es un poco más complejo pasar el form con errores de vuelta al DetailView

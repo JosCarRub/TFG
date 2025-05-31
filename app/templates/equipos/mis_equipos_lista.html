@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block base %}
+<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
+    {% include "components/nav.html" %}
+    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
+        {% include "components/top_nav.html" %}
+        <div class="container-fluid p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="text-white">{{ titulo_pagina }}</h4>
+                <a href="{% url 'crear_equipo_permanente' %}" class="btn btn-success">
+                    <i class="fas fa-plus-circle me-2"></i>Crear Nuevo Equipo
+                </a>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if equipos_list %}
+                <div class="row g-4">
+                    {% for equipo in equipos_list %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100" style="background-color: #2d3748; border-radius: 10px; color:white;">
+                            {% if equipo.team_banner %}
+                                <img src="{{ equipo.team_banner.url }}" class="card-img-top" alt="Banner de {{ equipo.nombre_equipo }}" style="height: 150px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                            {% else %}
+                                <div class="bg-secondary card-img-top d-flex align-items-center justify-content-center" style="height: 150px; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                                    <i class="fas fa-shield-alt fa-3x text-white-50"></i>
+                                </div>
+                            {% endif %}
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex align-items-center mb-2">
+                                    {% if equipo.team_shield %}
+                                        <img src="{{ equipo.team_shield.url }}" class="rounded-circle me-2" alt="Escudo" width="40" height="40" style="border: 2px solid #4a5568;">
+                                    {% else %}
+                                        <div class="rounded-circle bg-secondary me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border: 2px solid #4a5568;">
+                                            <i class="fas fa-users text-white-50"></i>
+                                        </div>
+                                    {% endif %}
+                                    <h5 class="card-title mb-0 text-white">{{ equipo.nombre_equipo }}</h5>
+                                </div>
+                                <p class="card-text text-white-50 small flex-grow-1">{{ equipo.descripcion|truncatewords:15|default:"Sin descripción." }}</p>
+                                <p class="card-text small mb-1"><i class="fas fa-user-shield me-1 text-success"></i> Capitán: {{ equipo.capitan.nombre }}</p>
+                                <p class="card-text small mb-3"><i class="fas fa-users me-1 text-success"></i> Jugadores: {{ equipo.jugadores.count }}</p>
+                                <a href="{% url 'detalle_equipo' pk=equipo.id_equipo %}" class="btn btn-outline-light btn-sm mt-auto w-100">Ver Detalles del Equipo</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <!-- Paginación si es necesaria -->
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-users-slash fa-4x text-white-50 mb-3"></i>
+                    <h5 class="text-white">Aún no perteneces ni capitaneas ningún equipo permanente.</h5>
+                    <p class="text-white-50">¡Anímate y crea el tuyo!</p>
+                    <a href="{% url 'crear_equipo_permanente' %}" class="btn btn-success mt-2">
+                        <i class="fas fa-plus-circle me-2"></i>Crear Mi Equipo
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
