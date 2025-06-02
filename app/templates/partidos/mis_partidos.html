@@ -1,135 +1,501 @@
-{% extends 'base.html' %}
+{% extends 'main.html' %}
 {% load static %}
 
-{% block base %}
-<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
-    {% include "components/nav.html" %}
+{% block title %}{{ titulo_pagina|default:"Mis Partidos" }} - De Rabona{% endblock %}
 
-    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
-        {% include "components/top_nav.html" %}
-        
-        <div class="container-fluid p-4">
-            <!-- Page Header -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                        <div class="card-body p-4 d-flex justify-content-between align-items-center">
-                            <div>
-                                <h4 class="text-white mb-1">{{ titulo_pagina|default:"Mis Partidos" }}</h4>
-                                <p class="text-white-50 mb-0">Consulta tus próximos partidos y tu historial.</p>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/partidos/mis_partidos_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <!-- Header de Mis Partidos -->
+    <div class="partidos-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h4 class="page-title">{{ titulo_pagina|default:"Mis Partidos" }}</h4>
+                <p class="page-subtitle">Consulta tus próximos partidos y tu historial de juegos</p>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'crear_partidos' %}" class="btn btn-primary btn-create">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    <span>Organizar un Partido</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensajes del sistema -->
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show custom-alert" role="alert">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Sección Próximos Partidos -->
+    <div class="proximos-partidos-section">
+        <div class="section-header">
+            <h5 class="section-title">
+                <i class="fas fa-calendar-alt me-2"></i>
+                Próximos Partidos
+            </h5>
+            <div class="section-meta">
+                {% if proximos_partidos_info %}
+                    <span class="partidos-count">{{ proximos_partidos_info|length }} partido{{ proximos_partidos_info|length|pluralize }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if proximos_partidos_info %}
+            <div class="partidos-grid">
+                {% for item in proximos_partidos_info %}
+                    {% with partido=item.partido es_creador=item.es_creador inscripcion_esta_abierta=item.inscripcion_esta_abierta plazas_disponibles=item.plazas_disponibles %}
+                    <div class="partido-card {% if es_creador %}creator-card{% endif %}" data-partido-id="{{ partido.id_partido }}">
+                        <!-- Header del partido -->
+                        <div class="partido-header">
+                            <div class="partido-info">
+                                <h6 class="partido-title">
+                                    <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="partido-link">
+                                        {{ partido.cancha.nombre_cancha }}
+                                    </a>
+                                </h6>
+                                <div class="partido-meta">
+                                    <span class="partido-date">
+                                        <i class="fas fa-calendar-day me-1"></i>
+                                        {{ partido.fecha|date:"d/m/Y \a \l\a\s H:i" }}
+                                    </span>
+                                </div>
                             </div>
-                            <a href="{% url 'crear_partidos' %}" class="btn btn-success">
-                                <i class="fas fa-plus-circle me-2"></i>Organizar un Partido
-                            </a>
+                            {% if es_creador %}
+                                <div class="creator-badge">
+                                    <i class="fas fa-crown"></i>
+                                    <span>Creador</span>
+                                </div>
+                            {% endif %}
                         </div>
+
+                        <!-- Detalles del partido -->
+                        <div class="partido-details">
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt detail-icon"></i>
+                                <span class="detail-text">{{ partido.cancha.ubicacion|truncatechars:35 }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-running detail-icon"></i>
+                                <span class="detail-text">{{ partido.get_tipo_display }} - {{ partido.get_modalidad_display }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Progreso de jugadores -->
+                        <div class="jugadores-progress">
+                            <div class="progress-header">
+                                <span class="progress-label">Jugadores inscritos</span>
+                                <span class="progress-count">{{ partido.jugadores.count }}/{{ partido.max_jugadores }}</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: {% widthratio partido.jugadores.count partido.max_jugadores 100 %}%">
+                                    <div class="progress-fill {% if partido.jugadores.count >= partido.max_jugadores %}full{% endif %}"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Estados del partido -->
+                        <div class="partido-estados">
+                            {% if inscripcion_esta_abierta %}
+                                <span class="estado-badge estado-abierto">
+                                    <i class="fas fa-user-plus me-1"></i>
+                                    Inscripción Abierta
+                                </span>
+                            {% elif partido.estado == 'PROGRAMADO' %}
+                                <span class="estado-badge estado-cerrado">
+                                    <i class="fas fa-lock me-1"></i>
+                                    Inscripción Cerrada
+                                </span>
+                            {% endif %}
+                            
+                            {% if plazas_disponibles > 0 and inscripcion_esta_abierta %}
+                                <span class="plazas-badge">
+                                    {{ plazas_disponibles }} plaza{{ plazas_disponibles|pluralize }} disponible{{ plazas_disponibles|pluralize }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Acciones -->
+                        <div class="partido-actions">
+                            <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="btn btn-outline-primary btn-sm btn-action">
+                                <i class="fas fa-eye me-1"></i>
+                                Ver Detalles
+                            </a>
+                            {% if es_creador %}
+                                <button class="btn btn-outline-secondary btn-sm btn-menu" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="fas fa-edit me-2"></i>Editar
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="fas fa-users me-2"></i>Gestionar Jugadores
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="#">
+                                            <i class="fas fa-times me-2"></i>Cancelar
+                                        </a>
+                                    </li>
+                                </ul>
+                            {% endif %}
+                        </div>
+
+                        <!-- Countdown si está próximo -->
+                        <div class="partido-countdown" data-fecha="{{ partido.fecha|date:'c' }}">
+                            <div class="countdown-container">
+                                <i class="fas fa-clock me-2"></i>
+                                <span class="countdown-text">Calculando...</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-content">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-calendar-plus"></i>
+                    </div>
+                    <h6 class="empty-state-title">No tienes próximos partidos</h6>
+                    <p class="empty-state-message">
+                        No tienes partidos programados o en los que estés inscrito.<br>
+                        ¡Es hora de unirse a la acción!
+                    </p>
+                    <div class="empty-state-actions">
+                        <a href="{% url 'buscar_partidos' %}" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>
+                            Buscar Partidos
+                        </a>
+                        <a href="{% url 'crear_partidos' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-plus me-2"></i>
+                            Crear Partido
+                        </a>
                     </div>
                 </div>
             </div>
+        {% endif %}
+    </div>
 
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
+    <!-- Sección Historial -->
+    <div class="historial-partidos-section">
+        <div class="section-header">
+            <h5 class="section-title">
+                <i class="fas fa-history me-2"></i>
+                Historial de Partidos
+            </h5>
+            <div class="section-meta">
+                {% if partidos_jugados_info %}
+                    <span class="partidos-count">{{ partidos_jugados_info|length }} partido{{ partidos_jugados_info|length|pluralize }} jugado{{ partidos_jugados_info|length|pluralize }}</span>
+                {% endif %}
+            </div>
+        </div>
 
-            <!-- Sección Próximos Partidos -->
-            <div class="mb-5">
-                <h5 class="text-success mb-3"><i class="fas fa-calendar-alt me-2"></i>Próximos Partidos</h5>
-                {% if proximos_partidos_info %}
-                    <div class="row g-4">
-                        {% for item in proximos_partidos_info %}
-                            {% with partido=item.partido es_creador=item.es_creador inscripcion_esta_abierta=item.inscripcion_esta_abierta plazas_disponibles=item.plazas_disponibles %}
-                            <div class="col-md-6 col-lg-4">
-                                <div class="card h-100 {% if es_creador %}border-primary border-2{% endif %}" style="background-color: #2d3748; border-radius: 10px; color:white;">
-                                    <div class="card-body d-flex flex-column">
-                                        <h6 class="card-title text-white">
-                                            <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="text-white text-decoration-none">
-                                                {{ partido.cancha.nombre_cancha }}
-                                            </a>
-                                        </h6>
-                                        <p class="small text-white-50 mb-1"><i class="fas fa-calendar-day me-1"></i> {{ partido.fecha|date:"d/m/Y \a \l\a\s H:i" }}</p>
-                                        <p class="small text-white-50 mb-1"><i class="fas fa-map-marker-alt me-1"></i> {{ partido.cancha.ubicacion|truncatechars:30 }}</p>
-                                        <p class="small text-white-50 mb-2"><i class="fas fa-running me-1"></i> {{ partido.get_tipo_display }} - {{ partido.get_modalidad_display }}</p>
-                                        
-                                        <div class="progress bg-dark mb-1" style="height: 8px;">
-                                            <div class="progress-bar {% if partido.jugadores.count >= partido.max_jugadores %}bg-danger{% else %}bg-success{% endif %}" role="progressbar" style="width: {% widthratio partido.jugadores.count partido.max_jugadores 100 %}%" aria-valuenow="{{ partido.jugadores.count }}" aria-valuemin="0" aria-valuemax="{{ partido.max_jugadores }}"></div>
-                                        </div>
-                                        <p class="small text-white-50 mb-2">{{ partido.jugadores.count }}/{{ partido.max_jugadores }} jugadores</p>
-
-                                        {% if es_creador %}
-                                            <span class="badge bg-primary mb-2">Eres el creador</span>
-                                        {% endif %}
-                                        {% if inscripcion_esta_abierta %}
-                                            <span class="badge bg-info text-dark mb-2">Inscripción Abierta</span>
-                                        {% elif partido.estado == 'PROGRAMADO' %}
-                                            <span class="badge bg-warning text-dark mb-2">Inscripción Cerrada</span>
-                                        {% endif %}
-                                        
-                                        <div class="mt-auto">
-                                            <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="btn btn-sm btn-outline-light w-100">Ver Detalles</a>
+        {% if partidos_jugados_info %}
+            <div class="historial-list">
+                {% for item in partidos_jugados_info %}
+                    {% with partido=item.partido es_creador=item.es_creador resultado_str=item.resultado_str %}
+                    <div class="historial-item" data-partido-id="{{ partido.id_partido }}">
+                        <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="historial-link">
+                            <div class="historial-content">
+                                <!-- Info principal -->
+                                <div class="historial-main">
+                                    <div class="historial-info">
+                                        <h6 class="historial-title">{{ partido.cancha.nombre_cancha }}</h6>
+                                        <div class="historial-meta">
+                                            <span class="historial-tipo">{{ partido.get_tipo_display }}</span>
+                                            <span class="historial-separator">•</span>
+                                            <span class="historial-modalidad">{{ partido.get_modalidad_display }}</span>
                                         </div>
                                     </div>
+                                    <div class="historial-fecha">
+                                        <span class="fecha-dia">{{ partido.fecha|date:"d" }}</span>
+                                        <span class="fecha-mes">{{ partido.fecha|date:"M" }}</span>
+                                        <span class="fecha-ano">{{ partido.fecha|date:"Y" }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Resultado o estado -->
+                                <div class="historial-resultado">
+                                    {% if partido.estado == 'FINALIZADO' %}
+                                        <div class="resultado-container">
+                                            <i class="fas fa-trophy resultado-icon"></i>
+                                            <span class="resultado-text">{{ resultado_str }}</span>
+                                        </div>
+                                    {% else %}
+                                        <div class="estado-container">
+                                            <div class="estado-badge-historial estado-{{ partido.estado|lower }}">
+                                                {{ partido.get_estado_display }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Badges especiales -->
+                                <div class="historial-badges">
+                                    {% if es_creador %}
+                                        <span class="historial-badge badge-creador">
+                                            <i class="fas fa-crown me-1"></i>Creador
+                                        </span>
+                                    {% endif %}
+                                    
+                                    {% if es_creador and partido.estado == 'PROGRAMADO' and partido.fecha < ahora %}
+                                        <span class="historial-badge badge-pendiente">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            Resultado Pendiente
+                                        </span>
+                                    {% elif es_creador and partido.estado == 'EN_CURSO' and partido.fecha < ahora %}
+                                        <span class="historial-badge badge-pendiente">
+                                            <i class="fas fa-clock me-1"></i>
+                                            Finalizar Partido
+                                        </span>
+                                    {% endif %}
                                 </div>
                             </div>
-                            {% endwith %}
-                        {% endfor %}
+                        </a>
+
+                        <!-- Indicador de acción requerida -->
+                        {% if es_creador and partido.estado == 'PROGRAMADO' and partido.fecha < ahora %}
+                            <div class="action-indicator">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                        {% elif es_creador and partido.estado == 'EN_CURSO' and partido.fecha < ahora %}
+                            <div class="action-indicator">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        {% endif %}
                     </div>
-                {% else %}
-                    <div class="card" style="background-color: #2d3748; border-radius: 10px;">
-                        <div class="card-body text-center text-white-50 p-4">
-                            <i class="fas fa-calendar-plus fa-2x mb-2"></i>
-                            <p>No tienes próximos partidos programados o en los que estés inscrito.</p>
-                            <a href="{% url 'buscar_partidos' %}" class="btn btn-success btn-sm">Buscar Partidos</a>
-                        </div>
-                    </div>
-                {% endif %}
+                    {% endwith %}
+                {% endfor %}
             </div>
 
-            <!-- Sección Historial de Partidos Jugados -->
-            <div>
-                <h5 class="text-warning mb-3"><i class="fas fa-history me-2"></i>Historial de Partidos Jugados</h5>
-                 {% if partidos_jugados_info %}
-                    <div class="list-group">
-                        {% for item in partidos_jugados_info %}
-                         {% with partido=item.partido es_creador=item.es_creador resultado_str=item.resultado_str %}
-                            <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="list-group-item list-group-item-action flex-column align-items-start mb-2" style="background-color: #2d3748; border-color: #374151; color:white; border-radius: 8px;">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-1 text-white">{{ partido.cancha.nombre_cancha }} - {{ partido.get_tipo_display }}</h6>
-                                    <small class="text-white-50">{{ partido.fecha|date:"d/m/Y" }}</small>
-                                </div>
-                                <p class="mb-1 text-white-75 small">
-                                    Modalidad: {{ partido.get_modalidad_display }}.
-                                    {% if partido.estado == 'FINALIZADO' %}
-                                        Resultado: {{ resultado_str }}
-                                    {% else %}
-                                        Estado: {{ partido.get_estado_display }}
-                                    {% endif %}
-                                </p>
-                                {% if es_creador and partido.estado == 'PROGRAMADO' %} {# Partido pasado que no se finalizó #}
-                                    <small class="text-danger">Este partido pasado no tiene resultado. <span class="badge bg-danger">Registrar Ahora</span></small>
-                                {% elif es_creador and partido.estado == 'EN_CURSO' and partido.fecha < ahora %}
-                                    <small class="text-danger">Este partido parece haber finalizado. <span class="badge bg-danger">Registrar Resultado</span></small>
-                                {% endif %}
-                            </a>
-                         {% endwith %}
-                        {% endfor %}
-                    </div>
-                {% else %}
-                     <div class="card" style="background-color: #2d3748; border-radius: 10px;">
-                        <div class="card-body text-center text-white-50 p-4">
-                            <i class="fas fa-receipt fa-2x mb-2"></i>
-                            <p>Aún no tienes partidos en tu historial.</p>
-                        </div>
-                    </div>
-                {% endif %}
+            <!-- Botón ver más historial -->
+            <div class="historial-footer">
+                <button class="btn btn-outline-primary btn-load-more" id="loadMoreHistory">
+                    <i class="fas fa-chevron-down me-2"></i>
+                    Ver más partidos
+                </button>
             </div>
-            
-            <!-- Paginación (si la implementas para cada sección) -->
-
-        </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-content">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <h6 class="empty-state-title">No tienes historial de partidos</h6>
+                    <p class="empty-state-message">
+                        Aún no has participado en ningún partido.<br>
+                        ¡Comienza tu aventura futbolística!
+                    </p>
+                    <div class="empty-state-actions">
+                        <a href="{% url 'buscar_partidos' %}" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>
+                            Buscar Partidos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </div>
+
+<!-- Script embebido para funcionalidades -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCountdowns();
+    initializeAnimations();
+    initializeInteractions();
+    initializeLoadMore();
+
+    // ======= Contadores de tiempo =======
+    function initializeCountdowns() {
+        const countdownElements = document.querySelectorAll('.partido-countdown');
+        
+        countdownElements.forEach(element => {
+            const fechaString = element.getAttribute('data-fecha');
+            if (!fechaString) return;
+            
+            const fechaPartido = new Date(fechaString);
+            const countdownText = element.querySelector('.countdown-text');
+            
+            function updateCountdown() {
+                const ahora = new Date();
+                const diferencia = fechaPartido - ahora;
+                
+                if (diferencia <= 0) {
+                    countdownText.innerHTML = '<span class="text-warning">¡Partido en curso!</span>';
+                    return;
+                }
+                
+                const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+                const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+                
+                if (dias > 0) {
+                    countdownText.textContent = `En ${dias} día${dias > 1 ? 's' : ''} y ${horas}h`;
+                } else if (horas > 0) {
+                    countdownText.textContent = `En ${horas}h ${minutos}m`;
+                } else {
+                    countdownText.innerHTML = `<span class="text-warning">En ${minutos} minutos</span>`;
+                }
+            }
+            
+            updateCountdown();
+            setInterval(updateCountdown, 60000); // Actualizar cada minuto
+        });
+    }
+
+    // ======= Animaciones =======
+    function initializeAnimations() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // Animar cards de partidos
+        document.querySelectorAll('.partido-card, .historial-item').forEach((el, index) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+            el.style.transitionDelay = `${index * 0.1}s`;
+            observer.observe(el);
+        });
+    }
+
+    // ======= Interacciones =======
+    function initializeInteractions() {
+        // Hover effects para cards
+        document.querySelectorAll('.partido-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Hover effects para historial
+        document.querySelectorAll('.historial-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(8px)';
+                this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.3)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+                this.style.boxShadow = '';
+            });
+        });
+
+        // Click en progress bar para mostrar detalles
+        document.querySelectorAll('.progress-bar-container').forEach(progressBar => {
+            progressBar.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const card = this.closest('.partido-card');
+                const partidoId = card.getAttribute('data-partido-id');
+                
+                // Agregar efecto visual
+                this.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+                
+                // Aquí podrías mostrar un tooltip o modal con más info
+                showPlayerDetails(partidoId);
+            });
+        });
+    }
+
+    // ======= Cargar más historial =======
+    function initializeLoadMore() {
+        const loadMoreBtn = document.getElementById('loadMoreHistory');
+        if (!loadMoreBtn) return;
+        
+        loadMoreBtn.addEventListener('click', function() {
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Cargando...';
+            this.disabled = true;
+            
+            // Simular carga (aquí harías una petición AJAX)
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-chevron-down me-2"></i>Ver más partidos';
+                this.disabled = false;
+                
+                // Aquí cargarías más partidos
+                loadMoreMatches();
+            }, 1500);
+        });
+    }
+
+    // ======= Funciones auxiliares =======
+    function showPlayerDetails(partidoId) {
+        // Mostrar detalles de jugadores (implementar según necesidades)
+        console.log(`Mostrar detalles de jugadores para partido ${partidoId}`);
+    }
+
+    function loadMoreMatches() {
+        // Cargar más partidos del historial (implementar con AJAX)
+        console.log('Cargar más partidos del historial');
+    }
+
+    // ======= Notificaciones =======
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = message;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1050;
+            animation: slideInRight 0.3s ease;
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideInRight 0.3s ease reverse';
+            setTimeout(() => notification.remove(), 300);
+        }, 4000);
+    }
+
+    // Agregar estilos de animación
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
 {% endblock %}

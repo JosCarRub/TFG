@@ -1,0 +1,1060 @@
+/* ======= Variables para Mis Partidos ======= */
+:root {
+    /* Colores específicos */
+    --partidos-primary: #06b6d4;
+    --partidos-secondary: #0891b2;
+    --partidos-accent: #10b981;
+    --partidos-success: #22c55e;
+    --partidos-warning: #f59e0b;
+    --partidos-danger: #ef4444;
+    --partidos-info: #3b82f6;
+    
+    /* Estados específicos */
+    --estado-abierto: #10b981;
+    --estado-cerrado: #f59e0b;
+    --estado-pendiente: #ef4444;
+    --estado-finalizado: #8b5cf6;
+    
+    /* Fondos */
+    --partidos-bg-card: #1e293b;
+    --partidos-bg-main: #0f172a;
+    --partidos-bg-section: #334155;
+    --partidos-bg-overlay: rgba(15, 23, 42, 0.9);
+    
+    /* Gradientes */
+    --partidos-gradient-primary: linear-gradient(135deg, var(--partidos-primary), var(--partidos-secondary));
+    --partidos-gradient-accent: linear-gradient(135deg, var(--partidos-accent), #059669);
+    --partidos-gradient-success: linear-gradient(135deg, var(--partidos-success), #16a34a);
+    
+    /* Sombras */
+    --partidos-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --partidos-shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.2);
+    --partidos-shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.3);
+    
+    /* Transiciones */
+    --partidos-transition: all 0.3s ease;
+    --partidos-transition-fast: all 0.15s ease;
+}
+
+/* ======= Header de Mis Partidos ======= */
+.partidos-header {
+    background: linear-gradient(135deg, var(--partidos-bg-section), #475569);
+    border: 1px solid #64748b;
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--partidos-shadow-lg);
+}
+
+.partidos-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--partidos-gradient-primary);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.header-info {
+    flex: 1;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0 0 0.5rem 0;
+    background: linear-gradient(135deg, #ffffff, var(--partidos-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-subtitle {
+    color: #cbd5e1;
+    font-size: 1.1rem;
+    margin: 0;
+    font-weight: 400;
+}
+
+.header-actions {
+    flex-shrink: 0;
+}
+
+.btn-create {
+    background: var(--partidos-gradient-primary);
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: var(--partidos-transition);
+    box-shadow: var(--partidos-shadow);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-create:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--partidos-shadow-hover);
+    color: white;
+    text-decoration: none;
+}
+
+/* ======= Mensajes del Sistema ======= */
+.messages-container {
+    margin-bottom: 2rem;
+}
+
+.custom-alert {
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: var(--partidos-shadow);
+    border-left: 4px solid;
+}
+
+.alert-success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #6ee7b7;
+    border-left-color: var(--partidos-success);
+}
+
+.alert-danger,
+.alert-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+    border-left-color: var(--partidos-danger);
+}
+
+.alert-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: #fcd34d;
+    border-left-color: var(--partidos-warning);
+}
+
+.alert-info {
+    background: rgba(59, 130, 246, 0.1);
+    color: #93c5fd;
+    border-left-color: var(--partidos-info);
+}
+
+/* ======= Secciones ======= */
+.proximos-partidos-section,
+.historial-partidos-section {
+    margin-bottom: 3rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.section-title i {
+    color: var(--partidos-primary);
+}
+
+.historial-partidos-section .section-title i {
+    color: var(--partidos-warning);
+}
+
+.section-meta {
+    flex-shrink: 0;
+}
+
+.partidos-count {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--partidos-primary);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.historial-partidos-section .partidos-count {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--partidos-warning);
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+/* ======= Grid de Próximos Partidos ======= */
+.partidos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.partido-card {
+    background: var(--partidos-bg-card);
+    border: 1px solid #374151;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: var(--partidos-transition);
+    box-shadow: var(--partidos-shadow);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.partido-card:hover {
+    border-color: var(--partidos-primary);
+    box-shadow: var(--partidos-shadow-hover);
+}
+
+.creator-card {
+    border-color: var(--partidos-primary);
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+}
+
+.creator-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--partidos-gradient-primary);
+}
+
+/* ======= Header del Partido ======= */
+.partido-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #374151;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.partido-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.partido-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+}
+
+.partido-link {
+    color: #f8fafc;
+    text-decoration: none;
+    transition: var(--partidos-transition);
+}
+
+.partido-link:hover {
+    color: var(--partidos-primary);
+    text-decoration: none;
+}
+
+.partido-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.partido-date {
+    color: #cbd5e1;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.partido-date i {
+    color: var(--partidos-primary);
+}
+
+.creator-badge {
+    background: var(--partidos-gradient-primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+    box-shadow: var(--partidos-shadow);
+}
+
+/* ======= Detalles del Partido ======= */
+.partido-details {
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #cbd5e1;
+    font-size: 0.875rem;
+}
+
+.detail-icon {
+    color: var(--partidos-accent);
+    width: 16px;
+    flex-shrink: 0;
+}
+
+.detail-text {
+    line-height: 1.4;
+}
+
+/* ======= Progreso de Jugadores ======= */
+.jugadores-progress {
+    padding: 1rem 1.5rem;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.progress-label {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.progress-count {
+    color: #f8fafc;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background: #374151;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: var(--partidos-transition);
+}
+
+.progress-bar-container:hover {
+    transform: scale(1.02);
+}
+
+.progress-bar {
+    height: 100%;
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    width: 100%;
+    height: 100%;
+    background: var(--partidos-gradient-accent);
+    transition: var(--partidos-transition);
+}
+
+.progress-fill.full {
+    background: var(--partidos-gradient-primary);
+}
+
+/* ======= Estados del Partido ======= */
+.partido-estados {
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.estado-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.estado-abierto {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--estado-abierto);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.estado-cerrado {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--estado-cerrado);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.plazas-badge {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--partidos-info);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* ======= Acciones del Partido ======= */
+.partido-actions {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #374151;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: auto;
+}
+
+.btn-action {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: var(--partidos-transition);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-menu {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid #64748b;
+    background: transparent;
+    color: #cbd5e1;
+    transition: var(--partidos-transition);
+}
+
+.btn-menu:hover {
+    border-color: var(--partidos-primary);
+    color: var(--partidos-primary);
+    background: rgba(6, 182, 212, 0.1);
+}
+
+/* ======= Countdown ======= */
+.partido-countdown {
+    padding: 0.75rem 1.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid #374151;
+}
+
+.countdown-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e1;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.countdown-container i {
+    color: var(--partidos-primary);
+}
+
+/* ======= Estados Vacíos ======= */
+.empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    padding: 2rem;
+}
+
+.empty-state-content {
+    text-align: center;
+    max-width: 400px;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    color: #475569;
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+}
+
+.empty-state-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #f8fafc;
+    margin: 0 0 1rem 0;
+}
+
+.empty-state-message {
+    color: #cbd5e1;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0 0 2rem 0;
+}
+
+.empty-state-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ======= Historial de Partidos ======= */
+.historial-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.historial-item {
+    background: var(--partidos-bg-card);
+    border: 1px solid #374151;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: var(--partidos-transition);
+    box-shadow: var(--partidos-shadow);
+    position: relative;
+}
+
+.historial-item:hover {
+    border-color: var(--partidos-warning);
+    box-shadow: var(--partidos-shadow-hover);
+}
+
+.historial-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.historial-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.historial-content {
+    padding: 1.5rem;
+}
+
+/* ======= Contenido del Historial ======= */
+.historial-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.historial-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.historial-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f8fafc;
+    margin: 0 0 0.5rem 0;
+}
+
+.historial-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+    font-size: 0.875rem;
+}
+
+.historial-separator {
+    color: #64748b;
+}
+
+.historial-fecha {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex-shrink: 0;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.75rem;
+    border-radius: 12px;
+    min-width: 70px;
+}
+
+.fecha-dia {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f8fafc;
+    line-height: 1;
+}
+
+.fecha-mes {
+    font-size: 0.75rem;
+    color: var(--partidos-warning);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.fecha-ano {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+
+/* ======= Resultado del Partido ======= */
+.historial-resultado {
+    margin-bottom: 1rem;
+}
+
+.resultado-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 12px;
+}
+
+.resultado-icon {
+    color: var(--estado-finalizado);
+    font-size: 1.25rem;
+}
+
+.resultado-text {
+    color: #f8fafc;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.estado-container {
+    display: flex;
+    justify-content: center;
+}
+
+.estado-badge-historial {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.estado-programado {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--partidos-warning);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.estado-en_curso {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--partidos-info);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.estado-finalizado {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--estado-finalizado);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+/* ======= Badges del Historial ======= */
+.historial-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.historial-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.badge-creador {
+    background: var(--partidos-gradient-primary);
+    color: white;
+}
+
+.badge-pendiente {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--partidos-danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    animation: pulse 2s infinite;
+}
+
+/* ======= Indicador de Acción ======= */
+.action-indicator {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 32px;
+    height: 32px;
+    background: var(--partidos-danger);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.875rem;
+    animation: pulse 2s infinite;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+}
+
+/* ======= Footer del Historial ======= */
+.historial-footer {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.btn-load-more {
+    padding: 0.875rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: var(--partidos-transition);
+    border: 2px solid var(--partidos-primary);
+    color: var(--partidos-primary);
+    background: transparent;
+}
+
+.btn-load-more:hover {
+    background: var(--partidos-primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--partidos-shadow-hover);
+}
+
+/* ======= Dropdown Menu ======= */
+.dropdown-menu {
+    background: var(--partidos-bg-card);
+    border: 1px solid #374151;
+    border-radius: 12px;
+    box-shadow: var(--partidos-shadow-lg);
+    padding: 0.5rem;
+    min-width: 180px;
+}
+
+.dropdown-item {
+    color: #cbd5e1;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: var(--partidos-transition);
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+}
+
+.dropdown-item.text-danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+}
+
+/* ======= Botones ======= */
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: var(--partidos-transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: var(--partidos-gradient-primary);
+    color: white;
+    box-shadow: var(--partidos-shadow);
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--partidos-primary);
+    color: var(--partidos-primary);
+    background: transparent;
+}
+
+.btn-outline-secondary {
+    border: 2px solid #64748b;
+    color: #cbd5e1;
+    background: transparent;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--partidos-shadow-hover);
+    text-decoration: none;
+}
+
+.btn-outline-primary:hover {
+    background: var(--partidos-primary);
+    color: white;
+}
+
+.btn-outline-secondary:hover {
+    background: #64748b;
+    color: white;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+}
+
+/* ======= Responsive Design ======= */
+@media (max-width: 1199.98px) {
+    .partidos-grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    .page-title {
+        font-size: 1.75rem;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .partidos-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .partidos-header {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .partido-card {
+        margin: 0 -0.5rem;
+    }
+    
+    .partido-header {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+    
+    .creator-badge {
+        align-self: flex-start;
+    }
+    
+    .partido-details,
+    .jugadores-progress,
+    .partido-estados,
+    .partido-actions {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .partido-countdown {
+        padding: 0.75rem 1rem;
+    }
+    
+    .historial-content {
+        padding: 1rem;
+    }
+    
+    .historial-main {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .historial-fecha {
+        align-self: flex-end;
+        min-width: 60px;
+    }
+    
+    .empty-state-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .empty-state-actions .btn {
+        width: 100%;
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .partido-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .btn-action {
+        width: 100%;
+    }
+    
+    .btn-menu {
+        width: 100%;
+        height: 36px;
+    }
+    
+    .historial-badges {
+        justify-content: center;
+    }
+    
+    .fecha-dia {
+        font-size: 1.25rem;
+    }
+}
+
+/* ======= Animaciones ======= */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ======= Mejoras de Accesibilidad ======= */
+.btn:focus,
+.partido-card:focus-within,
+.historial-item:focus-within {
+    outline: 2px solid var(--partidos-primary);
+    outline-offset: 2px;
+}
+
+.dropdown-item:focus {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+    outline: none;
+}
+
+/* ======= Estados de Loading ======= */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top-color: var(--partidos-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ======= Efectos Especiales ======= */
+.creator-card:hover {
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
+}
+
+.progress-bar-container:hover .progress-fill {
+    background: var(--partidos-gradient-primary);
+}
+
+/* ======= Scrollbar Personalizado ======= */
+.historial-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.historial-list::-webkit-scrollbar-track {
+    background: var(--partidos-bg-section);
+    border-radius: 3px;
+}
+
+.historial-list::-webkit-scrollbar-thumb {
+    background: var(--partidos-primary);
+    border-radius: 3px;
+}
+
+.historial-list::-webkit-scrollbar-thumb:hover {
+    background: var(--partidos-secondary);
+}

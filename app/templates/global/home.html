@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}De Rabona - Home{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/global/home_styles.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-icon">
+                <i class="fas fa-futbol"></i>
+            </div>
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    Hola, <span class="user-highlight">{{ user.nombre|default:user.username }}</span>
+                </h1>
+                <p class="hero-subtitle">Tu centro de comando futbolístico</p>
+            </div>
+        </div>
+        
+        <div class="stats-overview">
+            <div class="stat-pill">
+                <span class="stat-number">{{ user.calificacion|floatformat:0|default:"1500" }}</span>
+                <span class="stat-label">ELO</span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-number">{{ user.partidos_jugados|default:0 }}</span>
+                <span class="stat-label">Partidos</span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-number">{% widthratio user.victorias user.partidos_jugados|default:1 100 %}%</span>
+                <span class="stat-label">Victoria</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Actions Section -->
+    <section class="actions-section">
+        <div class="section-header">
+            <h2 class="section-title">Acciones Rápidas</h2>
+            <div class="title-accent"></div>
+        </div>
+        
+        <div class="actions-grid">
+            <a href="{% url 'crear_partidos' %}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div class="action-content">
+                    <h3 class="action-title">Crear</h3>
+                    <p class="action-desc">Nuevo partido</p>
+                </div>
+            </a>
+            
+            <a href="{% url 'buscar_partidos' %}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="action-content">
+                    <h3 class="action-title">Buscar</h3>
+                    <p class="action-desc">Partidos disponibles</p>
+                </div>
+            </a>
+            
+            <a href="{% url 'lista_mis_equipos' %}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="action-content">
+                    <h3 class="action-title">Equipos</h3>
+                    <p class="action-desc">Gestionar equipos</p>
+                </div>
+            </a>
+            
+            <a href="{% url 'canchas_lista' %}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="action-content">
+                    <h3 class="action-title">Canchas</h3>
+                    <p class="action-desc">Explorar espacios</p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content-section">
+        <div class="content-grid">
+            <!-- Próximos Partidos -->
+            <div class="content-card large">
+                <div class="card-header">
+                    <div class="header-content">
+                        <h3 class="card-title">Próximos Partidos</h3>
+                        <span class="card-subtitle">{{ proximos_partidos_dashboard|length }} programados</span>
+                    </div>
+                    <a href="{% url 'mis_partidos' %}" class="header-link">Ver todos</a>
+                </div>
+                
+                <div class="card-body">
+                    {% if proximos_partidos_dashboard %}
+                        <div class="matches-list">
+                            {% for item in proximos_partidos_dashboard|slice:":4" %}
+                                {% with partido=item.partido %}
+                                <div class="match-item">
+                                    <div class="match-info">
+                                        <div class="match-header">
+                                            <h4 class="match-venue">{{ partido.cancha.nombre_cancha }}</h4>
+                                            <span class="match-type">{{ partido.get_tipo_display }}</span>
+                                        </div>
+                                        <div class="match-meta">
+                                            <span class="match-time">{{ partido.fecha|date:"d M, H:i" }}</span>
+                                            <span class="match-players">{{ partido.jugadores.count }}/{{ partido.max_jugadores }}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="match-status">
+                                        {% if partido.inscripcion_abierta and item.plazas_disponibles > 0 %}
+                                            <span class="status-dot available"></span>
+                                            <span class="status-text">Disponible</span>
+                                        {% else %}
+                                            <span class="status-dot full"></span>
+                                            <span class="status-text">Completo</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endwith %}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="empty-content">
+                                <h4 class="empty-title">Sin partidos programados</h4>
+                                <p class="empty-desc">Busca partidos disponibles para unirte</p>
+                                <a href="{% url 'buscar_partidos' %}" class="btn btn-primary">Buscar Partidos</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Estadísticas Personales -->
+            <div class="content-card">
+                <div class="card-header">
+                    <div class="header-content">
+                        <h3 class="card-title">Rendimiento</h3>
+                        <span class="card-subtitle">Estadísticas globales</span>
+                    </div>
+                    <a href="{% url 'perfil' %}" class="header-link">Perfil</a>
+                </div>
+                
+                <div class="card-body">
+                    <div class="performance-stats">
+                        <div class="stat-row">
+                            <div class="stat-item">
+                                <span class="stat-value">{{ user.partidos_jugados|default:0 }}</span>
+                                <span class="stat-label">Jugados</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">{{ user.victorias|default:0 }}</span>
+                                <span class="stat-label">Victorias</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-row">
+                            <div class="stat-item">
+                                <span class="stat-value">{{ user.empates|default:0 }}</span>
+                                <span class="stat-label">Empates</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">{{ user.derrotas|default:0 }}</span>
+                                <span class="stat-label">Derrotas</span>
+                            </div>
+                        </div>
+                        
+                        {% with total_partidos=user.partidos_jugados|default:0 %}
+                            {% if total_partidos > 0 %}
+                                <div class="win-rate">
+                                    <div class="win-rate-header">
+                                        <span class="win-rate-label">Tasa de victoria</span>
+                                        <span class="win-rate-value">{% widthratio user.victorias total_partidos 100 %}%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: {% widthratio user.victorias total_partidos 100 %}%"></div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actividad Reciente -->
+            <div class="content-card">
+                <div class="card-header">
+                    <div class="header-content">
+                        <h3 class="card-title">Actividad</h3>
+                        <span class="card-subtitle">Últimos movimientos</span>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="activity-feed">
+                        {% if ultimas_actividades %}
+                            {% for actividad in ultimas_actividades|slice:":4" %}
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas {{ actividad.icono|default:'fa-futbol' }}"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p class="activity-text">{{ actividad.mensaje }}</p>
+                                    <span class="activity-time">{{ actividad.timestamp|timesince }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-futbol"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p class="activity-text">Partido creado en Cancha Centro</p>
+                                    <span class="activity-time">5 min</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p class="activity-text">Añadido al equipo "Los Invencibles"</p>
+                                    <span class="activity-time">1 h</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p class="activity-text">Victoria 5-3 contra "Rivales FC"</p>
+                                    <span class="activity-time">2 h</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animaciones sutiles y elegantes
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.classList.add('animate-in');
+                }, index * 100);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // Observar elementos para animación
+    document.querySelectorAll('.action-card, .content-card, .stat-pill').forEach(el => {
+        observer.observe(el);
+    });
+});
+</script>
+{% endblock %}

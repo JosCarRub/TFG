@@ -1,11 +1,11 @@
 /* ======= Variables CLEAN ======= */
 :root {
-    --primary: #00d4b1;
-    --primary-rgb: 0, 212, 177;
-    --accent: #8a5cf7;
-    --accent-rgb: 138, 92, 247;
-    --mint: #00d4b1;
-    --teal: #20c997;
+    --seville-orange: #f7835c;
+    --seville-orange-rgb: 0, 212, 177;
+    --seville-accent: #8a5cf7;
+    --seville-accent-rgb: 138, 92, 247;
+    --seville-primary: #f7835c;
+    --seville-teal: #f7835c;
     
     --bg-canvas: #0f0f1a;
     --bg-surface: #1e1e2d;
@@ -17,9 +17,9 @@
     
     --border-subtle: #374151;
     
-    --gradient-primary: linear-gradient(135deg, var(--primary), var(--teal));
-    --gradient-accent: linear-gradient(145deg, var(--accent), #8a5cf7);
-    --gradient-cta: linear-gradient(145deg, var(--mint), var(--teal));
+    --gradient-primary: linear-gradient(135deg, var(--seville-orange), var(--seville-teal));
+    --gradient-accent: linear-gradient(145deg, var(--seville-accent), #8a5cf7);
+    --gradient-cta: linear-gradient(145deg, var(--seville-primary), var(--seville-teal));
     
     --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -80,7 +80,7 @@ body {
 }
 
 .nav-link:hover {
-    color: var(--primary);
+    color: var(--seville-orange);
 }
 
 /* ======= Auth Links CLEAN ======= */
@@ -98,7 +98,7 @@ body {
 }
 
 .nav-link-auth:hover {
-    color: var(--primary);
+    color: var(--seville-orange);
     background: rgba(0, 212, 177, 0.1);
 }
 
@@ -245,14 +245,14 @@ body {
 }
 
 .register-link {
-    color: var(--primary);
+    color: var(--seville-orange);
     text-decoration: none;
     font-weight: 600;
     transition: var(--transition);
 }
 
 .register-link:hover {
-    color: var(--teal);
+    color: var(--seville-teal);
     text-decoration: underline;
 }
 
@@ -291,7 +291,7 @@ body {
 .register-form .form-control:focus,
 .register-form .form-select:focus {
     background: var(--bg-canvas);
-    border-color: var(--primary);
+    border-color: var(--seville-orange);
     box-shadow: 0 0 0 0.2rem rgba(0, 212, 177, 0.25);
     color: var(--text-primary);
 }

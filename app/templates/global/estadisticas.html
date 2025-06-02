@@ -1,0 +1,1277 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}Estadísticas Generales - De Rabona{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/estadisticas_styles.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <!-- Header de Estadísticas -->
+    <div class="stats-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h4 class="page-title">Estadísticas de la Comunidad</h4>
+                <p class="page-subtitle">Descubre las métricas y tendencias de De Rabona</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline-primary btn-refresh" id="refreshStats">
+                    <i class="fas fa-sync-alt me-2"></i>
+                    <span>Actualizar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas Principales -->
+    <div class="main-stats-section">
+        <div class="stats-grid">
+            <div class="stat-card" data-stat="players">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" data-target="3426">0</div>
+                    <div class="stat-label">Jugadores Activos</div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+12%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card" data-stat="matches">
+                <div class="stat-icon">
+                    <i class="fas fa-futbol"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" data-target="1857">0</div>
+                    <div class="stat-label">Partidos Jugados</div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+8%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card" data-stat="teams">
+                <div class="stat-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" data-target="312">0</div>
+                    <div class="stat-label">Equipos Formados</div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+15%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card" data-stat="venues">
+                <div class="stat-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" data-target="186">0</div>
+                    <div class="stat-label">Canchas Registradas</div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+5%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros de Período -->
+    <div class="period-filter-section">
+        <div class="filter-card">
+            <div class="filter-content">
+                <span class="filter-label">Período de análisis:</span>
+                <div class="period-buttons">
+                    <button class="btn-period" data-period="7d">Últimos 7 días</button>
+                    <button class="btn-period active" data-period="1m">Último mes</button>
+                    <button class="btn-period" data-period="1y">Último año</button>
+                    <button class="btn-period" data-period="all">Todo el tiempo</button>
+                </div>
+                <div class="auto-refresh">
+                    <label class="switch">
+                        <input type="checkbox" id="autoRefresh">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="switch-label">Actualización automática</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rankings de Jugadores -->
+    <div class="rankings-section">
+        <div class="section-header">
+            <h5 class="section-title">
+                <i class="fas fa-trophy me-2"></i>
+                Jugadores Destacados
+            </h5>
+        </div>
+
+        <div class="rankings-grid">
+            <!-- Mejor Valorados -->
+            <div class="ranking-card">
+                <div class="ranking-header">
+                    <h6 class="ranking-title">Mejor Valorados</h6>
+                    <span class="ranking-badge badge-gold">Top 5</span>
+                </div>
+                <div class="ranking-list">
+                    <div class="player-item" data-rank="1">
+                        <div class="player-rank">
+                            <span class="rank-number gold">1</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="Miguel Sánchez">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">Miguel Sánchez</h6>
+                            <p class="player-position">Delantero</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">5.0</span>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+
+                    <div class="player-item" data-rank="2">
+                        <div class="player-rank">
+                            <span class="rank-number silver">2</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="Laura Gómez">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">Laura Gómez</h6>
+                            <p class="player-position">Centrocampista</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">4.9</span>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+
+                    <div class="player-item" data-rank="3">
+                        <div class="player-rank">
+                            <span class="rank-number bronze">3</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="David Martín">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">David Martín</h6>
+                            <p class="player-position">Defensa</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">4.8</span>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+
+                    <div class="player-item" data-rank="4">
+                        <div class="player-rank">
+                            <span class="rank-number">4</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="Ana Rodríguez">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">Ana Rodríguez</h6>
+                            <p class="player-position">Delantera</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">4.7</span>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+
+                    <div class="player-item" data-rank="5">
+                        <div class="player-rank">
+                            <span class="rank-number">5</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="Javier López">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">Javier López</h6>
+                            <p class="player-position">Portero</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">4.6</span>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="ranking-footer">
+                    <a href="#" class="btn btn-sm btn-outline-primary">
+                        Ver ranking completo
+                        <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Más Activos -->
+            <div class="ranking-card">
+                <div class="ranking-header">
+                    <h6 class="ranking-title">Más Activos</h6>
+                    <span class="ranking-badge badge-blue">Top 5</span>
+                </div>
+                <div class="ranking-list">
+                    <div class="player-item" data-rank="1">
+                        <div class="player-rank">
+                            <span class="rank-number gold">1</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="Sergio Moreno">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">Sergio Moreno</h6>
+                            <p class="player-position">Centrocampista</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">78</span>
+                            <i class="fas fa-futbol"></i>
+                        </div>
+                    </div>
+
+                    <div class="player-item" data-rank="2">
+                        <div class="player-rank">
+                            <span class="rank-number silver">2</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="Pablo García">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">Pablo García</h6>
+                            <p class="player-position">Defensa</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">72</span>
+                            <i class="fas fa-futbol"></i>
+                        </div>
+                    </div>
+
+                    <div class="player-item" data-rank="3">
+                        <div class="player-rank">
+                            <span class="rank-number bronze">3</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="Carmen Ruiz">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">Carmen Ruiz</h6>
+                            <p class="player-position">Delantera</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">65</span>
+                            <i class="fas fa-futbol"></i>
+                        </div>
+                    </div>
+
+                    <div class="player-item" data-rank="4">
+                        <div class="player-rank">
+                            <span class="rank-number">4</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="Luis Torres">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">Luis Torres</h6>
+                            <p class="player-position">Portero</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">61</span>
+                            <i class="fas fa-futbol"></i>
+                        </div>
+                    </div>
+
+                    <div class="player-item" data-rank="5">
+                        <div class="player-rank">
+                            <span class="rank-number">5</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="Elena Martínez">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">Elena Martínez</h6>
+                            <p class="player-position">Centrocampista</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">59</span>
+                            <i class="fas fa-futbol"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="ranking-footer">
+                    <a href="#" class="btn btn-sm btn-outline-primary">
+                        Ver ranking completo
+                        <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Más Fiables -->
+            <div class="ranking-card">
+                <div class="ranking-header">
+                    <h6 class="ranking-title">Más Fiables</h6>
+                    <span class="ranking-badge badge-green">Top 5</span>
+                </div>
+                <div class="ranking-list">
+                    <div class="player-item" data-rank="1">
+                        <div class="player-rank">
+                            <span class="rank-number gold">1</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="Roberto Díaz">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">Roberto Díaz</h6>
+                            <p class="player-position">Defensa</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">100%</span>
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+
+                    <div class="player-item" data-rank="2">
+                        <div class="player-rank">
+                            <span class="rank-number silver">2</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="María López">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">María López</h6>
+                            <p class="player-position">Portera</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">98%</span>
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+
+                    <div class="player-item" data-rank="3">
+                        <div class="player-rank">
+                            <span class="rank-number bronze">3</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="Carlos Pérez">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">Carlos Pérez</h6>
+                            <p class="player-position">Centrocampista</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">97%</span>
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+
+                    <div class="player-item" data-rank="4">
+                        <div class="player-rank">
+                            <span class="rank-number">4</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="Sofía García">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">Sofía García</h6>
+                            <p class="player-position">Delantera</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">95%</span>
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+
+                    <div class="player-item" data-rank="5">
+                        <div class="player-rank">
+                            <span class="rank-number">5</span>
+                        </div>
+                        <div class="player-avatar">
+                            <img src="https://via.placeholder.com/50" alt="Fernando Silva">
+                        </div>
+                        <div class="player-info">
+                            <h6 class="player-name">Fernando Silva</h6>
+                            <p class="player-position">Defensa</p>
+                        </div>
+                        <div class="player-stat">
+                            <span class="stat-value">95%</span>
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="ranking-footer">
+                    <a href="#" class="btn btn-sm btn-outline-primary">
+                        Ver ranking completo
+                        <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Equipos y Canchas -->
+    <div class="teams-venues-section">
+        <div class="section-header">
+            <h5 class="section-title">
+                <i class="fas fa-chart-line me-2"></i>
+                Equipos y Canchas
+            </h5>
+        </div>
+
+        <div class="tv-grid">
+            <!-- Top Teams -->
+            <div class="data-table-card">
+                <div class="table-header">
+                    <h6 class="table-title">Equipos Mejor Valorados</h6>
+                    <span class="table-badge badge-purple">Top 5</span>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Equipo</th>
+                                <th>Partidos</th>
+                                <th>Valoración</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="rank-badge gold">1</span></td>
+                                <td>
+                                    <div class="team-info">
+                                        <div class="team-avatar bg-primary">FC</div>
+                                        <div class="team-details">
+                                            <h6>FC Barcelona Fans</h6>
+                                            <small>Madrid Este</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>42</td>
+                                <td>
+                                    <div class="rating">
+                                        <span>4.9</span>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-badge silver">2</span></td>
+                                <td>
+                                    <div class="team-info">
+                                        <div class="team-avatar bg-danger">RT</div>
+                                        <div class="team-details">
+                                            <h6>Real Tekkers</h6>
+                                            <small>Madrid Centro</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>38</td>
+                                <td>
+                                    <div class="rating">
+                                        <span>4.8</span>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-badge bronze">3</span></td>
+                                <td>
+                                    <div class="team-info">
+                                        <div class="team-avatar bg-success">LF</div>
+                                        <div class="team-details">
+                                            <h6>Las Fieras FC</h6>
+                                            <small>Madrid Norte</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>35</td>
+                                <td>
+                                    <div class="rating">
+                                        <span>4.7</span>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-badge">4</span></td>
+                                <td>
+                                    <div class="team-info">
+                                        <div class="team-avatar bg-warning">GP</div>
+                                        <div class="team-details">
+                                            <h6>Galácticos del Parque</h6>
+                                            <small>Madrid Sur</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>29</td>
+                                <td>
+                                    <div class="rating">
+                                        <span>4.6</span>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-badge">5</span></td>
+                                <td>
+                                    <div class="team-info">
+                                        <div class="team-avatar bg-info">AC</div>
+                                        <div class="team-details">
+                                            <h6>Atlético de Chamartín</h6>
+                                            <small>Madrid Este</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>27</td>
+                                <td>
+                                    <div class="rating">
+                                        <span>4.5</span>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-footer">
+                    <a href="#" class="btn btn-sm btn-outline-primary">
+                        Ver todos los equipos
+                        <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Top Venues -->
+            <div class="data-table-card">
+                <div class="table-header">
+                    <h6 class="table-title">Canchas Más Populares</h6>
+                    <span class="table-badge badge-green">Top 5</span>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Cancha</th>
+                                <th>Partidos</th>
+                                <th>Valoración</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="rank-badge gold">1</span></td>
+                                <td>
+                                    <div class="venue-info">
+                                        <img src="https://via.placeholder.com/40x24" alt="Campo">
+                                        <div class="venue-details">
+                                            <h6>Campo Municipal Norte</h6>
+                                            <small><i class="fas fa-check-circle text-success me-1"></i>Verificada</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>126</td>
+                                <td>
+                                    <div class="rating">
+                                        <span>4.8</span>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-badge silver">2</span></td>
+                                <td>
+                                    <div class="venue-info">
+                                        <img src="https://via.placeholder.com/40x24" alt="Campo">
+                                        <div class="venue-details">
+                                            <h6>Estadio Central</h6>
+                                            <small><i class="fas fa-check-circle text-success me-1"></i>Verificada</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>98</td>
+                                <td>
+                                    <div class="rating">
+                                        <span>4.9</span>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-badge bronze">3</span></td>
+                                <td>
+                                    <div class="venue-info">
+                                        <img src="https://via.placeholder.com/40x24" alt="Campo">
+                                        <div class="venue-details">
+                                            <h6>Polideportivo Sur</h6>
+                                            <small><i class="fas fa-check-circle text-success me-1"></i>Verificada</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>87</td>
+                                <td>
+                                    <div class="rating">
+                                        <span>4.6</span>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-badge">4</span></td>
+                                <td>
+                                    <div class="venue-info">
+                                        <img src="https://via.placeholder.com/40x24" alt="Campo">
+                                        <div class="venue-details">
+                                            <h6>Cancha "El Barrio"</h6>
+                                            <small><i class="fas fa-users text-info me-1"></i>Comunitaria</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>65</td>
+                                <td>
+                                    <div class="rating">
+                                        <span>4.2</span>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="rank-badge">5</span></td>
+                                <td>
+                                    <div class="venue-info">
+                                        <img src="https://via.placeholder.com/40x24" alt="Campo">
+                                        <div class="venue-details">
+                                            <h6>Campo San Jorge</h6>
+                                            <small><i class="fas fa-users text-info me-1"></i>Comunitaria</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>54</td>
+                                <td>
+                                    <div class="rating">
+                                        <span>4.0</span>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-footer">
+                    <a href="#" class="btn btn-sm btn-outline-primary">
+                        Ver todas las canchas
+                        <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos y Análisis -->
+    <div class="charts-section">
+        <div class="section-header">
+            <h5 class="section-title">
+                <i class="fas fa-chart-pie me-2"></i>
+                Tendencias y Análisis
+            </h5>
+        </div>
+
+        <div class="charts-grid">
+            <!-- Actividad Semanal -->
+            <div class="chart-card large">
+                <div class="chart-header">
+                    <h6 class="chart-title">Actividad Semanal</h6>
+                    <div class="chart-controls">
+                        <button class="btn btn-sm btn-outline-secondary" data-chart="matches">Partidos</button>
+                        <button class="btn btn-sm btn-primary" data-chart="players">Jugadores</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="weeklyActivityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Tipos de Partido -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h6 class="chart-title">Tipos de Partido</h6>
+                </div>
+                <div class="chart-container">
+                    <canvas id="matchTypesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas Personales -->
+    <div class="personal-stats-section">
+        <div class="personal-stats-card">
+            <div class="personal-header">
+                <div class="header-info">
+                    <h4 class="personal-title">Tus Estadísticas Personales</h4>
+                    <p class="personal-subtitle">Revisa tu rendimiento y progreso</p>
+                </div>
+                <div class="header-action">
+                    <a href="/mis-estadisticas" class="btn btn-primary">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Ver estadísticas detalladas
+                    </a>
+                </div>
+            </div>
+            <div class="personal-stats-grid">
+                <div class="personal-stat">
+                    <div class="personal-stat-icon">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+                    <div class="personal-stat-content">
+                        <div class="personal-stat-number" data-target="24">0</div>
+                        <div class="personal-stat-label">Partidos Jugados</div>
+                    </div>
+                </div>
+
+                <div class="personal-stat">
+                    <div class="personal-stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="personal-stat-content">
+                        <div class="personal-stat-number" data-target="4.7">0</div>
+                        <div class="personal-stat-label">Valoración Media</div>
+                    </div>
+                </div>
+
+                <div class="personal-stat">
+                    <div class="personal-stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="personal-stat-content">
+                        <div class="personal-stat-number" data-target="95">0</div>
+                        <div class="personal-stat-label">% Asistencia</div>
+                    </div>
+                </div>
+
+                <div class="personal-stat">
+                    <div class="personal-stat-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <div class="personal-stat-content">
+                        <div class="personal-stat-number" data-target="7">0</div>
+                        <div class="personal-stat-label">Partidos Creados</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts embebidos -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Variables globales
+    let weeklyChart = null;
+    let matchTypesChart = null;
+    let autoRefreshInterval = null;
+
+    // Inicializar todas las funcionalidades
+    initializeAnimations();
+    initializeCharts();
+    initializePeriodFilters();
+    initializeAutoRefresh();
+    initializeRefreshButton();
+
+    // ======= Animaciones =======
+    function initializeAnimations() {
+        // Observer para animar contadores cuando entran en vista
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const element = entry.target;
+                    if (element.classList.contains('stat-number')) {
+                        animateCounter(element);
+                    } else if (element.classList.contains('personal-stat-number')) {
+                        animateCounter(element);
+                    }
+                    observer.unobserve(element);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        // Observar todos los contadores
+        document.querySelectorAll('.stat-number, .personal-stat-number').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Animar entrada de cards
+        animateCards();
+    }
+
+    function animateCounter(element) {
+        const target = parseFloat(element.getAttribute('data-target'));
+        const isDecimal = target % 1 !== 0;
+        let current = 0;
+        const increment = target / 50;
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            
+            if (isDecimal) {
+                element.textContent = current.toFixed(1);
+            } else {
+                element.textContent = Math.floor(current);
+            }
+        }, 40);
+    }
+
+    function animateCards() {
+        const cards = document.querySelectorAll('.stat-card, .ranking-card, .chart-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    }
+
+    // ======= Gráficos =======
+    function initializeCharts() {
+        createWeeklyActivityChart();
+        createMatchTypesChart();
+    }
+
+    function createWeeklyActivityChart() {
+        const ctx = document.getElementById('weeklyActivityChart').getContext('2d');
+        
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
+        gradient.addColorStop(1, 'rgba(59, 130, 246, 0.05)');
+
+        weeklyChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+                datasets: [{
+                    label: 'Jugadores activos',
+                    data: [128, 86, 94, 145, 168, 312, 287],
+                    backgroundColor: gradient,
+                    borderColor: '#3b82f6',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointBackgroundColor: '#3b82f6',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 3,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleColor: '#f8fafc',
+                        bodyColor: '#cbd5e1',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(100, 116, 139, 0.1)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function createMatchTypesChart() {
+        const ctx = document.getElementById('matchTypesChart').getContext('2d');
+        
+        matchTypesChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Fútbol 5', 'Fútbol 7', 'Fútbol 11', 'Fútbol sala'],
+                datasets: [{
+                    data: [42, 28, 15, 15],
+                    backgroundColor: [
+                        '#10b981',
+                        '#3b82f6', 
+                        '#8b5cf6',
+                        '#f59e0b'
+                    ],
+                    borderColor: [
+                        '#10b981',
+                        '#3b82f6',
+                        '#8b5cf6', 
+                        '#f59e0b'
+                    ],
+                    borderWidth: 0,
+                    cutout: '60%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#cbd5e1',
+                            padding: 20,
+                            font: {
+                                size: 12
+                            },
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleColor: '#f8fafc',
+                        bodyColor: '#cbd5e1',
+                        borderColor: '#64748b',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.parsed}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // ======= Filtros de Período =======
+    function initializePeriodFilters() {
+        const periodButtons = document.querySelectorAll('.btn-period');
+        
+        periodButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remover clase active de todos los botones
+                periodButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Agregar clase active al botón clickeado
+                this.classList.add('active');
+                
+                // Obtener el período seleccionado
+                const period = this.getAttribute('data-period');
+                
+                // Actualizar datos según el período
+                updateDataForPeriod(period);
+                
+                // Mostrar feedback visual
+                showUpdateFeedback();
+            });
+        });
+    }
+
+    function updateDataForPeriod(period) {
+        // Simular datos diferentes según el período
+        const periodData = {
+            '7d': {
+                players: 1234,
+                matches: 89,
+                teams: 45,
+                venues: 23,
+                weeklyData: [45, 52, 38, 67, 89, 156, 134]
+            },
+            '1m': {
+                players: 3426,
+                matches: 1857,
+                teams: 312,
+                venues: 186,
+                weeklyData: [128, 86, 94, 145, 168, 312, 287]
+            },
+            '1y': {
+                players: 8945,
+                matches: 12456,
+                teams: 789,
+                venues: 234,
+                weeklyData: [456, 523, 389, 678, 892, 1156, 1034]
+            },
+            'all': {
+                players: 15678,
+                matches: 45321,
+                teams: 1234,
+                venues: 567,
+                weeklyData: [1128, 986, 1094, 1345, 1568, 2312, 2087]
+            }
+        };
+
+        const data = periodData[period];
+        
+        // Actualizar contadores principales
+        updateMainStats(data);
+        
+        // Actualizar gráfico semanal
+        updateWeeklyChart(data.weeklyData);
+    }
+
+    function updateMainStats(data) {
+        const statCards = document.querySelectorAll('.stat-card');
+        const stats = ['players', 'matches', 'teams', 'venues'];
+        
+        statCards.forEach((card, index) => {
+            const counter = card.querySelector('.stat-number');
+            const targetValue = data[stats[index]];
+            
+            // Animar el cambio de valor
+            animateValueChange(counter, targetValue);
+        });
+    }
+
+    function animateValueChange(element, newTarget) {
+        const currentValue = parseInt(element.textContent);
+        const increment = (newTarget - currentValue) / 30;
+        let current = currentValue;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if ((increment > 0 && current >= newTarget) || (increment < 0 && current <= newTarget)) {
+                current = newTarget;
+                clearInterval(timer);
+            }
+            element.textContent = Math.floor(current);
+        }, 50);
+    }
+
+    function updateWeeklyChart(newData) {
+        if (weeklyChart) {
+            weeklyChart.data.datasets[0].data = newData;
+            weeklyChart.update('active');
+        }
+    }
+
+    // ======= Auto-refresh =======
+    function initializeAutoRefresh() {
+        const autoRefreshToggle = document.getElementById('autoRefresh');
+        
+        autoRefreshToggle.addEventListener('change', function() {
+            if (this.checked) {
+                startAutoRefresh();
+                showNotification('Actualización automática activada', 'success');
+            } else {
+                stopAutoRefresh();
+                showNotification('Actualización automática desactivada', 'info');
+            }
+        });
+    }
+
+    function startAutoRefresh() {
+        // Actualizar cada 30 segundos
+        autoRefreshInterval = setInterval(() => {
+            refreshAllData();
+        }, 30000);
+    }
+
+    function stopAutoRefresh() {
+        if (autoRefreshInterval) {
+            clearInterval(autoRefreshInterval);
+            autoRefreshInterval = null;
+        }
+    }
+
+    function refreshAllData() {
+        const activePeriod = document.querySelector('.btn-period.active').getAttribute('data-period');
+        updateDataForPeriod(activePeriod);
+        showUpdateFeedback();
+    }
+
+    // ======= Botón de refresh manual =======
+    function initializeRefreshButton() {
+        const refreshButton = document.getElementById('refreshStats');
+        
+        refreshButton.addEventListener('click', function() {
+            // Mostrar estado de loading
+            const originalContent = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i><span>Actualizando...</span>';
+            this.disabled = true;
+            
+            // Simular carga de datos
+            setTimeout(() => {
+                refreshAllData();
+                
+                // Restaurar botón
+                this.innerHTML = originalContent;
+                this.disabled = false;
+                
+                showNotification('Estadísticas actualizadas', 'success');
+            }, 2000);
+        });
+    }
+
+    // ======= Funciones auxiliares =======
+    function showUpdateFeedback() {
+        // Crear elemento de feedback
+        const feedback = document.createElement('div');
+        feedback.className = 'update-feedback';
+        feedback.innerHTML = '<i class="fas fa-check me-2"></i>Datos actualizados';
+        feedback.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            z-index: 1000;
+            animation: slideInRight 0.3s ease;
+        `;
+        
+        document.body.appendChild(feedback);
+        
+        // Remover después de 3 segundos
+        setTimeout(() => {
+            feedback.style.animation = 'slideInRight 0.3s ease reverse';
+            setTimeout(() => feedback.remove(), 300);
+        }, 3000);
+    }
+
+    function showNotification(message, type = 'info') {
+        const colors = {
+            success: '#10b981',
+            error: '#ef4444',
+            warning: '#f59e0b',
+            info: '#3b82f6'
+        };
+
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${colors[type]};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1050;
+            font-weight: 500;
+            animation: slideInRight 0.3s ease;
+        `;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideInRight 0.3s ease reverse';
+            setTimeout(() => notification.remove(), 300);
+        }, 4000);
+    }
+
+    // ======= Event Listeners adicionales =======
+    
+    // Controles de gráfico semanal
+    document.querySelectorAll('[data-chart]').forEach(button => {
+        button.addEventListener('click', function() {
+            const chartType = this.getAttribute('data-chart');
+            
+            // Actualizar botones activos
+            document.querySelectorAll('[data-chart]').forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline-secondary');
+            });
+            this.classList.remove('btn-outline-secondary');
+            this.classList.add('btn-primary');
+            
+            // Actualizar datos del gráfico
+            if (chartType === 'matches') {
+                weeklyChart.data.datasets[0].label = 'Partidos jugados';
+                weeklyChart.data.datasets[0].data = [45, 32, 28, 52, 68, 89, 76];
+            } else {
+                weeklyChart.data.datasets[0].label = 'Jugadores activos';
+                weeklyChart.data.datasets[0].data = [128, 86, 94, 145, 168, 312, 287];
+            }
+            
+            weeklyChart.update('active');
+        });
+    });
+
+    // Hover effects para cards de ranking
+    document.querySelectorAll('.player-item').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(8px) scale(1.02)';
+            this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.3)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0) scale(1)';
+            this.style.boxShadow = '';
+        });
+    });
+
+    // Agregar estilos de animación
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Cleanup al salir de la página
+    window.addEventListener('beforeunload', function() {
+        stopAutoRefresh();
+    });
+});
+</script>
+{% endblock %}

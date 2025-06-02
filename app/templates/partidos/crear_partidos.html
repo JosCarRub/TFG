@@ -1,60 +1,209 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %} {# Si usas crispy-forms #}
+{% load crispy_forms_tags %}
+{% load static %}
 
-{% block base %}
-<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
-    {% include "components/nav.html" %}
+{% block title %}{{ titulo_pagina|default:"Crear Partido" }} - De Rabona{% endblock %}
 
-    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
-        {% include "components/top_nav.html" %}
-        
-        <div class="container-fluid p-4 bg-dark">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                        <div class="card-body p-4">
-                            <h4 class="text-white mb-2">{{ titulo_pagina|default:"Crear un nuevo partido" }}</h4>
-                            <p class="text-white-50 mb-0">Completa el formulario para organizar un partido y encontrar jugadores</p>
-                        </div>
-                    </div>
-                </div>
+{% block extra_css %}
+<link href="{% static 'css/partidos/crear_partido_styles.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="crear-partido-container">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-icon">
+                <i class="fas fa-plus-circle"></i>
+            </div>
+            <div class="hero-text">
+                <h1 class="hero-title">{{ titulo_pagina|default:"Crear Nuevo Partido" }}</h1>
+                <p class="hero-subtitle">Organiza un partido y encuentra jugadores para completar tu equipo</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Form Section -->
+    <section class="form-section">
+        <div class="form-container">
+            <div class="form-header">
+                <h2 class="form-title">Detalles del Partido</h2>
+                <p class="form-subtitle">Completa la información necesaria para tu partido</p>
             </div>
             
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="card border-0 shadow-sm" style="background-color: #6f7173; border-radius: 15px;">
-                        <div class="card-body p-4 p-md-5">
-                            <form method="post" enctype="multipart/form-data"> 
-                                {% csrf_token %}
-                                
-                                {{ form | crispy }}
-                                 
-                                <div class="d-flex justify-content-end mt-4">
-                                    <a href="{% url 'buscar_partidos' %}" class="btn btn-outline-light me-2">Cancelar</a>
-                                    <button type="submit" class="btn btn-success btn-lg">
-                                        <i class="fas fa-check-circle me-2"></i>Crear Partido
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+            <div class="form-body">
+                <form method="post" enctype="multipart/form-data" class="partido-form" id="partidoForm">
+                    {% csrf_token %}
+                    
+                    <div class="form-fields">
+                        {{ form | crispy }}
                     </div>
-                </div>
-            </div>
-            
-            <!-- Sección de Consejos -->
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                        <div class="card-body p-4">
-                            <h5 class="text-white mb-3">Consejos para organizar un buen partido</h5>
-                            <div class="row g-4">
-                                </div>
+                    
+                    <div class="form-actions">
+                        <a href="{% url 'buscar_partidos' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Cancelar</span>
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check"></i>
+                            <span class="btn-text">Crear Partido</span>
+                            <div class="btn-loader">
+                                <div class="spinner"></div>
                             </div>
-                        </div>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tips Section -->
+    <section class="tips-section">
+        <div class="tips-container">
+            <div class="tips-header">
+                <h3 class="tips-title">Consejos para organizar un buen partido</h3>
+                <div class="title-accent"></div>
+            </div>
+            
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="tip-content">
+                        <h4 class="tip-title">Planifica con tiempo</h4>
+                        <p class="tip-description">Crea el partido con al menos 24-48 horas de anticipación para dar tiempo a los jugadores a organizarse.</p>
+                    </div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="tip-content">
+                        <h4 class="tip-title">Elige una buena ubicación</h4>
+                        <p class="tip-description">Selecciona una cancha accesible y bien ubicada. Verifica que tenga estacionamiento y transporte público cercano.</p>
+                    </div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="tip-content">
+                        <h4 class="tip-title">Define el nivel</h4>
+                        <p class="tip-description">Especifica claramente el nivel de juego para que se unan jugadores con habilidades similares y el partido sea equilibrado.</p>
+                    </div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <div class="tip-content">
+                        <h4 class="tip-title">Comunica las reglas</h4>
+                        <p class="tip-description">Incluye información sobre el tipo de juego, duración, si hay árbitro, y cualquier regla especial que aplicará.</p>
+                    </div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-euro-sign"></i>
+                    </div>
+                    <div class="tip-content">
+                        <h4 class="tip-title">Costos transparentes</h4>
+                        <p class="tip-description">Si hay algún costo por la cancha o servicios, especifícalo claramente desde el inicio para evitar malentendidos.</p>
+                    </div>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="tip-content">
+                        <h4 class="tip-title">Seguridad primero</h4>
+                        <p class="tip-description">Asegúrate de que la cancha esté en buenas condiciones y recuerda a los jugadores usar equipo de protección apropiado.</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('partidoForm');
+    const submitBtn = document.querySelector('.btn-primary');
+    const btnText = document.querySelector('.btn-text');
+    const btnLoader = document.querySelector('.btn-loader');
+    
+    // Animaciones de entrada
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.classList.add('animate-in');
+                }, index * 100);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // Observar elementos para animación
+    document.querySelectorAll('.tip-card, .form-container').forEach(el => {
+        observer.observe(el);
+    });
+    
+    // Manejo del formulario
+    if (form && submitBtn) {
+        form.addEventListener('submit', function(e) {
+            // Validación básica
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                const firstError = form.querySelector('.is-invalid');
+                if (firstError) {
+                    firstError.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }
+                return;
+            }
+            
+            // Estado de carga
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+            btnText.style.opacity = '0';
+            btnLoader.style.opacity = '1';
+        });
+        
+        // Limpiar errores al escribir
+        const formFields = form.querySelectorAll('input, select, textarea');
+        formFields.forEach(field => {
+            field.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+            });
+        });
+    }
+});
+</script>
 {% endblock %}

@@ -1,218 +1,397 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block base %}
-<!-- Dashboard Layout -->
-<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
-    {% include "components/nav.html" %}
+{% block title %}Mi Perfil - De Rabona{% endblock %}
 
-    <!-- Main Content Area -->
-    <div class="flex-grow-1 overflow-auto p-0 bg-dark"> 
-        <!-- Top Navigation Bar -->
-        {% include "components/top_nav.html" %}
-        
-        <!-- Profile Content -->
-        <div class="container-fluid p-4">
-            <!-- Profile header/banner -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                        <div class="card-body p-0">
-                            <!-- Cover image -->
-                            <div class="position-relative">
-                                <img src="{% if user.banner_perfil %}{{ user.banner_perfil.url }}{% else %}{% static 'images/banner_default.png' %}{% endif %}" class="w-100" style="height: 200px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px;" alt="Banner del perfil">
-                                <!-- Profile image -->
-                                <div class="position-absolute" style="bottom: -50px; left: 30px;">
-                                    <div class="position-relative">
-                                        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static '/images/avatar_default.png' %}{% endif %}" class="rounded-circle border border-4 border-dark" width="100" height="100" alt="Avatar de {{ user.nombre }}">
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Profile info -->
-                            <div class="p-4 mt-5">
-                                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                                    <div>
-                                        <h3 class="text-white mb-1">{{ user.nombre|default:"Nombre no especificado" }}</h3>
-                                        <p class="text-success mb-0">
-                                            {% if user.posicion %}
-                                                <i class="fas fa-futbol me-2"></i>{{ user.get_posicion_display }} | 
-                                            {% endif %}
-                                            {% if user.ubicacion %}
-                                                <i class="fas fa-map-marker-alt me-2"></i>{{ user.ubicacion }} |
-                                            {% endif %}
-                                            <i class="fas fa-star me-2"></i>ELO: {{ user.calificacion|floatformat:0 }}
-                                        </p>
-                                    </div>
-                                    <div class="mt-3 mt-md-0">
-                                        <a href="{% url 'update_profile' %}" class="btn btn-outline-light">
-                                            <i class="fas fa-edit me-2"></i>Editar perfil
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+{% block extra_css %}
+<link href="{% static 'css/perfil_styles.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- Profile Hero Section -->
+    <section class="profile-hero-section">
+        <div class="profile-hero-content">
+            <!-- Profile Cover -->
+            <div class="profile-cover">
+                <img src="{% if user.banner_perfil %}{{ user.banner_perfil.url }}{% else %}{% static 'images/banner_default.png' %}{% endif %}" 
+                     alt="Banner del perfil" class="profile-cover-image">
+                <div class="profile-cover-overlay"></div>
+            </div>
+            
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar-wrapper">
+                        <img src="{% if user.imagen_perfil %}{{ user.imagen_perfil.url }}{% else %}{% static '/images/avatar_default.png' %}{% endif %}" 
+                             alt="Avatar de {{ user.nombre }}" class="profile-avatar">
+                        <div class="profile-avatar-ring"></div>
+                    </div>
+                    
+                    <div class="profile-info">
+                        <h1 class="profile-name">{{ user.nombre|default:"Nombre no especificado" }}</h1>
+                        <div class="profile-meta">
+                            {% if user.posicion %}
+                                <span class="profile-badge">
+                                    <i class="fas fa-futbol"></i>
+                                    {{ user.get_posicion_display }}
+                                </span>
+                            {% endif %}
+                            {% if user.ubicacion %}
+                                <span class="profile-badge">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    {{ user.ubicacion }}
+                                </span>
+                            {% endif %}
+                            <span class="profile-badge profile-elo">
+                                <i class="fas fa-star"></i>
+                                ELO {{ user.calificacion|floatformat:0 }}
+                            </span>
                         </div>
                     </div>
                 </div>
+                
+                <div class="profile-actions">
+                    <a href="{% url 'update_profile' %}" class="btn-profile-edit">
+                        <i class="fas fa-edit"></i>
+                        <span>Editar perfil</span>
+                    </a>
+                </div>
             </div>
+        </div>
+    </section>
 
-            <!-- Profile content tabs and details -->
-            <div class="row">
-                <div class="col-12">
-                    <!-- Tabs navigation -->
-                    <ul class="nav nav-tabs mb-4 border-0 gap-2" id="profileTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active text-white" style="background-color: #2d3748; border: none;" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-tab-pane" type="button" role="tab" aria-controls="info-tab-pane" aria-selected="true">
-                                <i class="fas fa-info-circle me-2"></i>Información
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link text-white" style="background-color: #2d3748; border: none;" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats-tab-pane" type="button" role="tab" aria-controls="stats-tab-pane" aria-selected="false">
-                                <i class="fas fa-chart-bar me-2"></i>Estadísticas
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link text-white" style="background-color: #2d3748; border: none;" id="elo-history-tab" data-bs-toggle="tab" data-bs-target="#elo-history-tab-pane" type="button" role="tab" aria-controls="elo-history-tab-pane" aria-selected="false">
-                                <i class="fas fa-trophy me-2"></i>Historial ELO
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link text-white" style="background-color: #2d3748; border: none;" id="teams-tab" data-bs-toggle="tab" data-bs-target="#teams-tab-pane" type="button" role="tab" aria-controls="teams-tab-pane" aria-selected="false">
-                                <i class="fas fa-users me-2"></i>Mis Equipos
-                            </button>
-                        </li>
-                    </ul>
+    <!-- Profile Navigation -->
+    <section class="profile-nav-section">
+        <nav class="profile-nav">
+            <button class="profile-nav-item active" data-tab="info">
+                <i class="fas fa-info-circle"></i>
+                <span>Información</span>
+            </button>
+            <button class="profile-nav-item" data-tab="stats">
+                <i class="fas fa-chart-bar"></i>
+                <span>Estadísticas</span>
+            </button>
+            <button class="profile-nav-item" data-tab="elo-history">
+                <i class="fas fa-trophy"></i>
+                <span>Historial ELO</span>
+            </button>
+            <button class="profile-nav-item" data-tab="teams">
+                <i class="fas fa-users"></i>
+                <span>Mis Equipos</span>
+            </button>
+        </nav>
+    </section>
 
-                    <!-- Tab content -->
-                    <div class="tab-content" id="profileTabsContent">
-                        <!-- Info Tab -->
-                        <div class="tab-pane fade show active" id="info-tab-pane" role="tabpanel" aria-labelledby="info-tab" tabindex="0">
-                            <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px;">
-                                <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center py-3">
-                                    <h5 class="text-white mb-0">Información personal</h5>
-                                    <a href="{% url 'update_profile' %}" class="btn btn-sm btn-dark text-success">
-                                        <i class="fas fa-edit me-1"></i>Editar
-                                    </a>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-group list-group-flush" style="background-color: transparent;">
-                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                            <span class="text-white-50">Nombre</span>
-                                            <span class="text-white">{{ user.nombre|default:"No especificado" }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                            <span class="text-white-50">Email</span>
-                                            <span class="text-white">{{ user.username }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                            <span class="text-white-50">Fecha de nacimiento</span>
-                                            <span class="text-white">{{ user.fecha_nacimiento|date:"d/m/Y"|default:"No especificada" }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                            <span class="text-white-50">Género</span>
-                                            <span class="text-white">{{ user.get_genero_display|default:"No especificado" }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                            <span class="text-white-50">Posición Preferida</span>
-                                            <span class="text-white">{{ user.get_posicion_display|default:"No especificada" }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-color: #3f495e;">
-                                            <span class="text-white-50">Ubicación</span>
-                                            <span class="text-white">{{ user.ubicacion|default:"No especificada" }}</span>
-                                        </li>
-                                        
-                                    </ul>
-                                </div>
+    <!-- Profile Content -->
+    <section class="profile-content-section">
+        <!-- Info Tab -->
+        <div class="profile-tab-content active" id="info-tab">
+            <div class="content-card">
+                <div class="card-header">
+                    <div class="header-content">
+                        <h3 class="card-title">
+                            <i class="fas fa-user"></i>
+                            Información Personal
+                        </h3>
+                        <span class="card-subtitle">Datos de tu perfil</span>
+                    </div>
+                    <a href="{% url 'update_profile' %}" class="header-action">
+                        <i class="fas fa-edit"></i>
+                        Editar
+                    </a>
+                </div>
+                
+                <div class="card-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-user"></i>
+                                Nombre completo
                             </div>
+                            <div class="info-value">{{ user.nombre|default:"No especificado" }}</div>
                         </div>
                         
-                        <!-- Stats Tab -->
-                        <div class="tab-pane fade" id="stats-tab-pane" role="tabpanel" aria-labelledby="stats-tab" tabindex="0">
-                            <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                                <div class="card-header bg-transparent border-0 py-3">
-                                    <h5 class="text-white mb-0">Mis Estadísticas</h5>
-                                </div>
-                                <div class="card-body p-0">
-                                    <div class="row g-0 text-center">
-                                        <div class="col-md-3 col-6 p-3 border-end border-bottom" style="border-color: #3f495e !important;">
-                                            <h4 class="text-success mb-1">{{ user.calificacion|floatformat:0 }}</h4>
-                                            <p class="text-white-50 mb-0">ELO Actual</p>
-                                        </div>
-                                        <div class="col-md-3 col-6 p-3 border-end border-bottom" style="border-color: #3f495e !important;">
-                                            <h4 class="text-success mb-1">{{ user.partidos_jugados }}</h4>
-                                            <p class="text-white-50 mb-0">Partidos Jugados</p>
-                                        </div>
-                                        <div class="col-md-3 col-6 p-3 border-end border-bottom" style="border-color: #3f495e !important;">
-                                            <h4 class="text-success mb-1">{{ user.victorias }}</h4>
-                                            <p class="text-white-50 mb-0">Victorias</p>
-                                        </div>
-                                        <div class="col-md-3 col-6 p-3 border-bottom" style="border-color: #3f495e !important;">
-                                            <h4 class="text-warning mb-1">{{ user.empates }}</h4>
-                                            <p class="text-white-50 mb-0">Empates</p>
-                                        </div>
-                                        <div class="col-md-3 col-6 p-3 border-end" style="border-color: #3f495e !important;">
-                                            <h4 class="text-danger mb-1">{{ user.derrotas }}</h4>
-                                            <p class="text-white-50 mb-0">Derrotas</p>
-                                        </div>
-                                        {% with total_partidos=user.partidos_jugados %}
-                                            {% if total_partidos > 0 %}
-                                                <div class="col-md-3 col-6 p-3 border-end" style="border-color: #3f495e !important;">
-                                                    <h4 class="text-info mb-1">{{ user.victorias}}</h4>
-                                                    <p class="text-white-50 mb-0">% Victorias</p>
-                                                </div>
-                                            {% else %}
-                                                <div class="col-md-3 col-6 p-3 border-end" style="border-color: #3f495e !important;">
-                                                    <h4 class="text-info mb-1">N/A</h4>
-                                                    <p class="text-white-50 mb-0">% Victorias</p>
-                                                </div>
-                                            {% endif %}
-                                        {% endwith %}
-                                        {# Puedes añadir más estadísticas aquí #}
-                                    </div>
-                                </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-envelope"></i>
+                                Email
                             </div>
+                            <div class="info-value">{{ user.username }}</div>
                         </div>
                         
-                        <!-- ELO History Tab (placeholder) -->
-                        <div class="tab-pane fade" id="elo-history-tab-pane" role="tabpanel" aria-labelledby="elo-history-tab" tabindex="0">
-                            <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                                <div class="card-body p-4">
-                                    <h5 class="text-white mb-3">Historial de Calificación (ELO)</h5>
-                                    <p class="text-white-50">Próximamente: Gráfico de evolución de tu ELO y listado de cambios por partido.</p>
-                                </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-calendar"></i>
+                                Fecha de nacimiento
                             </div>
+                            <div class="info-value">{{ user.fecha_nacimiento|date:"d/m/Y"|default:"No especificada" }}</div>
                         </div>
                         
-                        <!-- Teams Tab (placeholder) -->
-                        <div class="tab-pane fade" id="teams-tab-pane" role="tabpanel" aria-labelledby="teams-tab" tabindex="0">
-                            <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                                <div class="card-body p-4">
-                                    <h5 class="text-white mb-3">Mis Equipos</h5>
-                                    <p class="text-white-50">Próximamente: Listado de equipos a los que perteneces.</p>
-                                </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-venus-mars"></i>
+                                Género
                             </div>
+                            <div class="info-value">{{ user.get_genero_display|default:"No especificado" }}</div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-futbol"></i>
+                                Posición preferida
+                            </div>
+                            <div class="info-value">{{ user.get_posicion_display|default:"No especificada" }}</div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Ubicación
+                            </div>
+                            <div class="info-value">{{ user.ubicacion|default:"No especificada" }}</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+
+        <!-- Stats Tab -->
+        <div class="profile-tab-content" id="stats-tab">
+            <div class="content-card">
+                <div class="card-header">
+                    <div class="header-content">
+                        <h3 class="card-title">
+                            <i class="fas fa-chart-bar"></i>
+                            Estadísticas de Juego
+                        </h3>
+                        <span class="card-subtitle">Tu rendimiento en números</span>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Stats Overview -->
+                    <div class="stats-overview">
+                        <div class="stat-card primary">
+                            <div class="stat-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">{{ user.calificacion|floatformat:0 }}</div>
+                                <div class="stat-label">ELO Actual</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-futbol"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">{{ user.partidos_jugados|default:0 }}</div>
+                                <div class="stat-label">Partidos</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card success">
+                            <div class="stat-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">{{ user.victorias|default:0 }}</div>
+                                <div class="stat-label">Victorias</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card neutral">
+                            <div class="stat-icon">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">{{ user.empates|default:0 }}</div>
+                                <div class="stat-label">Empates</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card danger">
+                            <div class="stat-icon">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">{{ user.derrotas|default:0 }}</div>
+                                <div class="stat-label">Derrotas</div>
+                            </div>
+                        </div>
+                        
+                        {% with total_partidos=user.partidos_jugados|default:0 %}
+                        <div class="stat-card accent">
+                            <div class="stat-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="stat-content">
+                                {% if total_partidos > 0 %}
+                                    <div class="stat-number">{% widthratio user.victorias total_partidos 100 %}%</div>
+                                {% else %}
+                                    <div class="stat-number">N/A</div>
+                                {% endif %}
+                                <div class="stat-label">% Victoria</div>
+                            </div>
+                        </div>
+                        {% endwith %}
+                    </div>
+                    
+                    <!-- Performance Chart -->
+                    {% with total_partidos=user.partidos_jugados|default:0 %}
+                    {% if total_partidos > 0 %}
+                    <div class="performance-chart">
+                        <h4 class="chart-title">Distribución de Resultados</h4>
+                        <div class="chart-bars">
+                            <div class="chart-bar">
+                                <div class="bar-header">
+                                    <span class="bar-label">Victorias</span>
+                                    <span class="bar-percentage">{% widthratio user.victorias total_partidos 100 %}%</span>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-fill success" style="width: {% widthratio user.victorias total_partidos 100 %}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="chart-bar">
+                                <div class="bar-header">
+                                    <span class="bar-label">Empates</span>
+                                    <span class="bar-percentage">{% widthratio user.empates total_partidos 100 %}%</span>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-fill neutral" style="width: {% widthratio user.empates total_partidos 100 %}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="chart-bar">
+                                <div class="bar-header">
+                                    <span class="bar-label">Derrotas</span>
+                                    <span class="bar-percentage">{% widthratio user.derrotas total_partidos 100 %}%</span>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-fill danger" style="width: {% widthratio user.derrotas total_partidos 100 %}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+
+        <!-- ELO History Tab -->
+        <div class="profile-tab-content" id="elo-history-tab">
+            <div class="content-card">
+                <div class="card-header">
+                    <div class="header-content">
+                        <h3 class="card-title">
+                            <i class="fas fa-trophy"></i>
+                            Historial ELO
+                        </h3>
+                        <span class="card-subtitle">Evolución de tu calificación</span>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4 class="empty-title">Próximamente</h4>
+                        <p class="empty-desc">Gráfico de evolución de tu ELO y listado de cambios por partido.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teams Tab -->
+        <div class="profile-tab-content" id="teams-tab">
+            <div class="content-card">
+                <div class="card-header">
+                    <div class="header-content">
+                        <h3 class="card-title">
+                            <i class="fas fa-users"></i>
+                            Mis Equipos
+                        </h3>
+                        <span class="card-subtitle">Equipos donde participas</span>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4 class="empty-title">Próximamente</h4>
+                        <p class="empty-desc">Listado de equipos a los que perteneces y tu rol en cada uno.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
-
-    //SE HARÁ DESDE EL BACKEND EN SU MOMENTO
-    document.addEventListener('DOMContentLoaded', function() {
-        const fechaNacimientoStr = "{{ user.fecha_nacimiento|date:'Y-m-d' }}";
-        if (fechaNacimientoStr) {
-            const fechaNacimiento = new Date(fechaNacimientoStr);
-            const hoy = new Date();
-            let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
-            const m = hoy.getMonth() - fechaNacimiento.getMonth();
-            if (m < 0 || (m === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
-                edad--;
-            }
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab functionality
+    const tabButtons = document.querySelectorAll('.profile-nav-item');
+    const tabContents = document.querySelectorAll('.profile-tab-content');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
             
+            // Remove active class from all buttons and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked button and corresponding content
+            this.classList.add('active');
+            document.getElementById(targetTab + '-tab').classList.add('active');
+            
+            // Animate tab content
+            const targetContent = document.getElementById(targetTab + '-tab');
+            targetContent.style.opacity = '0';
+            targetContent.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                targetContent.style.transition = 'all 0.4s ease';
+                targetContent.style.opacity = '1';
+                targetContent.style.transform = 'translateY(0)';
+            }, 50);
+        });
+    });
+    
+    // Smooth scroll on profile navigation
+    const profileNav = document.querySelector('.profile-nav-section');
+    const profileNavOffset = profileNav.offsetTop;
+    
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset >= profileNavOffset) {
+            profileNav.classList.add('sticky');
+        } else {
+            profileNav.classList.remove('sticky');
         }
     });
+    
+    // Animate stats on scroll
+    const statsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+                statsObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    document.querySelectorAll('.stat-card').forEach(card => {
+        statsObserver.observe(card);
+    });
+});
 </script>
 {% endblock %}

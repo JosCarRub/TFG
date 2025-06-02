@@ -1,80 +1,353 @@
-{% extends 'base.html' %}
+{% extends 'main.html' %}
 {% load static %}
 
-{% block base %}
-<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
-    {% include "components/nav.html" %}
-    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
-        {% include "components/top_nav.html" %}
-        <div class="container-fluid p-4">
-            <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px; color: white;">
-                <div class="position-relative">
-                    <img src="{% if equipo.team_banner %}{{ equipo.team_banner.url }}{% else %}{% static 'images/banner_equipo_default.jpg' %}{% endif %}" class="card-img-top" alt="Banner de {{ equipo.nombre_equipo }}" style="height: 250px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px;">
-                    <div class="position-absolute bottom-0 start-0 p-3 d-flex align-items-end" style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); width:100%; border-bottom-left-radius: 15px;">
-                        {% if equipo.team_shield %}
-                            <img src="{{ equipo.team_shield.url }}" class="rounded-circle me-3" alt="Escudo" width="100" height="100" style="border: 3px solid #dee2e6; margin-bottom: -30px; background-color: #2d3748;">
-                        {% else %}
-                            <div class="rounded-circle bg-secondary me-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; border: 3px solid #dee2e6; margin-bottom: -30px;">
-                                <i class="fas fa-users fa-3x text-white-50"></i>
-                            </div>
-                        {% endif %}
-                        <div>
-                            <h2 class="text-white mb-0">{{ equipo.nombre_equipo }}</h2>
-                            <p class="text-white-50 mb-0">Capitán: {{ equipo.capitan.nombre }}</p>
+{% block title %}{{ equipo.nombre_equipo }} - De Rabona{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/equipo/detalle_equipo_styles.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-lg-4 p-3">
+    <!-- Banner del equipo -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="equipo-banner-card">
+                <div class="equipo-banner-wrapper">
+                    <!-- Imagen de fondo -->
+                    <div class="equipo-cover-container">
+                        <img src="{% if equipo.team_banner %}{{ equipo.team_banner.url }}{% else %}{% static 'images/banner_equipo_default.jpg' %}{% endif %}" 
+                             class="equipo-cover-image" 
+                             alt="Banner de {{ equipo.nombre_equipo }}">
+                    </div>
+                    
+                    <!-- Escudo y información del equipo -->
+                    <div class="equipo-info-overlay">
+                        <div class="equipo-shield-container">
+                            {% if equipo.team_shield %}
+                                <img src="{{ equipo.team_shield.url }}" class="equipo-shield" alt="Escudo de {{ equipo.nombre_equipo }}">
+                            {% else %}
+                                <div class="equipo-shield equipo-shield-default">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="equipo-info-text">
+                            <h1 class="equipo-nombre">{{ equipo.nombre_equipo }}</h1>
+                            <p class="equipo-capitan">
+                                <i class="fas fa-crown me-1"></i>
+                                Capitán: {{ equipo.capitan.nombre }}
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div class="card-body p-4" style="margin-top: 40px;"> {# Espacio para el escudo superpuesto #}
-                    <div class="d-flex justify-content-end mb-3">
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Información del equipo -->
+            <div class="content-card mb-4">
+                <div class="content-card-header">
+                    <h2 class="content-card-title">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Información del Equipo
+                    </h2>
+                    <!-- Botones de acción -->
+                    <div class="equipo-actions">
                         {% if es_capitan %}
-                            <a href="{% url 'editar_equipo_permanente' pk=equipo.id_equipo %}" class="btn btn-outline-warning btn-sm me-2"><i class="fas fa-edit"></i> Editar Equipo</a>
-                            {# Botón para gestionar miembros, invitar, etc. #}
-                            <a href="#" class="btn btn-outline-info btn-sm"><i class="fas fa-user-plus"></i> Gestionar Miembros</a>
+                            <a href="{% url 'editar_equipo_permanente' pk=equipo.id_equipo %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit me-1"></i>
+                                Editar Equipo
+                            </a>
+                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#gestionarMiembrosModal">
+                                <i class="fas fa-user-cog me-1"></i>
+                                Gestionar Miembros
+                            </button>
                         {% elif not es_miembro %}
-                            {# Lógica para solicitar unirse al equipo #}
-                            <a href="#" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> Solicitar Unirse</a>
+                            <button class="btn btn-success btn-sm" id="solicitarUnirse">
+                                <i class="fas fa-user-plus me-1"></i>
+                                Solicitar Unirse
+                            </button>
                         {% else %}
-                            <span class="badge bg-success p-2"><i class="fas fa-check"></i> Eres Miembro</span>
-                            {# Lógica para abandonar equipo #}
+                            <span class="badge badge-member">
+                                <i class="fas fa-check me-1"></i>
+                                Eres Miembro
+                            </span>
+                            <button class="btn btn-outline-danger btn-sm" id="abandonarEquipo">
+                                <i class="fas fa-sign-out-alt me-1"></i>
+                                Abandonar Equipo
+                            </button>
                         {% endif %}
                     </div>
+                </div>
+                <div class="content-card-body">
+                    <div class="equipo-descripcion">
+                        <h4 class="descripcion-title">
+                            <i class="fas fa-align-left me-2"></i>
+                            Descripción
+                        </h4>
+                        <div class="descripcion-content">
+                            {% if equipo.descripcion %}
+                                {{ equipo.descripcion|linebreaksbr }}
+                            {% else %}
+                                <p class="text-muted">Este equipo aún no tiene una descripción.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                    <h5 class="text-success">Descripción</h5>
-                    <p class="text-white-75">{{ equipo.descripcion|linebreaksbr|default:"Este equipo aún no tiene una descripción." }}</p>
-                    
-                    <hr class="border-secondary">
-
-                    <h5 class="text-success">Miembros del Equipo ({{ equipo.jugadores.count }})</h5>
-                    <div class="row g-3">
-                        {% for jugador in equipo.jugadores.all %}
-                        <div class="col-md-6 col-lg-4">
-                            <div class="d-flex align-items-center p-2 rounded" style="background-color: #3a4454;">
-                                <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" class="rounded-circle me-2" width="40" height="40" alt="{{ jugador.nombre }}">
-                                <div>
-                                    <span class="text-white">{{ jugador.nombre }}</span><br>
-                                    <small class="text-white-50">{{ jugador.get_posicion_display|default:"Sin posición" }}</small>
+            <!-- Miembros del equipo -->
+            <div class="content-card">
+                <div class="content-card-header">
+                    <h2 class="content-card-title">
+                        <i class="fas fa-users me-2"></i>
+                        Miembros del Equipo
+                        <span class="members-count">({{ equipo.jugadores.count }})</span>
+                    </h2>
+                </div>
+                <div class="content-card-body">
+                    {% if equipo.jugadores.exists %}
+                        <div class="miembros-grid">
+                            {% for jugador in equipo.jugadores.all %}
+                            <div class="miembro-card">
+                                <div class="miembro-avatar">
+                                    <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" 
+                                         alt="{{ jugador.nombre }}">
+                                </div>
+                                <div class="miembro-info">
+                                    <h5 class="miembro-nombre">{{ jugador.nombre }}</h5>
+                                    <p class="miembro-posicion">{{ jugador.get_posicion_display|default:"Sin posición" }}</p>
+                                    <div class="miembro-stats">
+                                        <span class="stat-item">
+                                            <i class="fas fa-star"></i>
+                                            {{ jugador.calificacion|floatformat:0|default:"N/A" }}
+                                        </span>
+                                    </div>
                                 </div>
                                 {% if jugador == equipo.capitan %}
-                                    <span class="badge bg-primary ms-auto">Capitán</span>
+                                    <div class="miembro-badge badge-capitan">
+                                        <i class="fas fa-crown"></i>
+                                        Capitán
+                                    </div>
                                 {% endif %}
                             </div>
+                            {% endfor %}
                         </div>
-                        {% empty %}
-                        <p class="text-white-50">Este equipo aún no tiene jugadores asignados (además del capitán).</p>
-                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-user-plus fa-3x"></i>
+                            <h4>No hay miembros</h4>
+                            <p>Este equipo aún no tiene jugadores asignados además del capitán.</p>
+                            {% if es_capitan %}
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#invitarJugadorModal">
+                                    <i class="fas fa-user-plus me-2"></i>
+                                    Invitar Jugadores
+                                </button>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar con estadísticas -->
+        <div class="col-lg-4">
+            <!-- Estadísticas del equipo -->
+            <div class="content-card mb-4">
+                <div class="content-card-header">
+                    <h3 class="content-card-title">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        Estadísticas
+                    </h3>
+                </div>
+                <div class="content-card-body">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">{{ equipo.jugadores.count }}</div>
+                                <div class="stat-label">Miembros</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">{{ equipo.fecha_creacion|date:"M Y" }}</div>
+                                <div class="stat-label">Creado</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-futbol"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">Partidos</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">Victorias</div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <hr class="border-secondary mt-4">
-                    <h5 class="text-success">Estadísticas del Equipo (Próximamente)</h5>
-                    <p class="text-white-50">Aquí se mostrarán los partidos jugados, victorias, ELO promedio del equipo, etc.</p>
-
+                    <div class="proximas-funciones">
+                        <h5 class="proximas-title">
+                            <i class="fas fa-rocket me-2"></i>
+                            Próximamente
+                        </h5>
+                        <ul class="proximas-lista">
+                            <li><i class="fas fa-chart-line me-2"></i>Historial de partidos</li>
+                            <li><i class="fas fa-star me-2"></i>ELO promedio del equipo</li>
+                            <li><i class="fas fa-trophy me-2"></i>Estadísticas detalladas</li>
+                            <li><i class="fas fa-medal me-2"></i>Rankings y logros</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="card-footer bg-transparent border-top border-secondary text-center py-3">
-                    <a href="{% url 'lista_mis_equipos' %}" class="btn btn-outline-light"><i class="fas fa-arrow-left me-2"></i>Volver a Mis Equipos</a>
+            </div>
+
+            <!-- Acciones rápidas -->
+            <div class="content-card">
+                <div class="content-card-header">
+                    <h3 class="content-card-title">
+                        <i class="fas fa-bolt me-2"></i>
+                        Acciones Rápidas
+                    </h3>
+                </div>
+                <div class="content-card-body">
+                    <div class="acciones-lista">
+                        <a href="{% url 'lista_mis_equipos' %}" class="accion-item">
+                            <div class="accion-icon">
+                                <i class="fas fa-arrow-left"></i>
+                            </div>
+                            <div class="accion-content">
+                                <h5>Volver a Mis Equipos</h5>
+                                <p>Regresar al listado completo</p>
+                            </div>
+                        </a>
+                        
+                        {% if es_capitan %}
+                        <a href="#" class="accion-item">
+                            <div class="accion-icon">
+                                <i class="fas fa-plus-circle"></i>
+                            </div>
+                            <div class="accion-content">
+                                <h5>Crear Partido</h5>
+                                <p>Organizar un partido con este equipo</p>
+                            </div>
+                        </a>
+                        {% endif %}
+                        
+                        <a href="#" class="accion-item">
+                            <div class="accion-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <div class="accion-content">
+                                <h5>Ver Historial</h5>
+                                <p>Partidos anteriores del equipo</p>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal para gestionar miembros (solo para capitanes) -->
+{% if es_capitan %}
+<div class="modal fade" id="gestionarMiembrosModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-white">
+                    <i class="fas fa-user-cog me-2"></i>
+                    Gestionar Miembros
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-light">Funcionalidad próximamente disponible.</p>
+            </div>
+        </div>
+    </div>
 </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animación de entrada para las cards de miembros
+    const miembroCards = document.querySelectorAll('.miembro-card');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 100);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    miembroCards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        observer.observe(card);
+    });
+
+    // Funcionalidad para solicitar unirse
+    const solicitarBtn = document.getElementById('solicitarUnirse');
+    if (solicitarBtn) {
+        solicitarBtn.addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que quieres solicitar unirte a este equipo?')) {
+                // Aquí iría la lógica para enviar la solicitud
+                this.innerHTML = '<i class="fas fa-clock me-1"></i>Solicitud Enviada';
+                this.classList.remove('btn-success');
+                this.classList.add('btn-warning');
+                this.disabled = true;
+            }
+        });
+    }
+
+    // Funcionalidad para abandonar equipo
+    const abandonarBtn = document.getElementById('abandonarEquipo');
+    if (abandonarBtn) {
+        abandonarBtn.addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que quieres abandonar este equipo? Esta acción no se puede deshacer.')) {
+                // Aquí iría la lógica para abandonar el equipo
+                window.location.href = "{% url 'lista_mis_equipos' %}";
+            }
+        });
+    }
+
+    // Efecto parallax sutil en el banner
+    const banner = document.querySelector('.equipo-cover-image');
+    if (banner) {
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const parallax = scrolled * 0.5;
+            banner.style.transform = `translateY(${parallax}px)`;
+        });
+    }
+});
+</script>
 {% endblock %}

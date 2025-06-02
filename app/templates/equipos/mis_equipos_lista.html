@@ -1,73 +1,290 @@
-{% extends 'base.html' %}
+{% extends 'main.html' %}
 {% load static %}
 
-{% block base %}
-<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
-    {% include "components/nav.html" %}
-    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
-        {% include "components/top_nav.html" %}
-        <div class="container-fluid p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="text-white">{{ titulo_pagina }}</h4>
-                <a href="{% url 'crear_equipo_permanente' %}" class="btn btn-success">
-                    <i class="fas fa-plus-circle me-2"></i>Crear Nuevo Equipo
+{% block title %}{{ titulo_pagina }} - De Rabona{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/equipo/lista_equipo_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <!-- Header con título y acción principal -->
+    <div class="page-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h4 class="page-title">{{ titulo_pagina }}</h4>
+                <p class="page-subtitle">Gestiona y visualiza todos tus equipos</p>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'crear_equipo_permanente' %}" class="btn btn-primary btn-create">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    <span>Crear Nuevo Equipo</span>
                 </a>
             </div>
+        </div>
+    </div>
 
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <!-- Mensajes del sistema -->
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show custom-alert" role="alert">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if equipos_list %}
+        <!-- Estadísticas rápidas -->
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
                     </div>
-                {% endfor %}
-            {% endif %}
+                    <div class="stat-content">
+                        <div class="stat-number">{{ equipos_list|length }}</div>
+                        <div class="stat-label">Equipo{{ equipos_list|length|pluralize }}</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">
+                            {% with capitaneados=equipos_list|length %}
+                                {{ capitaneados }}
+                            {% endwith %}
+                        </div>
+                        <div class="stat-label">Capitaneando</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">--</div>
+                        <div class="stat-label">Victorias</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            {% if equipos_list %}
-                <div class="row g-4">
-                    {% for equipo in equipos_list %}
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card h-100" style="background-color: #2d3748; border-radius: 10px; color:white;">
-                            {% if equipo.team_banner %}
-                                <img src="{{ equipo.team_banner.url }}" class="card-img-top" alt="Banner de {{ equipo.nombre_equipo }}" style="height: 150px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
-                            {% else %}
-                                <div class="bg-secondary card-img-top d-flex align-items-center justify-content-center" style="height: 150px; border-top-left-radius: 10px; border-top-right-radius: 10px;">
-                                    <i class="fas fa-shield-alt fa-3x text-white-50"></i>
-                                </div>
-                            {% endif %}
-                            <div class="card-body d-flex flex-column">
-                                <div class="d-flex align-items-center mb-2">
-                                    {% if equipo.team_shield %}
-                                        <img src="{{ equipo.team_shield.url }}" class="rounded-circle me-2" alt="Escudo" width="40" height="40" style="border: 2px solid #4a5568;">
-                                    {% else %}
-                                        <div class="rounded-circle bg-secondary me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border: 2px solid #4a5568;">
-                                            <i class="fas fa-users text-white-50"></i>
-                                        </div>
-                                    {% endif %}
-                                    <h5 class="card-title mb-0 text-white">{{ equipo.nombre_equipo }}</h5>
-                                </div>
-                                <p class="card-text text-white-50 small flex-grow-1">{{ equipo.descripcion|truncatewords:15|default:"Sin descripción." }}</p>
-                                <p class="card-text small mb-1"><i class="fas fa-user-shield me-1 text-success"></i> Capitán: {{ equipo.capitan.nombre }}</p>
-                                <p class="card-text small mb-3"><i class="fas fa-users me-1 text-success"></i> Jugadores: {{ equipo.jugadores.count }}</p>
-                                <a href="{% url 'detalle_equipo' pk=equipo.id_equipo %}" class="btn btn-outline-light btn-sm mt-auto w-100">Ver Detalles del Equipo</a>
+        <!-- Grid de equipos -->
+        <div class="equipos-section">
+            <div class="section-header">
+                <h5 class="section-title">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    Mis Equipos
+                </h5>
+            </div>
+            
+            <div class="equipos-grid">
+                {% for equipo in equipos_list %}
+                <div class="equipo-card" data-equipo-id="{{ equipo.id_equipo }}">
+                    <!-- Banner del equipo -->
+                    <div class="equipo-banner">
+                        {% if equipo.team_banner %}
+                            <img src="{{ equipo.team_banner.url }}" alt="Banner de {{ equipo.nombre_equipo }}" class="banner-image">
+                        {% else %}
+                            <div class="banner-placeholder">
+                                <i class="fas fa-image banner-placeholder-icon"></i>
+                            </div>
+                        {% endif %}
+                        <div class="banner-overlay">
+                            <div class="equipo-badge">
+                                <i class="fas fa-crown me-1"></i>
+                                Capitán
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
+                    
+                    <!-- Contenido del equipo -->
+                    <div class="equipo-content">
+                        <!-- Header con escudo y nombre -->
+                        <div class="equipo-header">
+                            <div class="escudo-container">
+                                {% if equipo.team_shield %}
+                                    <img src="{{ equipo.team_shield.url }}" alt="Escudo {{ equipo.nombre_equipo }}" class="escudo-image">
+                                {% else %}
+                                    <div class="escudo-placeholder">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="equipo-info">
+                                <h5 class="equipo-name">{{ equipo.nombre_equipo }}</h5>
+                                <p class="equipo-description">{{ equipo.descripcion|truncatewords:12|default:"Sin descripción disponible." }}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Estadísticas del equipo -->
+                        <div class="equipo-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-user-shield stat-icon"></i>
+                                <div class="stat-details">
+                                    <span class="stat-value">{{ equipo.capitan.nombre }}</span>
+                                    <span class="stat-label">Capitán</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <i class="fas fa-users stat-icon"></i>
+                                <div class="stat-details">
+                                    <span class="stat-value">{{ equipo.jugadores.count }}</span>
+                                    <span class="stat-label">Jugador{{ equipo.jugadores.count|pluralize:"es" }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <i class="fas fa-calendar-alt stat-icon"></i>
+                                <div class="stat-details">
+                                    <span class="stat-value">{{ equipo.fecha_creacion|date:"M Y" }}</span>
+                                    <span class="stat-label">Creado</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Acciones del equipo -->
+                        <div class="equipo-actions">
+                            <a href="{% url 'detalle_equipo' pk=equipo.id_equipo %}" class="btn btn-primary btn-view">
+                                <i class="fas fa-eye me-2"></i>
+                                Ver Detalles
+                            </a>
+                            <div class="action-menu">
+                                <button class="btn btn-outline-secondary btn-menu" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'editar_equipo_permanente' pk=equipo.id_equipo %}">
+                                            <i class="fas fa-edit me-2"></i>Editar
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="fas fa-users me-2"></i>Gestionar Jugadores
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="#" onclick="confirmDelete('{{ equipo.nombre_equipo }}', '{{ equipo.id_equipo }}')">
+                                            <i class="fas fa-trash me-2"></i>Eliminar
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Indicador de actividad -->
+                    <div class="activity-indicator active">
+                        <i class="fas fa-circle"></i>
+                        <span>Activo</span>
+                    </div>
                 </div>
-                <!-- Paginación si es necesaria -->
-            {% else %}
-                <div class="text-center py-5">
-                    <i class="fas fa-users-slash fa-4x text-white-50 mb-3"></i>
-                    <h5 class="text-white">Aún no perteneces ni capitaneas ningún equipo permanente.</h5>
-                    <p class="text-white-50">¡Anímate y crea el tuyo!</p>
-                    <a href="{% url 'crear_equipo_permanente' %}" class="btn btn-success mt-2">
-                        <i class="fas fa-plus-circle me-2"></i>Crear Mi Equipo
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Paginación (si es necesaria) -->
+        {% comment %}
+        <div class="pagination-section">
+            <nav aria-label="Navegación de equipos">
+                <ul class="pagination justify-content-center">
+                    <!-- Controles de paginación aquí -->
+                </ul>
+            </nav>
+        </div>
+        {% endcomment %}
+
+    {% else %}
+        <!-- Estado vacío -->
+        <div class="empty-state">
+            <div class="empty-state-content">
+                <div class="empty-state-icon">
+                    <i class="fas fa-users-slash"></i>
+                </div>
+                <h5 class="empty-state-title">No tienes equipos todavía</h5>
+                <p class="empty-state-message">
+                    Parece que aún no perteneces ni capitaneas ningún equipo permanente.<br>
+                    ¡Es el momento perfecto para crear tu primer equipo!
+                </p>
+                <div class="empty-state-actions">
+                    <a href="{% url 'crear_equipo_permanente' %}" class="btn btn-primary btn-create-first">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Crear Mi Primer Equipo
+                    </a>
+                    <a href="#" class="btn btn-outline-secondary">
+                        <i class="fas fa-search me-2"></i>
+                        Buscar Equipos
                     </a>
                 </div>
-            {% endif %}
+                
+                <!-- Sugerencias -->
+                <div class="suggestions">
+                    <h6 class="suggestions-title">¿Qué puedes hacer con un equipo?</h6>
+                    <div class="suggestions-grid">
+                        <div class="suggestion-item">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Organizar partidos</span>
+                        </div>
+                        <div class="suggestion-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Seguir estadísticas</span>
+                        </div>
+                        <div class="suggestion-item">
+                            <i class="fas fa-trophy"></i>
+                            <span>Competir en torneos</span>
+                        </div>
+                        <div class="suggestion-item">
+                            <i class="fas fa-users"></i>
+                            <span>Gestionar jugadores</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Modal de confirmación para eliminar -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-white" id="confirmDeleteModalLabel">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-white">
+                <p>¿Estás seguro de que quieres eliminar el equipo <strong id="teamNameToDelete"></strong>?</p>
+                <p class="text-warning small">
+                    <i class="fas fa-exclamation-circle me-1"></i>
+                    Esta acción no se puede deshacer y perderás toda la información del equipo.
+                </p>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash me-2"></i>Eliminar Equipo
+                </button>
+            </div>
         </div>
     </div>
 </div>
-</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/equipo/lista_equipos.js' %}"></script>
 {% endblock %}

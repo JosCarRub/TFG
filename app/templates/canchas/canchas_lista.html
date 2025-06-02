@@ -1,158 +1,279 @@
-{% extends 'base.html' %}
-{% load static %} {# Para la imagen por defecto de la cancha #}
+{% extends 'main.html' %}
+{% load static %}
 
-{% block base %}
-<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
-    {% include "components/nav.html" %}
+{% block title %}{{ titulo_pagina|default:"Canchas Disponibles" }} - De Rabona{% endblock %}
 
-    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
-        {% include "components/top_nav.html" %}
-        
-        <div class="container-fluid p-4">
-            <!-- Page Header -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                        <div class="card-body p-4">
-                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                                <div>
-                                    <h4 class="text-white mb-1">{{ titulo_pagina|default:"Canchas Disponibles" }}</h4>
-                                    <p class="text-white-50 mb-md-0">Encuentra o registra las mejores canchas para tus partidos</p>
-                                </div>
-                                <div class="d-flex gap-2 mt-3 mt-md-0">
-                                    <!-- Buscador (funcionalidad futura) -->
-                                    <form method="get" action="{% url 'canchas_lista' %}" class="input-group">
-                                        <input type="text" name="q" class="form-control bg-dark text-white border-secondary" placeholder="Buscar canchas por nombre..." value="{{ request.GET.q }}">
-                                        <button class="btn btn-success" type="submit">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </form>
-                                    <!-- Botón para ir a la página de registrar cancha -->
-                                    <a href="{% url 'canchas_registrar' %}" class="btn btn-success">
-                                        <i class="fas fa-plus-circle me-md-2"></i><span class="d-none d-md-inline">Añadir cancha</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/canchas/canchas_lista_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="canchas-container">
+    <!-- Header de Canchas -->
+    <div class="canchas-header">
+        <div class="header-content">
+            <div class="header-info">
+                <h1 class="page-title">
+                    <i class="fas fa-map-marker-alt me-3"></i>
+                    {{ titulo_pagina|default:"Canchas Disponibles" }}
+                </h1>
+                <p class="page-subtitle">Encuentra o registra las mejores canchas para tus partidos</p>
             </div>
-
-            <!-- Filtros (puedes mantener tu sección de filtros aquí si la implementas) -->
-            {% comment %}
-            <div class="row mb-4"> ... Tu código de filtros ... </div>
-            {% endcomment %}
-
-            <!-- Mensajes de Django (para éxito/error tras registrar) -->
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="header-actions">
+                <!-- Buscador -->
+                <form method="get" action="{% url 'canchas_lista' %}" class="search-form">
+                    <div class="search-container">
+                        <input type="text" name="q" class="search-input" placeholder="Buscar canchas por nombre..." value="{{ request.GET.q }}">
+                        <button class="search-btn" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
                     </div>
-                {% endfor %}
-            {% endif %}
-
-            <!-- Lista de Canchas -->
-            <div id="venueListView">
-                <div class="row g-4 mb-5">
-                    {% if canchas_list %}
-                        {% for cancha in canchas_list %}
-                        <div class="col-md-6 col-xl-4">
-                            <div class="card border-0 shadow-sm h-100" style="background-color: #2d3748; border-radius: 15px; overflow: hidden;">
-                                <div class="position-relative">
-                                    <img src="{% if cancha.imagen %}{{ cancha.imagen.url }}{% else %}{% static 'images/cancha_default.jpg' %}{% endif %}" class="card-img-top" alt="{{ cancha.nombre_cancha }}" style="height: 200px; object-fit: cover;">
-                                    <div class="position-absolute top-0 start-0 m-3">
-                                        <span class="badge {% if cancha.propiedad == 'PRIVADA' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %} d-flex align-items-center">
-                                            <i class="fas {% if cancha.propiedad == 'PRIVADA' %}fa-lock{% else %}fa-futbol{% endif %} me-1"></i>{{ cancha.get_propiedad_display }}
-                                        </span>
-                                    </div>
-                                    <div class="position-absolute bottom-0 start-0 end-0 p-3 text-center" style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
-                                        <h5 class="text-white mb-0">{{ cancha.nombre_cancha }}</h5>
-                                    </div>
-                                </div>
-                                <div class="card-body p-4 d-flex flex-column">
-                                    <div class="mb-3">
-                                        <p class="text-white mb-1"><i class="fas fa-map-marker-alt text-success me-2"></i>{{ cancha.ubicacion }}</p>
-                                        <p class="text-white mb-1"><i class="fas fa-futbol text-success me-2"></i>{{ cancha.get_tipo_display }}</p>
-                                        <p class="text-white mb-1"><i class="fas fa-layer-group text-success me-2"></i>{{ cancha.get_superficie_display }}</p>
-                                        {% if cancha.costo_partido is not None %}
-                                        <p class="text-white mb-1">
-                                            <i class="fas fa-euro-sign text-success me-2"></i>
-                                            {% if cancha.costo_partido > 0 %}
-                                                {{ cancha.costo_partido|floatformat:2 }}€
-                                            {% else %}
-                                                Gratis
-                                            {% endif %}
-                                        </p>
-                                        {% endif %}
-                                    </div>
-                                    <p class="text-white-50 small mb-3 flex-grow-1">{{ cancha.descripcion|truncatewords:20|default:"Sin descripción." }}</p>
-                                    <div class="mt-auto d-flex justify-content-between">
-                                        <a href="{% url 'detalle_cancha' pk_cancha=cancha.id_cancha %}" class="btn btn-outline-light btn-sm">
-                                            <i class="fas fa-info-circle me-1"></i>Detalles
-                                        </a>
-                                        {% if cancha.propiedad == 'PRIVADA' %}
-                                        <a href="#" class="btn btn-success btn-sm"> {/* Reemplazar # con URL de reserva */}
-                                            <i class="fas fa-calendar-alt me-1"></i>Reservar
-                                        </a>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                                                
-                    {% endfor %}
-                    {% else %}
-                        <div class="col-12">
-                            <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px;">
-                                <div class="card-body p-5 text-center">
-                                    <i class="fas fa-search-location fa-3x text-white-50 mb-3"></i>
-                                    <h5 class="text-white">No hay canchas disponibles</h5>
-                                    <p class="text-white-50">Parece que no hay canchas que coincidan con tu búsqueda o aún no se han registrado. <br>¡Intenta añadir una!</p>
-                                    <a href="{% url 'canchas_registrar' %}" class="btn btn-success mt-3">
-                                        <i class="fas fa-plus-circle me-2"></i>Añadir Nueva Cancha
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
-
-                <!-- Paginación -->
-                {% if is_paginated %}
-                    <div class="d-flex justify-content-center mt-4">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination">
-                                {% if page_obj.has_previous %}
-                                    <li class="page-item"><a class="page-link bg-dark border-secondary text-white" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">« Primera</a></li>
-                                    <li class="page-item"><a class="page-link bg-dark border-secondary text-white" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Anterior</a></li>
-                                {% else %}
-                                    <li class="page-item disabled"><span class="page-link bg-dark border-secondary text-secondary">« Primera</span></li>
-                                    <li class="page-item disabled"><span class="page-link bg-dark border-secondary text-secondary">Anterior</span></li>
-                                {% endif %}
-
-                                {% for num in page_obj.paginator.page_range %}
-                                    {% if page_obj.number == num %}
-                                        <li class="page-item active"><span class="page-link bg-success border-success">{{ num }}</span></li>
-                                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                                        <li class="page-item"><a class="page-link bg-dark border-secondary text-white" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a></li>
-                                    {% endif %}
-                                {% endfor %}
-
-                                {% if page_obj.has_next %}
-                                    <li class="page-item"><a class="page-link bg-dark border-secondary text-white" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Siguiente</a></li>
-                                    <li class="page-item"><a class="page-link bg-dark border-secondary text-white" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Última »</a></li>
-                                {% else %}
-                                    <li class="page-item disabled"><span class="page-link bg-dark border-secondary text-secondary">Siguiente</span></li>
-                                    <li class="page-item disabled"><span class="page-link bg-dark border-secondary text-secondary">Última »</span></li>
-                                {% endif %}
-                            </ul>
-                        </nav>
-                    </div>
-                {% endif %}
+                </form>
+                <!-- Botón para añadir cancha -->
+                <a href="{% url 'canchas_registrar' %}" class="btn-create">
+                    <i class="fas fa-plus-circle"></i>
+                    <span class="btn-text">Añadir cancha</span>
+                </a>
             </div>
         </div>
     </div>
+
+    <!-- Mensajes del Sistema -->
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="custom-alert alert-{{ message.tags }}">
+                    <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}fa-exclamation-triangle{% elif message.tags == 'warning' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="alert-close" onclick="this.parentElement.style.display='none'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Sección de Canchas -->
+    <div class="canchas-section">
+        <div class="section-header">
+            <div class="section-title">
+                <i class="fas fa-futbol me-2"></i>
+                Canchas Disponibles
+            </div>
+            {% if canchas_list %}
+                <div class="section-meta">
+                    <span class="canchas-count">{{ canchas_list|length }} cancha{{ canchas_list|length|pluralize:",s" }}</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Grid de Canchas -->
+        <div class="canchas-grid">
+            {% if canchas_list %}
+                {% for cancha in canchas_list %}
+                <div class="cancha-card">
+                    <!-- Imagen de la cancha -->
+                    <div class="cancha-image">
+                        <img src="{% if cancha.imagen %}{{ cancha.imagen.url }}{% else %}{% static 'images/cancha_default.jpg' %}{% endif %}" 
+                             alt="{{ cancha.nombre_cancha }}" 
+                             class="cancha-img">
+                        <div class="image-overlay">
+                            <div class="overlay-content">
+                                <h3 class="cancha-title">{{ cancha.nombre_cancha }}</h3>
+                            </div>
+                        </div>
+                        <!-- Badge de propiedad -->
+                        <div class="propiedad-badge {% if cancha.propiedad == 'PRIVADA' %}badge-privada{% else %}badge-publica{% endif %}">
+                            <i class="fas {% if cancha.propiedad == 'PRIVADA' %}fa-lock{% else %}fa-futbol{% endif %}"></i>
+                            {{ cancha.get_propiedad_display }}
+                        </div>
+                    </div>
+
+                    <!-- Contenido de la cancha -->
+                    <div class="cancha-content">
+                        <!-- Información básica -->
+                        <div class="cancha-info">
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt info-icon"></i>
+                                <span class="info-text">{{ cancha.ubicacion }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-futbol info-icon"></i>
+                                <span class="info-text">{{ cancha.get_tipo_display }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-layer-group info-icon"></i>
+                                <span class="info-text">{{ cancha.get_superficie_display }}</span>
+                            </div>
+                            {% if cancha.costo_partido is not None %}
+                            <div class="info-item">
+                                <i class="fas fa-euro-sign info-icon"></i>
+                                <span class="info-text">
+                                    {% if cancha.costo_partido > 0 %}
+                                        {{ cancha.costo_partido|floatformat:2 }}€
+                                    {% else %}
+                                        Gratis
+                                    {% endif %}
+                                </span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="cancha-descripcion">
+                            <p class="descripcion-text">{{ cancha.descripcion|truncatewords:20|default:"Sin descripción disponible." }}</p>
+                        </div>
+
+                        <!-- Acciones -->
+                        <div class="cancha-actions">
+                            <a href="{% url 'detalle_cancha' pk_cancha=cancha.id_cancha %}" class="btn-action btn-outline">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Detalles</span>
+                            </a>
+                            {% if cancha.propiedad == 'PRIVADA' %}
+                            <a href="#" class="btn-action btn-primary">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Reservar</span>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Estado vacío -->
+                <div class="empty-state">
+                    <div class="empty-state-content">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-search-location"></i>
+                        </div>
+                        <h3 class="empty-state-title">No hay canchas disponibles</h3>
+                        <p class="empty-state-message">
+                            Parece que no hay canchas que coincidan con tu búsqueda o aún no se han registrado. 
+                            <br>¡Sé el primero en añadir una!
+                        </p>
+                        <div class="empty-state-actions">
+                            <a href="{% url 'canchas_registrar' %}" class="btn-create">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Añadir Nueva Cancha</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Paginación -->
+        {% if is_paginated %}
+            <div class="pagination-container">
+                <nav class="pagination-nav" aria-label="Navegación de páginas">
+                    <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                    <i class="fas fa-angle-double-left"></i>
+                                    <span class="page-text">Primera</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                    <i class="fas fa-angle-left"></i>
+                                    <span class="page-text">Anterior</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                    <span class="page-text">Siguiente</span>
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                                    <span class="page-text">Última</span>
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
+    </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Efecto hover en las tarjetas
+    const canchaCards = document.querySelectorAll('.cancha-card');
+    
+    canchaCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+
+    // Auto-hide para mensajes
+    const alerts = document.querySelectorAll('.custom-alert');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            alert.style.opacity = '0';
+            alert.style.transform = 'translateY(-100%)';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 300);
+        }, 5000);
+    });
+
+    // Efecto de búsqueda
+    const searchInput = document.querySelector('.search-input');
+    const searchBtn = document.querySelector('.search-btn');
+    
+    if (searchInput) {
+        searchInput.addEventListener('focus', function() {
+            this.parentElement.classList.add('search-focused');
+        });
+        
+        searchInput.addEventListener('blur', function() {
+            this.parentElement.classList.remove('search-focused');
+        });
+    }
+
+    // Lazy loading para imágenes
+    const images = document.querySelectorAll('.cancha-img');
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.style.opacity = '1';
+                observer.unobserve(img);
+            }
+        });
+    });
+
+    images.forEach(img => {
+        img.style.opacity = '0';
+        img.style.transition = 'opacity 0.3s ease';
+        imageObserver.observe(img);
+    });
+});
+</script>
 {% endblock %}

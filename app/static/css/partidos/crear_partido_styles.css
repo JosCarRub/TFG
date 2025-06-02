@@ -1,0 +1,413 @@
+/* ======= Variables específicas para Crear Partido ======= */
+:root {
+    --crear-accent: #f7835c;
+    --mint: #00d4b1;
+    --crear-accent-subtle: rgba(247, 131, 92, 0.08);
+    --crear-accent-border: rgba(247, 131, 92, 0.15);
+    --crear-text-primary: #ffffff;
+    --crear-text-secondary: #a8a8a8;
+    --crear-text-muted: #6b7280;
+    --crear-bg-card: #1a1a2e;
+    --crear-bg-elevated: #242438;
+    --crear-border: rgba(255, 255, 255, 0.08);
+    --crear-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    --crear-radius: 16px;
+    --crear-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ======= Container Principal ======= */
+.crear-partido-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: calc(100vh - 70px);
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+/* ======= Hero Section ======= */
+.hero-section {
+    background: linear-gradient(135deg, var(--crear-bg-card) 0%, var(--crear-bg-elevated) 100%);
+    border: 1px solid var(--crear-border);
+    border-radius: var(--crear-radius);
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, var(--crear-accent-subtle) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(50%, -50%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: center;
+    justify-content: center;
+}
+
+.hero-icon {
+    width: 64px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--crear-border);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.hero-icon i {
+    font-size: 1.75rem;
+    color: var(--crear-accent);
+}
+
+.hero-text {
+    flex: 1;
+}
+
+.hero-title {
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-weight: 700;
+    color: var(--crear-text-primary);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 1rem;
+    color: var(--crear-text-secondary);
+    font-weight: 400;
+    margin: 0;
+}
+
+/* ======= Form Section ======= */
+.form-section {
+    flex: 1;
+}
+
+.form-container {
+    background: var(--crear-bg-card);
+    border: 1px solid var(--crear-border);
+    border-radius: var(--crear-radius);
+    overflow: hidden;
+    transition: var(--crear-transition);
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.form-container.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.form-header {
+    padding: 2rem;
+    border-bottom: 1px solid var(--crear-border);
+    text-align: center;
+}
+
+.form-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--crear-text-primary);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+}
+
+.form-subtitle {
+    font-size: 0.9rem;
+    color: var(--crear-text-muted);
+    margin: 0;
+}
+
+.form-body {
+    padding: 2rem;
+}
+
+/* ======= Form Fields ======= */
+.form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-fields .form-group {
+    margin-bottom: 0;
+}
+
+.form-fields .form-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--crear-text-primary);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-fields .form-control,
+.form-fields .form-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--crear-border);
+    border-radius: 12px;
+    padding: 0.875rem 1rem;
+    color: var(--crear-text-primary);
+    font-size: 0.9rem;
+    transition: var(--crear-transition);
+}
+
+.form-fields .form-control:focus,
+.form-fields .form-select:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--mint);
+    box-shadow: 0 0 0 2px rgba(0, 212, 177, 0.1);
+    color: var(--crear-text-primary);
+}
+
+.form-fields .form-control::placeholder {
+    color: var(--crear-text-muted);
+}
+
+.form-fields .form-control.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+}
+
+.form-fields .invalid-feedback {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+/* ======= Form Actions ======= */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--crear-border);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: var(--crear-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--crear-text-secondary);
+    border: 1px solid var(--crear-border);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--crear-text-primary);
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background: var(--crear-accent);
+    color: white;
+    border: 1px solid var(--crear-accent);
+}
+
+.btn-primary:hover:not(.loading) {
+    background: #e6673a;
+    transform: translateY(-1px);
+}
+
+.btn-primary.loading {
+    background: var(--crear-accent);
+    cursor: not-allowed;
+}
+
+.btn-loader {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ======= Tips Section ======= */
+.tips-section {
+    margin-top: 2rem;
+}
+
+.tips-container {
+    background: var(--crear-bg-card);
+    border: 1px solid var(--crear-border);
+    border-radius: var(--crear-radius);
+    padding: 2rem;
+}
+
+.tips-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.tips-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--crear-text-primary);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+}
+
+.title-accent {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--crear-accent) 0%, transparent 100%);
+    margin: 0 auto;
+    border-radius: 1px;
+}
+
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.tip-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--crear-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: var(--crear-transition);
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.tip-card.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.tip-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--crear-accent-border);
+}
+
+.tip-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.tip-icon i {
+    font-size: 1.25rem;
+    color: var(--mint);
+}
+
+.tip-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--crear-text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.tip-description {
+    font-size: 0.85rem;
+    color: var(--crear-text-muted);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ======= Responsive ======= */
+@media (max-width: 768px) {
+    .crear-partido-container {
+        padding: 1rem;
+        gap: 2rem;
+    }
+    
+    .hero-section {
+        padding: 2rem;
+    }
+    
+    .hero-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .form-body {
+        padding: 1.5rem;
+    }
+    
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+    
+    .tips-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .tip-card {
+        padding: 1.25rem;
+    }
+    
+    .tips-container {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-content {
+        gap: 1rem;
+    }
+    
+    .hero-icon {
+        width: 56px;
+        height: 56px;
+    }
+    
+    .hero-icon i {
+        font-size: 1.5rem;
+    }
+    
+    .form-header,
+    .form-body {
+        padding: 1rem;
+    }
+}

@@ -1,342 +1,624 @@
-{% extends 'base.html' %}
+{% extends 'main.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block base %}
-<style>
-    .drag-list {
-        min-height: 100px;
-        border: 2px dashed #4a5568;
-        border-radius: 0.5rem;
-        padding: 10px;
-        margin-bottom: 15px;
-        background-color: rgba(255,255,255,0.05);
-        transition: background-color 0.2s ease-in-out;
-    }
-    .drag-list.drag-over {
-        background-color: rgba(40, 167, 69, 0.2); /* Verde éxito al arrastrar encima */
-        border-color: #28a745;
-    }
-    .player-card {
-        background-color: #3a4454;
-        color: white;
-        padding: 8px 12px;
-        margin-bottom: 8px;
-        border-radius: 0.3rem;
-        cursor: grab;
-        border: 1px solid #4a5568;
-        display: flex;
-        align-items: center;
-        font-size: 0.9rem;
-    }
-    .player-card:active {
-        cursor: grabbing;
-    }
-    .player-card img {
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        margin-right: 8px;
-    }
-    .placeholder { /* Para cuando un elemento se está arrastrando */
-        background-color: rgba(255,255,255,0.1);
-        border: 2px dashed #555;
-        height: 40px; /* Ajustar a la altura de player-card */
-        margin-bottom: 8px;
-        border-radius: 0.3rem;
-    }
-</style>
+{% block title %}{{ titulo_pagina }} - De Rabona{% endblock %}
 
-<div class="d-flex flex-column flex-lg-row vh-100 overflow-hidden" style="background-color: #0F172A;">
-    {% include "components/nav.html" %}
-    <div class="flex-grow-1 overflow-auto p-0 bg-dark">
-        {% include "components/top_nav.html" %}
-        <div class="container-fluid p-4">
-            
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/partidos/detalle_partido_styles.css' %}">
+{% endblock %}
 
-            <div class="card border-0 shadow-sm" style="background-color: #2d3748; border-radius: 15px; color: white;">
-                <div class="card-header bg-transparent border-bottom border-secondary py-3 d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">{{ titulo_pagina }}</h4>
-                    {% if es_creador and partido.estado == 'PROGRAMADO' %}
-                    {# <a href="#" class="btn btn-outline-warning btn-sm"><i class="fas fa-edit me-1"></i> Editar Partido</a> #}
+{% block content %}
+<div class="match-detail-container">
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {% if message.tags == 'success' %}
+                        <i class="fas fa-check-circle me-2"></i>
+                    {% elif message.tags == 'error' or message.tags == 'danger' %}
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                    {% elif message.tags == 'warning' %}
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                    {% else %}
+                        <i class="fas fa-info-circle me-2"></i>
                     {% endif %}
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <div class="card-body p-4">
-                    <div class="row">
-                        <div class="col-lg-7 mb-4 mb-lg-0">
-                            {# ... (Información General del Partido como la tenías) ... #}
-                            <h5 class="text-success mb-3">Información General del Partido</h5>
-                            <div class="row">
-                                <div class="col-sm-6 mb-2"><strong><i class="fas fa-futbol me-2 text-success"></i>Cancha:</strong></div>
-                                <div class="col-sm-6 mb-2">{{ partido.cancha.nombre_cancha }} ({{ partido.cancha.get_superficie_display }})</div>
-                                <div class="col-sm-6 mb-2"><strong><i class="fas fa-map-marker-alt me-2 text-success"></i>Ubicación:</strong></div>
-                                <div class="col-sm-6 mb-2">{{ partido.cancha.ubicacion }}</div>
-                                <div class="col-sm-6 mb-2"><strong><i class="fas fa-calendar-alt me-2 text-success"></i>Fecha y Hora:</strong></div>
-                                <div class="col-sm-6 mb-2">{{ partido.fecha|date:"l, d F Y, H:i" }}</div>
-                                <div class="col-sm-6 mb-2"><strong><i class="fas fa-clock me-2 text-success"></i>Duración:</strong></div>
-                                <div class="col-sm-6 mb-2">1 hora</div>
-                                <div class="col-sm-6 mb-2"><strong><i class="fas fa-user-clock me-2 text-success"></i>Límite Inscripción:</strong></div>
-                                <div class="col-sm-6 mb-2">{{ partido.fecha_limite_inscripcion_efectiva|date:"l, d F Y, H:i" }}</div>
-                                <div class="col-sm-6 mb-2"><strong><i class="fas fa-users me-2 text-success"></i>Formato:</strong></div>
-                                <div class="col-sm-6 mb-2">{{ partido.get_tipo_display }}</div>
-                                <div class="col-sm-6 mb-2"><strong><i class="fas fa-medal me-2 text-success"></i>Modalidad:</strong></div>
-                                <div class="col-sm-6 mb-2">{{ partido.get_modalidad_display }}</div>
-                                <div class="col-sm-6 mb-2"><strong><i class="fas fa-tachometer-alt me-2 text-success"></i>Nivel:</strong></div>
-                                <div class="col-sm-6 mb-2">{{ partido.get_nivel_display|default:"Abierto a todos" }}</div>
-                                <div class="col-sm-6 mb-2"><strong><i class="fas fa-euro-sign me-2 text-success"></i>Costo:</strong></div>
-                                <div class="col-sm-6 mb-2">{% if partido.costo > 0 %}{{ partido.costo|floatformat:2 }}€ ({{ partido.get_metodo_pago_display }}){% else %}Gratis{% endif %}</div>
-                                <div class="col-sm-6 mb-2"><strong><i class="fas fa-user-edit me-2 text-success"></i>Creador:</strong></div>
-                                <div class="col-sm-6 mb-2">{{ partido.creador.nombre }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Hero Section -->
+    <div class="match-hero">
+        <div class="hero-background">
+            <div class="hero-overlay"></div>
+            <div class="hero-pattern"></div>
+        </div>
+        <div class="hero-content">
+            <div class="match-title-section">
+                <h1 class="match-title">{{ titulo_pagina }}</h1> <!-- PONER EL STR DEL PARTIDO-->
+                <div class="match-status-badge status-{{ partido.estado|lower }}">
+                    {% if partido.estado == 'PROGRAMADO' %}
+                        <i class="fas fa-clock"></i>
+                    {% elif partido.estado == 'FINALIZADO' %}
+                        <i class="fas fa-check-circle"></i>
+                    {% elif partido.estado == 'EN_CURSO' %}
+                        <i class="fas fa-play-circle"></i>
+                    {% else %}
+                        <i class="fas fa-calendar"></i>
+                    {% endif %}
+                    {{ partido.get_estado_display }}
+                </div>
+            </div>
+            {% if es_creador and partido.estado == 'PROGRAMADO' %}
+                <div class="hero-actions">
+                    <button class="btn btn-premium">
+                        <i class="fas fa-edit me-2"></i>
+                        Configurar Partido
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="match-content-grid">
+        <!-- Left Column: Match Info -->
+        <div class="match-info-column">
+            <div class="info-card glass-effect">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Información del Partido
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-futbol"></i>
                             </div>
-                             {% if partido.comentarios %}
-                                <h5 class="text-success mt-4 mb-2">Comentarios Adicionales</h5>
-                                <p class="text-white-75">{{ partido.comentarios|linebreaksbr }}</p>
-                            {% endif %}
+                            <div class="info-content">
+                                <span class="info-label">Cancha</span>
+                                <span class="info-value">{{ partido.cancha.nombre_cancha }}</span>
+                                <span class="info-detail">({{ partido.cancha.get_superficie_display }})</span>
+                            </div>
                         </div>
 
-                        <div class="col-lg-5">
-                            <h5 class="text-success">Jugadores ({{ partido.jugadores.count }}/{{ partido.max_jugadores }})</h5>
-                            {% if plazas_disponibles > 0 and inscripcion_esta_abierta %}
-                                <p class="text-info small"><i class="fas fa-info-circle me-1"></i>{{ plazas_disponibles }} plaza{{ plazas_disponibles|pluralize }} disponible{{ plazas_disponibles|pluralize }}.</p>
-                            {% elif partido.jugadores.count >= partido.max_jugadores and not es_creador %} {# No mostrar completo si es creador y puede asignar #}
-                                <p class="text-danger small"><i class="fas fa-times-circle me-1"></i>¡Partido Completo!</p>
-                            {% elif not inscripcion_esta_abierta and not es_creador %}
-                                 <p class="text-warning small"><i class="fas fa-hourglass-end me-1"></i>Inscripción cerrada.</p>
-                            {% endif %}
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="info-content">
+                                <span class="info-label">Ubicación</span>
+                                <span class="info-value">{{ partido.cancha.ubicacion }}</span>
+                            </div>
+                        </div>
 
-                            {% if es_creador and partido.estado == 'PROGRAMADO' %}
-                                <form method="post" action="{% url 'detalle_partido' pk=partido.id_partido %}" id="formAsignarEquipos">
-                                    {% csrf_token %}
-                                    {# Renderizar los campos select ocultos del AsignarEquiposForm #}
-                                    <div class="d-none">
-                                        {{ form_asignar_equipos|crispy }}
-                                    </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="info-content">
+                                <span class="info-label">Fecha y Hora</span>
+                                <span class="info-value">{{ partido.fecha|date:"l, d F Y" }}</span>
+                                <span class="info-detail">{{ partido.fecha|date:"H:i" }}</span>
+                            </div>
+                        </div>
 
-                                    <div class="row">
-                                        <div class="col-12 mb-3">
-                                            <h6 class="text-white-50">Jugadores Sin Asignar / Suplentes</h6>
-                                            <div id="lista-sin-asignar" class="drag-list">
-                                                {% for jugador in jugadores_inscritos_list %}
-                                                    {% if not partido.equipo_local or jugador not in partido.equipo_local.jugadores.all %}
-                                                        {% if not partido.equipo_visitante or jugador not in partido.equipo_visitante.jugadores.all %}
-                                                            <div class="player-card" draggable="true" data-jugador-id="{{ jugador.id }}">
-                                                                <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" alt="{{ jugador.nombre }}">
-                                                                {{ jugador.nombre }}
-                                                            </div>
-                                                        {% endif %}
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h6 class="text-info">Equipo Local</h6>
-                                            <div id="equipo-local" class="drag-list">
-                                                {% if partido.equipo_local %}
-                                                    {% for jugador in partido.equipo_local.jugadores.all %}
-                                                    <div class="player-card" draggable="true" data-jugador-id="{{ jugador.id }}">
-                                                        <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" alt="{{ jugador.nombre }}">
-                                                        {{ jugador.nombre }}
-                                                    </div>
-                                                    {% endfor %}
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h6 class="text-warning">Equipo Visitante</h6>
-                                            <div id="equipo-visitante" class="drag-list">
-                                                {% if partido.equipo_visitante %}
-                                                    {% for jugador in partido.equipo_visitante.jugadores.all %}
-                                                    <div class="player-card" draggable="true" data-jugador-id="{{ jugador.id }}">
-                                                        <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" alt="{{ jugador.nombre }}">
-                                                        {{ jugador.nombre }}
-                                                    </div>
-                                                    {% endfor %}
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary btn-sm mt-3 w-100">Guardar Asignación de Equipos</button>
-                                </form>
-                            
-                            {% elif jugadores_inscritos_list %}
-                                <h6 class="text-white mt-3 mb-2">Lista de Inscritos:</h6>
-                                <ul class="list-group list-group-flush bg-transparent mb-3">
-                                    {% for jugador_inscrito in jugadores_inscritos_list %}
-                                        <li class="list-group-item bg-transparent border-secondary text-white d-flex align-items-center px-0 py-2">
-                                            <img src="{% if jugador_inscrito.imagen_perfil %}{{ jugador_inscrito.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" class="rounded-circle me-2" width="30" height="30" alt="{{ jugador_inscrito.nombre }}">
-                                            <span>{{ jugador_inscrito.nombre }} <small>({{ jugador_inscrito.get_posicion_display|default:"Sin pos." }})</small></span>
-                                            {% if jugador_inscrito == partido.creador %}
-                                                <span class="badge bg-primary ms-2">Creador</span>
-                                            {% endif %}
-                                            {% if partido.equipo_local and jugador_inscrito in partido.equipo_local.jugadores.all %}
-                                                <span class="badge bg-info ms-auto">Equipo Local</span>
-                                            {% elif partido.equipo_visitante and jugador_inscrito in partido.equipo_visitante.jugadores.all %}
-                                                 <span class="badge bg-warning text-dark ms-auto">Equipo Visitante</span>
-                                            {% endif %}
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <p class="text-white-50">Aún no hay jugadores inscritos.</p>
-                            {% endif %}
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="info-content">
+                                <span class="info-label">Duración</span>
+                                <span class="info-value">1 hora</span>
+                            </div>
+                        </div>
 
-                            <div class="mt-3">
-                                {# ... (Lógica de botones de acción como la tenías, adaptada) ... #}
-                                {% if es_creador %}
-                                    {% if partido.estado == 'PROGRAMADO' %}
-                                        {% if partido.equipo_local and partido.equipo_visitante %}
-                                            <a href="{% url 'registrar_resultado_partido' pk=partido.id_partido %}" class="btn btn-info mt-2 w-100">
-                                                <i class="fas fa-edit me-2"></i>Registrar Resultado
-                                            </a>
-                                        {% elif not form_asignar_equipos %}
-                                            <p class="text-warning small">Asigna jugadores a los equipos para poder registrar el resultado.</p>
-                                        {% endif %}
-                                    {% elif partido.estado == 'FINALIZADO' %}
-                                        {# ... (Mostrar resultado) ... #}
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="info-content">
+                                <span class="info-label">Formato</span>
+                                <span class="info-value">{{ partido.get_tipo_display }}</span>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-euro-sign"></i>
+                            </div>
+                            <div class="info-content">
+                                <span class="info-label">Costo</span>
+                                <span class="info-value">
+                                    {% if partido.costo > 0 %}
+                                        {{ partido.costo|floatformat:2 }}€
+                                    {% else %}
+                                        Gratis
                                     {% endif %}
-                                {% elif esta_inscrito %}
-                                    {# ... (Botón Ya Inscrito) ... #}
-                                {% elif inscripcion_esta_abierta %}
-                                    {# ... (Formulario Inscribirse) ... #}
-                                {% else %}
-                                    {# ... (Botón Inscripción no disponible) ... #}
+                                </span>
+                                {% if partido.costo > 0 %}
+                                    <span class="info-detail">({{ partido.get_metodo_pago_display }})</span>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent border-top border-secondary text-center py-3">
-                        <a href="{% url 'buscar_partidos' %}" class="btn btn-outline-light"><i class="fas fa-arrow-left me-2"></i>Volver a la lista de partidos</a>
+
+                    {% if partido.comentarios %}
+                        <div class="comments-section">
+                            <h4 class="comments-title">
+                                <i class="fas fa-comment me-2"></i>
+                                Comentarios Adicionales
+                            </h4>
+                            <p class="comments-content">{{ partido.comentarios|linebreaksbr }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Players Status Card -->
+            <div class="players-status-card glass-effect">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-users me-2"></i>
+                        Estado del Partido
+                    </h3>
+                    <div class="players-count">
+                        <span class="current">{{ partido.jugadores.count }}</span>
+                        <span class="separator">/</span>
+                        <span class="max">{{ partido.max_jugadores }}</span>
                     </div>
                 </div>
+                <div class="card-body">
+                    <div class="progress-container">
+                        {% widthratio partido.jugadores.count partido.max_jugadores 100 as progress_width %}
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ progress_width }}%"></div>
+                        </div>
+                        <div class="progress-labels">
+                            <span>{{ plazas_disponibles }} plaza{{ plazas_disponibles|pluralize }} disponible{{ plazas_disponibles|pluralize }}</span>
+                        </div>
+                    </div>
+
+                    {% if plazas_disponibles > 0 and inscripcion_esta_abierta %}
+                        <div class="status-message status-available">
+                            <i class="fas fa-check-circle me-2"></i>
+                            ¡Inscripciones abiertas!
+                        </div>
+                    {% elif partido.jugadores.count >= partido.max_jugadores %}
+                        <div class="status-message status-full">
+                            <i class="fas fa-times-circle me-2"></i>
+                            Partido completo
+                        </div>
+                    {% elif not inscripcion_esta_abierta %}
+                        <div class="status-message status-closed">
+                            <i class="fas fa-hourglass-end me-2"></i>
+                            Inscripciones cerradas
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Football Field & Team Management -->
+        <div class="field-column">
+            {% if es_creador and partido.estado == 'PROGRAMADO' %}
+                <!-- Team Assignment Section -->
+                <div class="team-management-section">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <i class="fas fa-tactics me-2"></i>
+                            Asignación de Equipos
+                        </h3>
+                        <div class="header-controls">
+                            <!-- Assignment Mode Toggle -->
+                            <div class="assignment-mode-toggle">
+                                <button class="mode-btn active" data-mode="drag" id="dragModeBtn">
+                                    <i class="fas fa-hand-rock me-2"></i>
+                                    Arrastrar
+                                </button>
+                                <button class="mode-btn" data-mode="dropdown" id="dropdownModeBtn">
+                                    <i class="fas fa-list me-2"></i>
+                                    Lista
+                                </button>
+                                <button class="mode-btn" data-mode="auto" id="autoModeBtn">
+                                    <i class="fas fa-magic me-2"></i>
+                                    Auto
+                                </button>
+                            </div>
+                            <button class="btn btn-save" id="saveTeamsBtn" disabled>
+                                <i class="fas fa-save me-2"></i>
+                                Guardar Equipos
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Assignment Mode Info -->
+                    <div class="assignment-info">
+                        <div class="info-card drag-info active" data-info="drag">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Arrastra los jugadores entre las zonas del campo o el banquillo para asignar equipos.
+                        </div>
+                        <div class="info-card dropdown-info" data-info="dropdown">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Selecciona el equipo para cada jugador usando las listas desplegables.
+                        </div>
+                        <div class="info-card auto-info" data-info="auto">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Los equipos se asignarán automáticamente de forma equilibrada.
+                        </div>
+                    </div>
+
+                    <!-- Drag Mode: Football Field -->
+                    <div class="assignment-mode drag-mode active" data-assignment="drag">
+                        <div class="football-field-container">
+                            <div class="field-wrapper">
+                                <!-- Field Background -->
+                                <div class="football-field" data-tipo-partido="{{ partido.tipo }}">
+                                    <!-- Field markings -->
+                                    <div class="field-lines">
+                                        <!-- Center circle -->
+                                        <div class="center-circle"></div>
+                                        <div class="center-line"></div>
+                                        
+                                        <!-- Penalty areas -->
+                                        <div class="penalty-area left"></div>
+                                        <div class="penalty-area right"></div>
+                                        
+                                        <!-- Goal areas -->
+                                        <div class="goal-area left"></div>
+                                        <div class="goal-area right"></div>
+                                        
+                                        <!-- Goals -->
+                                        <div class="goal left"></div>
+                                        <div class="goal right"></div>
+                                        
+                                        <!-- Corner arcs -->
+                                        <div class="corner-arc top-left"></div>
+                                        <div class="corner-arc top-right"></div>
+                                        <div class="corner-arc bottom-left"></div>
+                                        <div class="corner-arc bottom-right"></div>
+                                    </div>
+
+                                    <!-- Team Local Zone -->
+                                    <div class="team-zone local-zone" data-team="local">
+                                        <div class="team-label">
+                                            <i class="fas fa-home me-2"></i>
+                                            Equipo Local
+                                            <span class="team-counter local-counter">0</span>
+                                        </div>
+                                        <div class="players-drop-zone" id="local-players">
+                                            {% if partido.equipo_local %}
+                                                {% for jugador in partido.equipo_local.jugadores.all %}
+                                                    <div class="field-player local-player" draggable="true" data-jugador-id="{{ jugador.id }}">
+                                                        <div class="player-avatar">
+                                                            <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" alt="{{ jugador.nombre }}">
+                                                        </div>
+                                                        <div class="player-name">{{ jugador.nombre|truncatechars:10 }}</div>
+                                                        <div class="player-position">{{ jugador.get_posicion_display|default:"JUG"|truncatechars:3 }}</div>
+                                                    </div>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Team Visitante Zone -->
+                                    <div class="team-zone visitante-zone" data-team="visitante">
+                                        <div class="team-label">
+                                            <i class="fas fa-plane me-2"></i>
+                                            Equipo Visitante
+                                            <span class="team-counter visitante-counter">0</span>
+                                        </div>
+                                        <div class="players-drop-zone" id="visitante-players">
+                                            {% if partido.equipo_visitante %}
+                                                {% for jugador in partido.equipo_visitante.jugadores.all %}
+                                                    <div class="field-player visitante-player" draggable="true" data-jugador-id="{{ jugador.id }}">
+                                                        <div class="player-avatar">
+                                                            <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" alt="{{ jugador.nombre }}">
+                                                        </div>
+                                                        <div class="player-name">{{ jugador.nombre|truncatechars:10 }}</div>
+                                                        <div class="player-position">{{ jugador.get_posicion_display|default:"JUG"|truncatechars:3 }}</div>
+                                                    </div>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bench Area -->
+                                <div class="bench-area">
+                                    <div class="bench-section">
+                                        <h4 class="bench-title">
+                                            <i class="fas fa-chair me-2"></i>
+                                            Banquillo / Sin Asignar
+                                            <span class="team-counter bench-counter">0</span>
+                                        </h4>
+                                        <div class="bench-players" id="bench-players">
+                                            {% for jugador in jugadores_inscritos_list %}
+                                                {% if not partido.equipo_local or jugador not in partido.equipo_local.jugadores.all %}
+                                                    {% if not partido.equipo_visitante or jugador not in partido.equipo_visitante.jugadores.all %}
+                                                        <div class="bench-player" draggable="true" data-jugador-id="{{ jugador.id }}">
+                                                            <div class="player-avatar">
+                                                                <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" alt="{{ jugador.nombre }}">
+                                                            </div>
+                                                            <div class="player-info">
+                                                                <div class="player-name">{{ jugador.nombre }}</div>
+                                                                <div class="player-position">{{ jugador.get_posicion_display|default:"Jugador" }}</div>
+                                                            </div>
+                                                            {% if jugador == partido.creador %}
+                                                                <div class="creator-badge">
+                                                                    <i class="fas fa-crown"></i>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Mode: List Assignment -->
+                    <div class="assignment-mode dropdown-mode" data-assignment="dropdown">
+                        <div class="dropdown-assignment-container">
+                            <div class="players-assignment-list">
+                                {% for jugador in jugadores_inscritos_list %}
+                                    <div class="player-assignment-row" data-jugador-id="{{ jugador.id }}">
+                                        <div class="player-info-section">
+                                            <div class="player-avatar">
+                                                <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" alt="{{ jugador.nombre }}">
+                                            </div>
+                                            <div class="player-details">
+                                                <h4 class="player-name">{{ jugador.nombre }}</h4>
+                                                <p class="player-position">{{ jugador.get_posicion_display|default:"Jugador" }}</p>
+                                                {% if jugador == partido.creador %}
+                                                    <span class="creator-tag">
+                                                        <i class="fas fa-crown me-1"></i>Creador
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="assignment-controls">
+                                            <select class="team-select" data-jugador="{{ jugador.id }}">
+                                                <option value="bench" 
+                                                    {% if not partido.equipo_local or jugador not in partido.equipo_local.jugadores.all %}
+                                                        {% if not partido.equipo_visitante or jugador not in partido.equipo_visitante.jugadores.all %}
+                                                            selected
+                                                        {% endif %}
+                                                    {% endif %}>
+                                                    Banquillo
+                                                </option>
+                                                <option value="local"
+                                                    {% if partido.equipo_local and jugador in partido.equipo_local.jugadores.all %}
+                                                        selected
+                                                    {% endif %}>
+                                                    Equipo Local
+                                                </option>
+                                                <option value="visitante"
+                                                    {% if partido.equipo_visitante and jugador in partido.equipo_visitante.jugadores.all %}
+                                                        selected
+                                                    {% endif %}>
+                                                    Equipo Visitante
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <!-- Team Summary -->
+                            <div class="team-summary">
+                                <div class="summary-card">
+                                    <h4 class="summary-title">
+                                        <i class="fas fa-home me-2"></i>
+                                        Equipo Local
+                                    </h4>
+                                    <div class="player-count">
+                                        <span class="count" id="localCountDropdown">0</span>
+                                        <span class="max-text">jugadores</span>
+                                    </div>
+                                    <div class="players-preview" id="localPlayersPreview"></div>
+                                </div>
+                                
+                                <div class="summary-card">
+                                    <h4 class="summary-title">
+                                        <i class="fas fa-plane me-2"></i>
+                                        Equipo Visitante
+                                    </h4>
+                                    <div class="player-count">
+                                        <span class="count" id="visitanteCountDropdown">0</span>
+                                        <span class="max-text">jugadores</span>
+                                    </div>
+                                    <div class="players-preview" id="visitantePlayersPreview"></div>
+                                </div>
+                                
+                                <div class="summary-card">
+                                    <h4 class="summary-title">
+                                        <i class="fas fa-chair me-2"></i>
+                                        Banquillo
+                                    </h4>
+                                    <div class="player-count">
+                                        <span class="count" id="benchCountDropdown">0</span>
+                                        <span class="max-text">jugadores</span>
+                                    </div>
+                                    <div class="players-preview" id="benchPlayersPreview"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Auto Mode: Automatic Assignment -->
+                    <div class="assignment-mode auto-mode" data-assignment="auto">
+                        <div class="auto-assignment-container">
+                            <div class="auto-options">
+                                <h4 class="auto-title">Opciones de Asignación Automática</h4>
+                                <div class="auto-controls">
+                                    <div class="auto-option">
+                                        <label class="auto-label">
+                                            <input type="radio" name="autoMode" value="random" checked>
+                                            <span class="radio-custom"></span>
+                                            <div class="option-content">
+                                                <strong>Aleatorio</strong>
+                                                <p>Asignación completamente aleatoria</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="auto-option">
+                                        <label class="auto-label">
+                                            <input type="radio" name="autoMode" value="balanced">
+                                            <span class="radio-custom"></span>
+                                            <div class="option-content">
+                                                <strong>Equilibrado</strong>
+                                                <p>Basado en posiciones y habilidades</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="auto-option">
+                                        <label class="auto-label">
+                                            <input type="radio" name="autoMode" value="position">
+                                            <span class="radio-custom"></span>
+                                            <div class="option-content">
+                                                <strong>Por Posición</strong>
+                                                <p>Priorizando posiciones preferidas</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <button class="btn btn-primary btn-auto-assign" id="autoAssignBtn">
+                                    <i class="fas fa-magic me-2"></i>
+                                    Asignar Automáticamente
+                                </button>
+                            </div>
+                            
+                            <!-- Auto Assignment Result -->
+                            <div class="auto-result" id="autoResult" style="display: none;">
+                                <h4 class="result-title">Resultado de la Asignación</h4>
+                                <div class="result-teams">
+                                    <div class="result-team local">
+                                        <h5><i class="fas fa-home me-2"></i>Equipo Local</h5>
+                                        <div class="result-players" id="autoLocalPlayers"></div>
+                                    </div>
+                                    <div class="result-team visitante">
+                                        <h5><i class="fas fa-plane me-2"></i>Equipo Visitante</h5>
+                                        <div class="result-players" id="autoVisitantePlayers"></div>
+                                    </div>
+                                    <div class="result-team bench">
+                                        <h5><i class="fas fa-chair me-2"></i>Banquillo</h5>
+                                        <div class="result-players" id="autoBenchPlayers"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden Form -->
+                    <form method="post" action="{% url 'detalle_partido' pk=partido.id_partido %}" id="teamAssignmentForm" style="display: none;">
+                        {% csrf_token %}
+                        {{ form_asignar_equipos|crispy }}
+                        <input type="hidden" id="localPlayersInput" name="equipo_local_jugadores" value="">
+                        <input type="hidden" id="visitantePlayersInput" name="equipo_visitante_jugadores" value="">
+                    </form>
+                </div>
+
+            {% else %}
+                <!-- Regular Players List View -->
+                <div class="players-list-section">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <i class="fas fa-users me-2"></i>
+                            Jugadores Inscritos
+                        </h3>
+                    </div>
+
+                    {% if jugadores_inscritos_list %}
+                        <div class="players-grid">
+                            {% for jugador_inscrito in jugadores_inscritos_list %}
+                                <div class="player-card">
+                                    <div class="player-avatar-wrapper">
+                                        <img src="{% if jugador_inscrito.imagen_perfil %}{{ jugador_inscrito.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" class="player-avatar" alt="{{ jugador_inscrito.nombre }}">
+                                        {% if jugador_inscrito == partido.creador %}
+                                            <div class="creator-crown">
+                                                <i class="fas fa-crown"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="player-info">
+                                        <h4 class="player-name">{{ jugador_inscrito.nombre }}</h4>
+                                        <p class="player-position">{{ jugador_inscrito.get_posicion_display|default:"Jugador" }}</p>
+                                        <div class="player-badges">
+                                            {% if partido.equipo_local and jugador_inscrito in partido.equipo_local.jugadores.all %}
+                                                <span class="team-badge local">Local</span>
+                                            {% elif partido.equipo_visitante and jugador_inscrito in partido.equipo_visitante.jugadores.all %}
+                                                <span class="team-badge visitante">Visitante</span>
+                                            {% else %}
+                                                <span class="team-badge bench">Banquillo</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <h4 class="empty-title">Sin jugadores inscritos</h4>
+                            <p class="empty-description">Aún no hay jugadores inscritos en este partido.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                {% if es_creador %}
+                    {% if partido.estado == 'PROGRAMADO' %}
+                        {% if partido.equipo_local and partido.equipo_visitante %}
+                            <a href="{% url 'registrar_resultado_partido' pk=partido.id_partido %}" class="btn btn-primary btn-large">
+                                <i class="fas fa-clipboard-check me-2"></i>
+                                Registrar Resultado
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                {% elif not esta_inscrito and inscripcion_esta_abierta %}
+                    <button class="btn btn-success btn-large" id="joinMatchBtn">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Unirse al Partido
+                    </button>
+                {% elif esta_inscrito %}
+                    <button class="btn btn-outline-danger btn-large" id="leaveMatchBtn">
+                        <i class="fas fa-minus-circle me-2"></i>
+                        Abandonar Partido
+                    </button>
+                {% endif %}
+
+                <a href="{% url 'buscar_partidos' %}" class="btn btn-outline btn-large">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Volver a Partidos
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const dragLists = document.querySelectorAll('.drag-list');
-    let draggedItem = null;
-    let placeholder = document.createElement('div');
-    placeholder.classList.add('placeholder');
+<!-- Drag Preview Element -->
+<div id="dragPreview" class="drag-preview"></div>
 
-    function getSelectFieldForJugador(jugadorId) {
-        return document.querySelector(`.player-assignment-select[data-jugador-id="${jugadorId}"]`);
-    }
+<!-- Touch Feedback -->
+<div id="touchFeedback" class="touch-feedback"></div>
+{% endblock %}
 
-    document.querySelectorAll('.player-card').forEach(item => {
-        item.addEventListener('dragstart', function (e) {
-            draggedItem = this;
-            // e.dataTransfer.setData('text/plain', this.dataset.jugadorId); // No es estrictamente necesario para esta lógica
-            setTimeout(() => {
-                this.style.display = 'none'; // Ocultar el original mientras se arrastra
-            }, 0);
-        });
-
-        item.addEventListener('dragend', function () {
-            setTimeout(() => {
-                if (draggedItem) { // Asegurarse que draggedItem no es null
-                    draggedItem.style.display = 'flex'; // Mostrar de nuevo
-                    draggedItem = null;
-                }
-                if (placeholder.parentNode) {
-                    placeholder.parentNode.removeChild(placeholder);
-                }
-            }, 0);
-        });
-    });
-
-    dragLists.forEach(list => {
-        list.addEventListener('dragover', function (e) {
-            e.preventDefault(); // Necesario para permitir el drop
-            this.classList.add('drag-over');
-            
-            // Lógica del placeholder para feedback visual
-            const afterElement = getDragAfterElement(this, e.clientY);
-            if (afterElement == null) {
-                this.appendChild(placeholder);
-            } else {
-                this.insertBefore(placeholder, afterElement);
-            }
-        });
-
-        list.addEventListener('dragleave', function () {
-            this.classList.remove('drag-over');
-            if (placeholder.parentNode === this) { // Solo remover si el placeholder está en esta lista
-                 //this.removeChild(placeholder); // Opcional: remover al salir si no se ha soltado
-            }
-        });
-
-        list.addEventListener('drop', function (e) {
-            e.preventDefault();
-            this.classList.remove('drag-over');
-            if (placeholder.parentNode) {
-                 placeholder.parentNode.removeChild(placeholder);
-            }
-
-            if (draggedItem) {
-                this.appendChild(draggedItem); // Mover el elemento visualmente
-
-                const jugadorId = draggedItem.dataset.jugadorId;
-                const selectField = getSelectFieldForJugador(jugadorId);
-
-                if (selectField) {
-                    if (this.id === 'equipo-local') {
-                        selectField.value = 'local';
-                    } else if (this.id === 'equipo-visitante') {
-                        selectField.value = 'visitante';
-                    } else { // lista-sin-asignar
-                        selectField.value = ''; // Opción "Sin Asignar"
-                    }
-                    // console.log(`Jugador ${jugadorId} asignado a ${selectField.value}`);
-                }
-            }
-        });
-    });
-
-    function getDragAfterElement(container, y) {
-        const draggableElements = [...container.querySelectorAll('.player-card:not([style*="display: none"])')]; // Excluir el que se está arrastrando
-
-        return draggableElements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = y - box.top - box.height / 2;
-            if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
-            } else {
-                return closest;
-            }
-        }, { offset: Number.NEGATIVE_INFINITY }).element;
-    }
-
-    // Opcional: Si quieres que al cambiar el select (si lo haces visible) se mueva el card
-    document.querySelectorAll('.player-assignment-select').forEach(select => {
-        select.addEventListener('change', function() {
-            const jugadorId = this.dataset.jugadorId;
-            const playerCard = document.querySelector(`.player-card[data-jugador-id="${jugadorId}"]`);
-            if (!playerCard) return;
-
-            let targetListId;
-            if (this.value === 'local') {
-                targetListId = 'equipo-local';
-            } else if (this.value === 'visitante') {
-                targetListId = 'equipo-visitante';
-            } else {
-                targetListId = 'lista-sin-asignar';
-            }
-            const targetList = document.getElementById(targetListId);
-            if (targetList) {
-                targetList.appendChild(playerCard);
-            }
-        });
-    });
-});
-</script>
+{% block extra_js %}
+<script src="{% static 'js/detalle_partido.js' %}"></script>
 {% endblock %}

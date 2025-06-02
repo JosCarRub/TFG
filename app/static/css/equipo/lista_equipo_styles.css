@@ -1,0 +1,978 @@
+/* ======= Variables para Lista de Equipos ======= */
+:root {
+    /* Colores específicos */
+    --teams-primary: #10b981;
+    --teams-secondary: #059669;
+    --teams-accent: #06b6d4;
+    --teams-success: #22c55e;
+    --teams-warning: #f59e0b;
+    --teams-danger: #ef4444;
+    --teams-info: #3b82f6;
+    
+    /* Fondos */
+    --teams-bg-card: #1e293b;
+    --teams-bg-main: #0f172a;
+    --teams-bg-section: #334155;
+    --teams-bg-banner: #475569;
+    --teams-bg-overlay: rgba(15, 23, 42, 0.9);
+    
+    /* Gradientes */
+    --teams-gradient-primary: linear-gradient(135deg, var(--teams-primary), var(--teams-secondary));
+    --teams-gradient-accent: linear-gradient(135deg, var(--teams-accent), #0891b2);
+    --teams-gradient-overlay: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2));
+    
+    /* Sombras */
+    --teams-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --teams-shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.2);
+    --teams-shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.3);
+    
+    /* Transiciones */
+    --teams-transition: all 0.3s ease;
+    --teams-transition-fast: all 0.15s ease;
+}
+
+/* ======= Header de la Página ======= */
+.page-header {
+    background: linear-gradient(135deg, var(--teams-bg-section), #475569);
+    border: 1px solid #64748b;
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--teams-shadow-lg);
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--teams-gradient-primary);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.header-info {
+    flex: 1;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0 0 0.5rem 0;
+    background: linear-gradient(135deg, #ffffff, var(--teams-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-subtitle {
+    color: #cbd5e1;
+    font-size: 1.1rem;
+    margin: 0;
+    font-weight: 400;
+}
+
+.header-actions {
+    flex-shrink: 0;
+}
+
+.btn-create {
+    background: var(--teams-gradient-primary);
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: var(--teams-transition);
+    box-shadow: var(--teams-shadow);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-create:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--teams-shadow-hover);
+}
+
+/* ======= Mensajes del Sistema ======= */
+.messages-container {
+    margin-bottom: 2rem;
+}
+
+.custom-alert {
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: var(--teams-shadow);
+    border-left: 4px solid;
+}
+
+.alert-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #6ee7b7;
+    border-left-color: var(--teams-success);
+}
+
+.alert-danger,
+.alert-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+    border-left-color: var(--teams-danger);
+}
+
+.alert-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: #fcd34d;
+    border-left-color: var(--teams-warning);
+}
+
+.alert-info {
+    background: rgba(59, 130, 246, 0.1);
+    color: #93c5fd;
+    border-left-color: var(--teams-info);
+}
+
+/* ======= Sección de Estadísticas ======= */
+.stats-section {
+    margin-bottom: 2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--teams-bg-card), #2a3441);
+    border: 1px solid #374151;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: var(--teams-transition);
+    box-shadow: var(--teams-shadow);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--teams-shadow-hover);
+    border-color: var(--teams-primary);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--teams-gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f8fafc;
+    line-height: 1;
+}
+
+.stat-label {
+    color: #cbd5e1;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+/* ======= Sección de Equipos ======= */
+.equipos-section {
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.section-title i {
+    color: var(--teams-primary);
+}
+
+/* ======= Grid de Equipos ======= */
+.equipos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.equipo-card {
+    background: var(--teams-bg-card);
+    border: 1px solid #374151;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: var(--teams-transition);
+    box-shadow: var(--teams-shadow);
+    position: relative;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.equipo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--teams-shadow-hover);
+    border-color: var(--teams-primary);
+}
+
+/* ======= Banner del Equipo ======= */
+.equipo-banner {
+    position: relative;
+    height: 180px;
+    overflow: hidden;
+    background: var(--teams-bg-banner);
+}
+
+.banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--teams-transition);
+}
+
+.equipo-card:hover .banner-image {
+    transform: scale(1.05);
+}
+
+.banner-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--teams-bg-banner), #5a6b7d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+}
+
+.banner-placeholder-icon {
+    font-size: 3rem;
+    opacity: 0.5;
+}
+
+.banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--teams-gradient-overlay);
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: 1rem;
+}
+
+.equipo-badge {
+    background: var(--teams-gradient-primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    box-shadow: var(--teams-shadow);
+}
+
+/* ======= Contenido del Equipo ======= */
+.equipo-content {
+    padding: 1.5rem;
+}
+
+.equipo-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.escudo-container {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.escudo-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid var(--teams-primary);
+    object-fit: cover;
+    box-shadow: var(--teams-shadow);
+}
+
+.escudo-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid var(--teams-primary);
+    background: var(--teams-gradient-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: var(--teams-shadow);
+}
+
+.equipo-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.equipo-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.2;
+}
+
+.equipo-description {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* ======= Estadísticas del Equipo ======= */
+.equipo-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    border: 1px solid #374151;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.stat-icon {
+    color: var(--teams-primary);
+    font-size: 1rem;
+    width: 20px;
+    flex-shrink: 0;
+}
+
+.stat-details {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-value {
+    color: #f8fafc;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.stat-label {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ======= Acciones del Equipo ======= */
+.equipo-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.btn-view {
+    flex: 1;
+    background: var(--teams-gradient-accent);
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: var(--teams-transition);
+    font-size: 0.875rem;
+}
+
+.btn-view:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--teams-shadow);
+}
+
+.btn-menu {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid #64748b;
+    background: transparent;
+    color: #cbd5e1;
+    transition: var(--teams-transition);
+}
+
+.btn-menu:hover {
+    border-color: var(--teams-primary);
+    color: var(--teams-primary);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+/* ======= Dropdown Menu ======= */
+.dropdown-menu {
+    background: var(--teams-bg-card);
+    border: 1px solid #374151;
+    border-radius: 12px;
+    box-shadow: var(--teams-shadow-lg);
+    padding: 0.5rem;
+    min-width: 180px;
+}
+
+.dropdown-item {
+    color: #cbd5e1;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: var(--teams-transition);
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+}
+
+.dropdown-item.text-danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+}
+
+/* ======= Indicador de Actividad ======= */
+.activity-indicator {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: var(--teams-transition);
+}
+
+.activity-indicator.active {
+    color: var(--teams-success);
+}
+
+.activity-indicator.active i {
+    color: var(--teams-success);
+    animation: pulse 2s infinite;
+}
+
+/* ======= Estado Vacío ======= */
+.empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    padding: 2rem;
+}
+
+.empty-state-content {
+    text-align: center;
+    max-width: 600px;
+}
+
+.empty-state-icon {
+    font-size: 6rem;
+    color: #475569;
+    margin-bottom: 2rem;
+    opacity: 0.7;
+}
+
+.empty-state-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0 0 1rem 0;
+}
+
+.empty-state-message {
+    color: #cbd5e1;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0 0 2rem 0;
+}
+
+.empty-state-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+}
+
+.btn-create-first {
+    background: var(--teams-gradient-primary);
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: var(--teams-transition);
+    box-shadow: var(--teams-shadow);
+}
+
+.btn-create-first:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--teams-shadow-hover);
+}
+
+/* ======= Sugerencias ======= */
+.suggestions {
+    background: rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.suggestions-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f8fafc;
+    margin: 0 0 1.5rem 0;
+    text-align: center;
+}
+
+.suggestions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.suggestion-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    transition: var(--teams-transition);
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.suggestion-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--teams-primary);
+    color: #f8fafc;
+    transform: translateY(-2px);
+}
+
+.suggestion-item i {
+    font-size: 2rem;
+    color: var(--teams-primary);
+    margin-bottom: 0.5rem;
+}
+
+/* ======= Modal Personalizado ======= */
+.modal-content.bg-dark {
+    background: var(--teams-bg-card) !important;
+    border: 1px solid #374151;
+    border-radius: 16px;
+}
+
+.modal-header.border-secondary {
+    border-color: #374151 !important;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.modal-footer.border-secondary {
+    border-color: #374151 !important;
+}
+
+/* ======= Responsive Design ======= */
+@media (max-width: 991.98px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    .page-title {
+        font-size: 1.75rem;
+    }
+    
+    .page-subtitle {
+        font-size: 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+    }
+    
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .equipos-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .page-header {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .equipos-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .equipo-card {
+        margin: 0 -0.5rem;
+    }
+    
+    .equipo-banner {
+        height: 150px;
+    }
+    
+    .equipo-content {
+        padding: 1rem;
+    }
+    
+    .equipo-header {
+        gap: 0.75rem;
+    }
+    
+    .escudo-image,
+    .escudo-placeholder {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .escudo-placeholder {
+        font-size: 1.25rem;
+    }
+    
+    .equipo-name {
+        font-size: 1.1rem;
+    }
+    
+    .equipo-stats {
+        padding: 0.75rem;
+    }
+    
+    .empty-state-icon {
+        font-size: 4rem;
+    }
+    
+    .empty-state-title {
+        font-size: 1.5rem;
+    }
+    
+    .empty-state-message {
+        font-size: 1rem;
+    }
+    
+    .empty-state-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-create-first {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .suggestions-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .equipo-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .btn-view {
+        width: 100%;
+    }
+    
+    .btn-menu {
+        width: 100%;
+        height: 36px;
+    }
+    
+    .stat-item {
+        gap: 0.5rem;
+    }
+    
+    .stat-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .suggestions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ======= Animaciones ======= */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Animaciones escalonadas */
+.equipo-card:nth-child(1) { animation-delay: 0.1s; }
+.equipo-card:nth-child(2) { animation-delay: 0.2s; }
+.equipo-card:nth-child(3) { animation-delay: 0.3s; }
+.equipo-card:nth-child(4) { animation-delay: 0.4s; }
+.equipo-card:nth-child(5) { animation-delay: 0.5s; }
+.equipo-card:nth-child(6) { animation-delay: 0.6s; }
+
+.stat-card:nth-child(1) { animation: slideIn 0.6s ease-out 0.1s both; }
+.stat-card:nth-child(2) { animation: slideIn 0.6s ease-out 0.2s both; }
+.stat-card:nth-child(3) { animation: slideIn 0.6s ease-out 0.3s both; }
+
+/* ======= Efectos Hover Adicionales ======= */
+.equipo-card:hover .escudo-image,
+.equipo-card:hover .escudo-placeholder {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.equipo-card:hover .equipo-badge {
+    transform: scale(1.05);
+    box-shadow: var(--teams-shadow-hover);
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* ======= Estados de Loading ======= */
+.equipo-card.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.equipo-card.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 3px solid transparent;
+    border-top-color: var(--teams-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ======= Mejoras de Accesibilidad ======= */
+.btn:focus,
+.equipo-card:focus-within,
+.stat-card:focus-within {
+    outline: 2px solid var(--teams-primary);
+    outline-offset: 2px;
+}
+
+.dropdown-item:focus {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+    outline: none;
+}
+
+/* ======= Filtros y Búsqueda (Futuro) ======= */
+.filters-section {
+    background: var(--teams-bg-section);
+    border: 1px solid #64748b;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: none; /* Ocultar hasta implementar */
+}
+
+.filter-controls {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.search-input {
+    background: var(--teams-bg-card);
+    border: 1px solid #64748b;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    color: #f8fafc;
+    min-width: 200px;
+}
+
+.search-input:focus {
+    border-color: var(--teams-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* ======= Badges de Estado ======= */
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.active {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--teams-success);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-badge.inactive {
+    background: rgba(107, 114, 128, 0.2);
+    color: #9ca3af;
+    border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+/* ======= Efectos de Transición Suaves ======= */
+.equipo-card,
+.stat-card,
+.btn,
+.suggestion-item {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.equipo-card:hover,
+.stat-card:hover {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ======= Personalización del Scrollbar ======= */
+.equipos-section::-webkit-scrollbar {
+    width: 6px;
+}
+
+.equipos-section::-webkit-scrollbar-track {
+    background: var(--teams-bg-section);
+    border-radius: 3px;
+}
+
+.equipos-section::-webkit-scrollbar-thumb {
+    background: var(--teams-primary);
+    border-radius: 3px;
+}
+
+.equipos-section::-webkit-scrollbar-thumb:hover {
+    background: var(--teams-secondary);
+}
