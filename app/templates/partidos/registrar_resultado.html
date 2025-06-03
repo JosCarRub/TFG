@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
 
@@ -9,161 +9,136 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid p-lg-4 p-3">
-    <!-- Header de la página -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="page-header-card">
-                <div class="page-header-content">
-                    <div class="header-icon">
-                        <i class="fas fa-clipboard-check"></i>
-                    </div>
-                    <div class="header-text">
-                        <h1 class="page-title">{{ titulo_pagina|default:"Registrar Resultado del Partido" }}</h1>
-                        <p class="page-subtitle">Registra el marcador final y actualiza las estadísticas</p>
-                    </div>
-                </div>
+<div class="resultado-container" id="resultado-container">
+    <!-- Hero Section -->
+    <section class="resultado-hero-section" id="resultado-hero-section">
+        <div class="hero-content">
+            <div class="hero-icon">
+                <i class="fas fa-clipboard-check"></i>
+            </div>
+            <div class="hero-text">
+                <h1 class="hero-title">{{ titulo_pagina|default:"Registrar Resultado del Partido" }}</h1>
+                <p class="hero-subtitle">Registra el marcador final y actualiza las estadísticas</p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Formulario principal -->
-    <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8">
-            <div class="resultado-container">
-                <!-- Header del partido -->
-                <div class="partido-info-header">
-                    <div class="partido-details">
-                        <h2 class="partido-title">
-                            <i class="fas fa-futbol me-2"></i>
-                            Información del Partido
-                        </h2>
-                        <div class="partido-meta">
-                            <div class="meta-item">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>{{ partido.fecha|date:"d/m/Y \a \l\a\s H:i" }}</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>{{ partido.cancha.nombre_cancha }}</span>
-                            </div>
-                        </div>
+    <!-- Partido Info Section -->
+
+    <!-- Equipos Section -->
+    <section class="equipos-section" id="resultado-equipos-section">
+        {% if partido.equipo_local and partido.equipo_visitante %}
+            <div class="equipos-enfrentamiento">
+                <div class="equipo-card equipo-local">
+                    <div class="equipo-icon">
+                        <i class="fas fa-shield-alt"></i>
                     </div>
-                </div>
-
-                <!-- Equipos enfrentados -->
-                <div class="equipos-section">
-                    {% if partido.equipo_local and partido.equipo_visitante %}
-                        <div class="equipos-enfrentamiento">
-                            <div class="equipo-card equipo-local">
-                                <div class="equipo-icon">
-                                    <i class="fas fa-shield-alt"></i>
-                                </div>
-                                <h3 class="equipo-nombre">{{ partido.equipo_local.nombre_equipo|default:"Equipo Local" }}</h3>
-                                <span class="equipo-label">Local</span>
-                            </div>
-                            
-                            <div class="vs-separator">
-                                <span class="vs-text">VS</span>
-                            </div>
-                            
-                            <div class="equipo-card equipo-visitante">
-                                <div class="equipo-icon">
-                                    <i class="fas fa-shield-alt"></i>
-                                </div>
-                                <h3 class="equipo-nombre">{{ partido.equipo_visitante.nombre_equipo|default:"Equipo Visitante" }}</h3>
-                                <span class="equipo-label">Visitante</span>
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="no-equipos-warning">
-                            <div class="warning-icon">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                            <div class="warning-content">
-                                <h4 class="warning-title">Equipos no asignados</h4>
-                                <p class="warning-text">Los equipos no están asignados a este partido. Las calificaciones ELO no se actualizarán automáticamente.</p>
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
-
-                <!-- Formulario de resultado -->
-                <div class="resultado-form-section">
-                    <div class="form-header">
-                        <h3 class="form-title">
-                            <i class="fas fa-trophy me-2"></i>
-                            Resultado Final
-                        </h3>
-                        <p class="form-subtitle">Ingresa el marcador final del partido</p>
-                    </div>
-
-                    <div class="form-body">
-                        <form method="post" class="resultado-form" id="resultadoForm">
-                            {% csrf_token %}
-                            
-                            <!-- Formulario con crispy forms -->
-                            <div class="form-fields">
-                                {{ form|crispy }}
-                            </div>
-                            
-                            <!-- Botones de acción -->
-                            <div class="form-actions">
-                                <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="btn btn-secondary">
-                                    <i class="fas fa-times me-2"></i>
-                                    Cancelar
-                                </a>
-                                <button type="submit" class="btn btn-primary btn-save">
-                                    <i class="fas fa-save me-2"></i>
-                                    <span class="btn-text">Guardar Resultado</span>
-                                    <div class="btn-loader">
-                                        <div class="spinner"></div>
-                                    </div>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Información adicional -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="info-cards-grid">
-                <div class="info-card">
-                    <div class="info-icon">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="info-content">
-                        <h4 class="info-title">Calificación ELO</h4>
-                        <p class="info-description">Las calificaciones de los jugadores se actualizarán automáticamente basándose en el resultado.</p>
+                    <div class="equipo-info">
+                        <h3 class="equipo-nombre">{{ partido.equipo_local.nombre_equipo|default:"Equipo Local" }}</h3>
+                        <span class="equipo-label">Local</span>
                     </div>
                 </div>
                 
-                <div class="info-card">
-                    <div class="info-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="info-content">
-                        <h4 class="info-title">Estadísticas</h4>
-                        <p class="info-description">El resultado se añadirá al historial y estadísticas personales de cada jugador.</p>
+                <div class="vs-separator">
+                    <div class="vs-circle">
+                        <span class="vs-text">VS</span>
                     </div>
                 </div>
                 
-                <div class="info-card">
-                    <div class="info-icon">
-                        <i class="fas fa-history"></i>
+                <div class="equipo-card equipo-visitante">
+                    <div class="equipo-icon">
+                        <i class="fas fa-shield-alt"></i>
                     </div>
-                    <div class="info-content">
-                        <h4 class="info-title">Historial</h4>
-                        <p class="info-description">Una vez guardado, el resultado quedará registrado permanentemente en el historial del partido.</p>
+                    <div class="equipo-info">
+                        <h3 class="equipo-nombre">{{ partido.equipo_visitante.nombre_equipo|default:"Equipo Visitante" }}</h3>
+                        <span class="equipo-label">Visitante</span>
                     </div>
                 </div>
             </div>
+        {% else %}
+            <div class="no-equipos-warning">
+                <div class="warning-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="warning-content">
+                    <h4 class="warning-title">Equipos no asignados</h4>
+                    <p class="warning-text">Los equipos no están asignados a este partido. Las calificaciones ELO no se actualizarán automáticamente.</p>
+                </div>
+            </div>
+        {% endif %}
+    </section>
+
+    <!-- Formulario Section -->
+    <section class="form-section" id="resultado-form-section">
+        <div class="form-container">
+            <div class="form-header">
+                <h3 class="form-title">
+                    <i class="fas fa-trophy"></i>
+                    Resultado Final
+                </h3>
+                <p class="form-subtitle">Ingresa el marcador final del partido</p>
+            </div>
+
+            <div class="form-body">
+                <form method="post" class="resultado-form" id="resultadoForm">
+                    {% csrf_token %}
+                    
+                    <div class="form-fields">
+                        {{ form|crispy }}
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                            <span>Cancelar</span>
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-save">
+                            <i class="fas fa-save"></i>
+                            <span class="btn-text">Guardar Resultado</span>
+                            <div class="btn-loader">
+                                <div class="spinner"></div>
+                            </div>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Info Cards Section -->
+    <section class="info-section" id="resultado-info-section">
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-card-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="info-card-content">
+                    <h4 class="info-card-title">Calificación ELO</h4>
+                    <p class="info-card-description">Las calificaciones de los jugadores se actualizarán automáticamente basándose en el resultado.</p>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="info-card-content">
+                    <h4 class="info-card-title">Estadísticas</h4>
+                    <p class="info-card-description">El resultado se añadirá al historial y estadísticas personales de cada jugador.</p>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-card-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="info-card-content">
+                    <h4 class="info-card-title">Historial</h4>
+                    <p class="info-card-description">Una vez guardado, el resultado quedará registrado permanentemente en el historial del partido.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 {% endblock %}
 
@@ -181,17 +156,14 @@ document.addEventListener('DOMContentLoaded', function() {
         entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
                 setTimeout(() => {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.classList.add('animate-in');
                 }, index * 150);
+                observer.unobserve(entry.target);
             }
         });
     }, { threshold: 0.1 });
 
     infoCards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
         observer.observe(card);
     });
     
@@ -208,7 +180,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     isValid = false;
                     field.classList.add('is-invalid');
                     
-                    // Crear mensaje de error si no existe
                     if (!field.parentNode.querySelector('.invalid-feedback')) {
                         const errorMsg = document.createElement('div');
                         errorMsg.className = 'invalid-feedback';
@@ -255,18 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    
-    // Efecto de focus en los campos del formulario
-    const formControls = document.querySelectorAll('.form-control');
-    formControls.forEach(control => {
-        control.addEventListener('focus', function() {
-            this.parentNode.classList.add('focused');
-        });
-        
-        control.addEventListener('blur', function() {
-            this.parentNode.classList.remove('focused');
-        });
-    });
 });
 </script>
 {% endblock %}

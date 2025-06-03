@@ -8,16 +8,16 @@
 {% endblock %}
 
 {% block content %}
-<div class="buscar-container">
-    <!-- Header Section -->
-    <section class="header-section">
-        <div class="header-content">
-            <div class="header-icon">
+<div class="partidos-container" id="buscar-partidos-container">
+    <!-- Hero Section -->
+    <section class="partidos-hero-section" id="buscar-hero-section">
+        <div class="hero-content">
+            <div class="hero-icon">
                 <i class="fas fa-search"></i>
             </div>
-            <div class="header-text">
-                <h1 class="header-title">{{ titulo_pagina|default:"Partidos Disponibles" }}</h1>
-                <p class="header-subtitle">Encuentra tu próximo desafío futbolístico</p>
+            <div class="hero-text">
+                <h1 class="hero-title">{{ titulo_pagina|default:"Partidos Disponibles" }}</h1>
+                <p class="hero-subtitle">Asómate a la ventana y busca si están los chavales en las pistas</p>
             </div>
         </div>
         
@@ -31,130 +31,212 @@
 
     <!-- Messages -->
     {% if messages %}
-        <section class="messages-section">
+        <section class="messages-section" id="buscar-messages-section">
             {% for message in messages %}
-                <div class="message message-{{ message.tags }}">
-                    <div class="message-content">
-                        <p class="message-text">{{ message }}</p>
-                        <button class="message-close" onclick="this.parentElement.parentElement.remove()">
-                            <i class="fas fa-times"></i>
-                        </button>
+                <div class="custom-alert alert-{{ message.tags }}">
+                    <div class="alert-icon">
+                        {% if message.tags == 'success' %}
+                            <i class="fas fa-check-circle"></i>
+                        {% elif message.tags == 'error' or message.tags == 'danger' %}
+                            <i class="fas fa-exclamation-circle"></i>
+                        {% elif message.tags == 'warning' %}
+                            <i class="fas fa-exclamation-triangle"></i>
+                        {% else %}
+                            <i class="fas fa-info-circle"></i>
+                        {% endif %}
                     </div>
+                    <div class="alert-content">{{ message }}</div>
+                    <button class="alert-dismiss" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             {% endfor %}
         </section>
     {% endif %}
 
-    <!-- Matches Section -->
-    <section class="matches-section">
+    <!-- Stats Section -->
+    {% if partidos_info_list %}
+        <section class="stats-section" id="buscar-stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ partidos_info_list|length }}</div>
+                        <div class="stat-label">Partidos Disponibles</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">
+                            {% for item in partidos_info_list %}{{ item.partido.jugadores.count|add:0 }}{% if not forloop.last %} + {% endif %}{% endfor %}
+                        </div>
+                        <div class="stat-label">Jugadores Inscritos</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">
+                            {% regroup partidos_info_list by partido.cancha.ubicacion as ubicaciones %}
+                            {{ ubicaciones|length }}
+                        </div>
+                        <div class="stat-label">Ubicaciones</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    <!-- Partidos Section -->
+    <section class="partidos-section" id="buscar-partidos-section">
         {% if partidos_info_list %}
-            <div class="matches-grid">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    Próximos Partidos
+                </h2>
+                <div class="section-meta">
+                    <span class="partidos-count">{{ partidos_info_list|length }} partido{{ partidos_info_list|length|pluralize:"s" }}</span>
+                </div>
+            </div>
+            
+            <div class="partidos-grid">
                 {% for item_info in partidos_info_list %}
                     {% with partido=item_info.partido es_creador=item_info.es_creador esta_inscrito=item_info.esta_inscrito inscripcion_esta_abierta=item_info.inscripcion_esta_abierta plazas_disponibles=item_info.plazas_disponibles %}
-                    <div class="match-card {% if es_creador %}match-card-owner{% elif esta_inscrito %}match-card-joined{% endif %}">
-                        <!-- Card Header -->
-                        <div class="card-header">
-                            <div class="match-status">
+                    <div class="partido-card {% if es_creador %}partido-owner{% elif esta_inscrito %}partido-joined{% endif %}">
+                        <!-- Partido Header -->
+                        <div class="partido-header">
+                            <div class="partido-status">
                                 {% if es_creador %}
-                                    <span class="status-badge status-owner">Tu Partido</span>
+                                    <span class="status-badge status-owner">
+                                        <i class="fas fa-crown"></i>
+                                        Tu Partido
+                                    </span>
                                 {% elif esta_inscrito %}
-                                    <span class="status-badge status-joined">Participando</span>
+                                    <span class="status-badge status-joined">
+                                        <i class="fas fa-check"></i>
+                                        Participando
+                                    </span>
                                 {% elif not inscripcion_esta_abierta and partido.jugadores.count >= partido.max_jugadores %}
-                                    <span class="status-badge status-full">Completo</span>
+                                    <span class="status-badge status-full">
+                                        <i class="fas fa-users"></i>
+                                        Completo
+                                    </span>
                                 {% elif not inscripcion_esta_abierta %}
-                                    <span class="status-badge status-closed">Cerrado</span>
+                                    <span class="status-badge status-closed">
+                                        <i class="fas fa-lock"></i>
+                                        Cerrado
+                                    </span>
                                 {% else %}
-                                    <span class="status-badge status-available">Disponible</span>
+                                    <span class="status-badge status-available">
+                                        <i class="fas fa-clock"></i>
+                                        Disponible
+                                    </span>
                                 {% endif %}
                             </div>
+                            
+                            <div class="partido-capacity">
+                                <span class="capacity-text">{{ partido.jugadores.count }}/{{ partido.max_jugadores }}</span>
+                                <div class="capacity-bar">
+                                    <div class="capacity-fill" style="width: {% widthratio partido.jugadores.count partido.max_jugadores 100 %}%"></div>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <!-- Card Body -->
-                        <div class="card-body">
-                            <h3 class="match-title">
-                                <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="match-link">
+
+                        <!-- Partido Content -->
+                        <div class="partido-content">
+                            <h3 class="partido-title">
+                                <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="partido-link">
                                     {{ partido.cancha.nombre_cancha }}
                                 </a>
                             </h3>
                             
-                            <div class="match-details">
-                                <div class="detail-row">
-                                    <div class="detail-item">
-                                        <span class="detail-label">Fecha</span>
-                                        <span class="detail-value">{{ partido.fecha|date:"d M, H:i" }}</span>
+                            <div class="partido-details">
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-calendar"></i>
                                     </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">Límite</span>
-                                        <span class="detail-value">{{ partido.fecha_limite_inscripcion_efectiva|date:"d/m H:i" }}</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="detail-row">
-                                    <div class="detail-item detail-location">
-                                        <span class="detail-label">Ubicación</span>
-                                        <span class="detail-value">{{ partido.cancha.ubicacion }}</span>
+                                    <div class="info-text">
+                                        <div class="info-label">Fecha y Hora</div>
+                                        <div class="info-value">{{ partido.fecha|date:"d M Y, H:i" }}h</div>
                                     </div>
                                 </div>
                                 
-                                <div class="detail-row">
-                                    <div class="detail-item">
-                                        <span class="detail-label">Modalidad</span>
-                                        <span class="detail-value">{{ partido.get_tipo_display }}</span>
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-clock"></i>
                                     </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">Nivel</span>
-                                        <span class="detail-value">{{ partido.get_nivel_display|default:"Abierto" }}</span>
+                                    <div class="info-text">
+                                        <div class="info-label">Límite Inscripción</div>
+                                        <div class="info-value">{{ partido.fecha_limite_inscripcion_efectiva|date:"d/m H:i" }}h</div>
                                     </div>
-                                </div>
-                            </div>
-
-                            <!-- Capacity -->
-                            <div class="capacity-section">
-                                <div class="capacity-header">
-                                    <span class="capacity-label">Ocupación</span>
-                                    <span class="capacity-count">{{ partido.jugadores.count }}/{{ partido.max_jugadores }}</span>
                                 </div>
                                 
-                                <div class="capacity-bar">
-                                    <div class="capacity-progress" style="width: {% widthratio partido.jugadores.count partido.max_jugadores 100 %}%"></div>
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <div class="info-text">
+                                        <div class="info-label">Ubicación</div>
+                                        <div class="info-value">{{ partido.cancha.ubicacion }}</div>
+                                    </div>
                                 </div>
                                 
-                                <div class="capacity-status">
-                                    {% if inscripcion_esta_abierta %}
-                                        <span class="status-text status-available">{{ plazas_disponibles }} plazas disponibles</span>
-                                    {% elif partido.jugadores.count >= partido.max_jugadores %}
-                                        <span class="status-text status-full">Partido completo</span>
-                                    {% else %}
-                                        <span class="status-text status-closed">Inscripción cerrada</span>
-                                    {% endif %}
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-futbol"></i>
+                                    </div>
+                                    <div class="info-text">
+                                        <div class="info-label">Modalidad</div>
+                                        <div class="info-value">{{ partido.get_tipo_display }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-icon">
+                                        <i class="fas fa-signal"></i>
+                                    </div>
+                                    <div class="info-text">
+                                        <div class="info-label">Nivel</div>
+                                        <div class="info-value">{{ partido.get_nivel_display|default:"Abierto" }}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Card Footer -->
-                        <div class="card-footer">
+                        <!-- Partido Actions -->
+                        <div class="partido-actions">
                             {% if es_creador %}
-                                <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="card-action btn-primary">
-                                    <span>Gestionar Partido</span>
-                                    <i class="fas fa-arrow-right"></i>
+                                <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="btn btn-primary">
+                                    <i class="fas fa-cog"></i>
+                                    <span>Gestionar</span>
                                 </a>
                             {% elif esta_inscrito %}
-                                <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="card-action btn-secondary">
+                                <a href="{% url 'detalle_partido' pk=partido.id_partido %}" class="btn btn-secondary">
+                                    <i class="fas fa-eye"></i>
                                     <span>Ver Detalles</span>
-                                    <i class="fas fa-arrow-right"></i>
                                 </a>
                             {% elif inscripcion_esta_abierta %}
                                 <form action="{% url 'inscribirse_partido' partido_id=partido.id_partido %}" method="post" class="join-form">
                                     {% csrf_token %}
-                                    <button type="submit" class="card-action btn-join">
-                                        <span>Unirse al Partido</span>
+                                    <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-user-plus"></i>
+                                        <span>Unirse</span>
                                     </button>
                                 </form>
                             {% else %}
-                                <div class="card-action btn-disabled">
-                                    <span>No Disponible</span>
+                                <div class="btn btn-disabled">
                                     <i class="fas fa-ban"></i>
+                                    <span>No Disponible</span>
                                 </div>
                             {% endif %}
                         </div>
@@ -165,7 +247,7 @@
             
             <!-- Pagination -->
             {% if is_paginated %}
-                <nav class="pagination-section">
+                <nav class="pagination-section" id="buscar-pagination">
                     <div class="pagination-content">
                         {% if page_obj.has_previous %}
                             <a href="?page=1" class="page-link">
@@ -199,18 +281,16 @@
             {% endif %}
         {% else %}
             <!-- Empty State -->
-            <section class="empty-section">
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-search"></i>
+                </div>
                 <div class="empty-content">
-                    <div class="empty-icon">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <div class="empty-text">
-                        <h3 class="empty-title">No se encontraron partidos</h3>
-                        <p class="empty-description">
-                            No hay partidos disponibles que coincidan con tus criterios actuales.
-                            ¿Por qué no crear el primero?
-                        </p>
-                    </div>
+                    <h3 class="empty-title">No se encontraron partidos</h3>
+                    <p class="empty-desc">
+                        No hay partidos disponibles que coincidan con tus criterios actuales.
+                        ¿Por qué no crear el primero?
+                    </p>
                     <div class="empty-actions">
                         <a href="{% url 'crear_partidos' %}" class="btn btn-primary">
                             <i class="fas fa-plus"></i>
@@ -222,7 +302,7 @@
                         </a>
                     </div>
                 </div>
-            </section>
+            </div>
         {% endif %}
     </section>
 </div>
@@ -231,7 +311,7 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Animaciones sutiles
+    // Animaciones de entrada
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -248,8 +328,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, observerOptions);
 
-    // Observar elementos
-    document.querySelectorAll('.match-card').forEach(card => {
+    // Observar cards
+    document.querySelectorAll('.partido-card').forEach(card => {
         observer.observe(card);
     });
 
@@ -261,14 +341,26 @@ document.addEventListener('DOMContentLoaded', function() {
             const confirmation = confirm('¿Confirmas tu participación en este partido?');
             
             if (confirmation) {
-                const button = this.querySelector('.btn-join');
-                button.innerHTML = '<span>Inscribiendo...</span><i class="fas fa-spinner fa-spin"></i>';
+                const button = this.querySelector('.btn');
+                const originalContent = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Inscribiendo...</span>';
                 button.disabled = true;
                 
-                this.submit();
+                setTimeout(() => {
+                    this.submit();
+                }, 500);
             }
         });
     });
+
+    // Auto-dismiss alerts
+    setTimeout(() => {
+        document.querySelectorAll('.custom-alert').forEach(alert => {
+            alert.style.opacity = '0';
+            alert.style.transform = 'translateY(-10px)';
+            setTimeout(() => alert.remove(), 300);
+        });
+    }, 5000);
 });
 </script>
 {% endblock %}

@@ -1,31 +1,36 @@
-{% extends 'main.html' %}
+{% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block title %}{{ titulo_pagina|default:"Editar Perfil" }} - De Rabona{% endblock %}
 
 {% block extra_css %}
-
+<link rel="stylesheet" href="{% static 'css/perfil/editar_perfil_styles.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid p-lg-4 p-3">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10">
-            <div class="content-card">
-                <div class="content-card-header">
-                    <h4 class="content-card-title">
-                        <i class="fas fa-user-edit text-success me-2"></i>
+<div class="editar-perfil-page">
+    <div class="editar-perfil-container"> 
+
+            
+            <div class="form-container"> {# Reemplaza .content-card #}
+                <div class="form-header"> {# Reemplaza .content-card-header #}
+                    {# <h4 class="content-card-title"> Mapea a .form-title #}
+                    <h4 class="form-title">
+                        <i class="fas fa-user-edit"></i> 
                         {{ titulo_pagina|default:"Editar Perfil" }}
                     </h4>
                 </div>
-                <div class="content-card-body">
+                <div class="form-body">
                     {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4" role="alert">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        {% endfor %}
+                        <div class="messages-section mb-4"> 
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        </div>
                     {% endif %}
 
                     <form method="post" enctype="multipart/form-data" class="profile-form">
@@ -34,18 +39,16 @@
                         {{ form.non_field_errors }}
 
                         <!-- Información Personal -->
-                        <div class="form-section">
+                        <div class="form-section"> 
                             <h5 class="form-section-title">
-                                <i class="fas fa-user me-2"></i>
+                                <i class="fas fa-user"></i> 
                                 Información Personal
                             </h5>
                             
                             <div class="form-group">
-                                <label for="{{ form.nombre.id_for_label }}" class="form-label">{{ form.nombre.label }}</label>
-                                {{ form.nombre }}
-                                {% if form.nombre.help_text %}
-                                    <small class="form-text">{{ form.nombre.help_text }}</small>
-                                {% endif %}
+                                
+                                {{ form.nombre|as_crispy_field }}
+                                
                                 {% for error in form.nombre.errors %}
                                     <div class="invalid-feedback d-block">{{ error }}</div>
                                 {% endfor %}
@@ -54,8 +57,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label">{{ form.fecha_nacimiento.label }}</label>
-                                        {{ form.fecha_nacimiento }}
+                                        {{ form.fecha_nacimiento|as_crispy_field  }} 
                                         {% for error in form.fecha_nacimiento.errors %}
                                             <div class="invalid-feedback d-block">{{ error }}</div>
                                         {% endfor %}
@@ -63,8 +65,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="{{ form.genero.id_for_label }}" class="form-label">{{ form.genero.label }}</label>
-                                        {{ form.genero }}
+                                        {{ form.genero |as_crispy_field  }} 
                                         {% for error in form.genero.errors %}
                                             <div class="invalid-feedback d-block">{{ error }}</div>
                                         {% endfor %}
@@ -76,15 +77,14 @@
                         <!-- Información de Fútbol -->
                         <div class="form-section">
                             <h5 class="form-section-title">
-                                <i class="fas fa-futbol me-2"></i>
+                                <i class="fas fa-futbol"></i>
                                 Información de Fútbol
                             </h5>
                             
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="{{ form.posicion.id_for_label }}" class="form-label">{{ form.posicion.label }}</label>
-                                        {{ form.posicion }}
+                                        {{ form.posicion |as_crispy_field  }}
                                         {% for error in form.posicion.errors %}
                                             <div class="invalid-feedback d-block">{{ error }}</div>
                                         {% endfor %}
@@ -105,7 +105,7 @@
                         <!-- Imágenes del Perfil -->
                         <div class="form-section">
                             <h5 class="form-section-title">
-                                <i class="fas fa-images me-2"></i>
+                                <i class="fas fa-images"></i>
                                 Imágenes del Perfil
                             </h5>
                             
@@ -117,7 +117,7 @@
                                             <div class="current-image-preview">
                                                 <img src="{{ user.imagen_perfil.url }}" alt="Avatar actual" class="current-avatar">
                                                 <div class="current-image-info">
-                                                    <small class="text-muted">Imagen actual</small>
+                                                    <small>Imagen actual</small> {# CSS controlará color #}
                                                     <a href="{{ user.imagen_perfil.url }}" target="_blank" class="view-image-link">
                                                         <i class="fas fa-external-link-alt"></i>
                                                         Ver imagen
@@ -125,7 +125,7 @@
                                                 </div>
                                             </div>
                                         {% endif %}
-                                        {{ form.imagen_perfil }}
+                                        {{ form.imagen_perfil }} {# Django FileInput. El CSS lo estilizará como .form-control #}
                                         {% for error in form.imagen_perfil.errors %}
                                             <div class="invalid-feedback d-block">{{ error }}</div>
                                         {% endfor %}
@@ -138,7 +138,7 @@
                                             <div class="current-image-preview">
                                                 <img src="{{ user.banner_perfil.url }}" alt="Banner actual" class="current-banner">
                                                 <div class="current-image-info">
-                                                    <small class="text-muted">Banner actual</small>
+                                                    <small>Banner actual</small>
                                                     <a href="{{ user.banner_perfil.url }}" target="_blank" class="view-image-link">
                                                         <i class="fas fa-external-link-alt"></i>
                                                         Ver imagen
@@ -156,54 +156,62 @@
                         </div>
 
                         <!-- Botones de Acción -->
-                        <div class="form-actions">
+                        <div class="form-actions"> {# Esta clase ya existe en el CSS nuevo #}
                             <a href="{% url 'perfil' %}" class="btn btn-secondary">
-                                <i class="fas fa-times me-2"></i>
+                                <i class="fas fa-times"></i> {# Quitamos me-2 #}
                                 Cancelar
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>
+                                <i class="fas fa-save"></i> {# Quitamos me-2 #}
                                 Guardar Cambios
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
+        </div> 
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+{{ block.super }} {# Si main.html tiene JS base que quieres mantener #}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Preview de imagen cuando se selecciona un archivo
-    const imageInputs = document.querySelectorAll('input[type="file"]');
+    const imageInputs = document.querySelectorAll('.profile-form input[type="file"]'); // Más específico
     
     imageInputs.forEach(input => {
         input.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    // Buscar el preview container más cercano
-                    const previewContainer = input.closest('.form-group').querySelector('.current-image-preview');
+                reader.onload = function(event) {
+                    let previewContainer = input.closest('.form-group').querySelector('.current-image-preview');
+                    
                     if (previewContainer) {
                         const img = previewContainer.querySelector('img');
                         if (img) {
-                            img.src = e.target.result;
+                            img.src = event.target.result;
                         }
+                        // Actualizar texto a "Vista previa"
+                        const smallText = previewContainer.querySelector('.current-image-info small');
+                        if (smallText) smallText.textContent = 'Vista previa';
+                        const link = previewContainer.querySelector('.view-image-link');
+                        if(link) link.style.display = 'none'; // Ocultar "Ver imagen"
                     } else {
-                        // Crear preview si no existe
-                        const preview = document.createElement('div');
-                        preview.className = 'current-image-preview mt-2';
-                        preview.innerHTML = `
-                            <img src="${e.target.result}" alt="Preview" class="${input.name === 'imagen_perfil' ? 'current-avatar' : 'current-banner'}">
+                        // Crear preview si no existe (para el caso de que no hubiera imagen previa)
+                        const newPreviewDiv = document.createElement('div');
+                        newPreviewDiv.className = 'current-image-preview'; // Asegúrate que los estilos CSS se apliquen
+                        const imgClass = input.name === 'imagen_perfil' ? 'current-avatar' : 'current-banner';
+                        newPreviewDiv.innerHTML = `
+                            <img src="${event.target.result}" alt="Vista previa" class="${imgClass}">
                             <div class="current-image-info">
-                                <small class="text-muted">Vista previa</small>
+                                <small>Vista previa</small>
                             </div>
                         `;
-                        input.parentNode.insertBefore(preview, input);
+                        // Insertar antes del input de archivo
+                        input.parentNode.insertBefore(newPreviewDiv, input);
                     }
                 };
                 reader.readAsDataURL(file);
@@ -211,30 +219,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Validación del formulario
+    // Validación del formulario (opcional, Django ya valida)
     const form = document.querySelector('.profile-form');
-    form.addEventListener('submit', function(e) {
-        const requiredFields = form.querySelectorAll('[required]');
-        let isValid = true;
+    if (form) {
+        form.addEventListener('submit', function(e) {
+           
+            const submitButton = form.querySelector('button[type="submit"].btn-primary');
+            if (submitButton) {
+                submitButton.classList.add('loading'); // Necesitarías CSS para .loading
 
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                isValid = false;
-                field.classList.add('is-invalid');
-            } else {
-                field.classList.remove('is-invalid');
+                const icon = submitButton.querySelector('i');
+                if (icon) icon.className = 'fas fa-spinner fa-spin'; // Cambia el ícono a spinner
+                submitButton.disabled = true;
             }
         });
-
-        if (!isValid) {
-            e.preventDefault();
-            // Scroll al primer campo con error
-            const firstError = form.querySelector('.is-invalid');
-            if (firstError) {
-                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-    });
+    }
 });
 </script>
 {% endblock %}

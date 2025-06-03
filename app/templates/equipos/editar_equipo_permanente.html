@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
 
@@ -9,257 +9,335 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid p-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10">
-            <div class="editar-equipo-card">
-                <!-- Header con información del equipo actual -->
-                <div class="editar-equipo-header">
-                    <div class="header-content">
-                        <div class="current-team-info">
-                            <div class="current-shield">
-                                {% if equipo.imagen_escudo %}
-                                    <img src="{{ equipo.imagen_escudo.url }}" alt="Escudo {{ equipo.nombre }}">
-                                {% else %}
-                                    <i class="fas fa-shield-alt"></i>
-                                {% endif %}
-                            </div>
-                            <div class="current-details">
-                                <h4 class="current-name">{{ equipo.nombre }}</h4>
-                                <p class="current-subtitle">Editando información del equipo</p>
-                            </div>
+<div class="editar-equipo-container">
+    <!-- Hero Section -->
+    <div class="editar-equipo-hero animate-in">
+        <div class="hero-content">
+            <div class="current-team-info">
+                <div class="current-shield">
+                    {% if equipo.team_shield %}
+                        <img src="{{ equipo.team_shield.url }}" alt="Escudo {{ equipo.nombre_equipo }}">
+                    {% else %}
+                        <div class="shield-placeholder">
+                            <i class="fas fa-shield-alt"></i>
                         </div>
-                        <div class="edit-icon">
-                            <i class="fas fa-edit"></i>
+                    {% endif %}
+                </div>
+                <div class="current-details">
+                    <h1 class="current-name">{{ equipo.nombre_equipo }}</h1>
+                    <p class="current-subtitle">Editando información del equipo</p>
+                </div>
+            </div>
+            <div class="edit-icon">
+                <i class="fas fa-edit"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensajes del Sistema -->
+    {% if messages %}
+        <div class="messages-section">
+            {% for message in messages %}
+                <div class="custom-alert alert-{{ message.tags }}">
+                    <div class="alert-icon">
+                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                    </div>
+                    <div class="alert-content">{{ message }}</div>
+                    <button type="button" class="alert-dismiss" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Formulario Principal -->
+    <div class="editar-equipo-form-container animate-in">
+        <form method="post" enctype="multipart/form-data" class="equipo-form" id="editarEquipoForm">
+            {% csrf_token %}
+            
+            <div class="form-sections">
+                <!-- Sección de información básica -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-info-circle"></i>
                         </div>
+                        <div class="section-content">
+                            <h2 class="section-title">Información Básica</h2>
+                            <p class="section-description">Modifica los datos principales de tu equipo</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <!-- Campo Nombre del Equipo (siempre primero) -->
+                        {% for field in form %}
+                            {% if field.name == 'nombre_equipo' %}
+                                <div class="form-field">
+                                    <label class="form-label" for="{{ field.id_for_label }}">
+                                        <div class="label-content">
+                                            <div class="label-icon">
+                                                <i class="fas fa-tag"></i>
+                                            </div>
+                                            <span class="label-text">
+                                                {{ field.label }}
+                                                {% if field.field.required %}
+                                                    <span class="required-asterisk">*</span>
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </label>
+                                    
+                                    <div class="field-wrapper">
+                                        {{ field }}
+                                        <div class="field-status">
+                                            <i class="fas fa-check-circle field-valid-icon"></i>
+                                            <i class="fas fa-exclamation-circle field-invalid-icon"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    {% if field.help_text %}
+                                        <small class="form-help">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                        <div class="field-errors">
+                                            {% for error in field.errors %}
+                                                <small class="error-text">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- Campo Descripción (siempre segundo) -->
+                        {% for field in form %}
+                            {% if field.name == 'descripcion' %}
+                                <div class="form-field form-field-full">
+                                    <label class="form-label" for="{{ field.id_for_label }}">
+                                        <div class="label-content">
+                                            <div class="label-icon">
+                                                <i class="fas fa-align-left"></i>
+                                            </div>
+                                            <span class="label-text">
+                                                {{ field.label }}
+                                                {% if field.field.required %}
+                                                    <span class="required-asterisk">*</span>
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </label>
+                                    
+                                    <div class="field-wrapper">
+                                        {{ field }}
+                                        <div class="field-status">
+                                            <i class="fas fa-check-circle field-valid-icon"></i>
+                                            <i class="fas fa-exclamation-circle field-invalid-icon"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    {% if field.help_text %}
+                                        <small class="form-help">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                        <div class="field-errors">
+                                            {% for error in field.errors %}
+                                                <small class="error-text">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
                 
-                <div class="editar-equipo-body">
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
+                <!-- Sección de personalización visual -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <div class="section-content">
+                            <h2 class="section-title">Personalización Visual</h2>
+                            <p class="section-description">Actualiza la identidad visual de tu equipo</p>
+                        </div>
+                    </div>
                     
-                    <form method="post" enctype="multipart/form-data" class="equipo-form" id="editarEquipoForm">
-                        {% csrf_token %}
-                        
-                        <div class="form-sections">
-                            <!-- Sección de información básica -->
-                            <div class="form-section">
-                                <div class="section-header">
-                                    <h5 class="section-title">
-                                        <i class="fas fa-info-circle me-2"></i>
-                                        Información Básica
-                                    </h5>
-                                    <p class="section-description">Modifica los datos principales de tu equipo</p>
-                                </div>
-                                
-                                <div class="form-grid">
-                                    {% for field in form %}
-                                        {% if field.name == 'nombre' or field.name == 'descripcion' %}
-                                            <div class="form-field {% if field.name == 'descripcion' %}form-field-full{% endif %}">
-                                                <label class="form-label" for="{{ field.id_for_label }}">
-                                                    {% if field.name == 'nombre' %}
-                                                        <i class="fas fa-tag me-2"></i>
-                                                    {% elif field.name == 'descripcion' %}
-                                                        <i class="fas fa-align-left me-2"></i>
-                                                    {% endif %}
-                                                    {{ field.label }}
-                                                    {% if field.field.required %}
-                                                        <span class="required-asterisk">*</span>
-                                                    {% endif %}
-                                                </label>
-                                                
-                                                <div class="field-wrapper">
+                    <div class="form-grid">
+                        {% for field in form %}
+                            {% if field.name != 'nombre_equipo' and field.name != 'descripcion' %}
+                                <div class="form-field {% if field.name == 'team_shield' or field.name == 'team_banner' %}form-field-full{% endif %}">
+                                    <label class="form-label" for="{{ field.id_for_label }}">
+                                        <div class="label-content">
+                                            <div class="label-icon">
+                                                {% if field.name == 'team_shield' %}
+                                                    <i class="fas fa-shield-alt"></i>
+                                                {% elif field.name == 'team_banner' %}
+                                                    <i class="fas fa-image"></i>
+                                                {% else %}
+                                                    <i class="fas fa-cog"></i>
+                                                {% endif %}
+                                            </div>
+                                            <span class="label-text">
+                                                {{ field.label }}
+                                                {% if field.field.required %}
+                                                    <span class="required-asterisk">*</span>
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </label>
+                                    
+                                    {% if field.name == 'team_shield' or field.name == 'team_banner' %}
+                                        <div class="file-upload-container">
+                                            <div class="file-upload-wrapper">
+                                                <div class="file-input-container">
                                                     {{ field }}
-                                                    <div class="field-status">
-                                                        <i class="fas fa-check-circle field-valid-icon"></i>
-                                                        <i class="fas fa-exclamation-circle field-invalid-icon"></i>
-                                                    </div>
                                                 </div>
-                                                
-                                                {% if field.help_text %}
-                                                    <small class="form-help">{{ field.help_text }}</small>
-                                                {% endif %}
-                                                {% if field.errors %}
-                                                    <div class="field-errors">
-                                                        {% for error in field.errors %}
-                                                            <small class="error-text">{{ error }}</small>
-                                                        {% endfor %}
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            
-                            <!-- Sección de personalización -->
-                            <div class="form-section">
-                                <div class="section-header">
-                                    <h5 class="section-title">
-                                        <i class="fas fa-palette me-2"></i>
-                                        Personalización Visual
-                                    </h5>
-                                    <p class="section-description">Actualiza la identidad visual de tu equipo</p>
-                                </div>
-                                
-                                <div class="form-grid">
-                                    {% for field in form %}
-                                        {% if field.name != 'nombre' and field.name != 'descripcion' %}
-                                            <div class="form-field {% if field.name == 'imagen_escudo' %}form-field-full{% endif %}">
-                                                <label class="form-label" for="{{ field.id_for_label }}">
-                                                    {% if field.name == 'imagen_escudo' %}
-                                                        <i class="fas fa-shield-alt me-2"></i>
-                                                    {% elif field.name == 'color_primario' %}
-                                                        <i class="fas fa-fill-drip me-2"></i>
-                                                    {% elif field.name == 'color_secundario' %}
-                                                        <i class="fas fa-tint me-2"></i>
-                                                    {% else %}
-                                                        <i class="fas fa-cog me-2"></i>
-                                                    {% endif %}
-                                                    {{ field.label }}
-                                                    {% if field.field.required %}
-                                                        <span class="required-asterisk">*</span>
-                                                    {% endif %}
-                                                </label>
-                                                
-                                                {% if field.name == 'imagen_escudo' %}
-                                                    <div class="file-upload-container">
-                                                        <div class="file-upload-wrapper">
-                                                            {{ field }}
-                                                            <div class="file-upload-preview" id="escudo-preview">
-                                                                {% if equipo.imagen_escudo %}
-                                                                    <img src="{{ equipo.imagen_escudo.url }}" alt="Escudo actual">
-                                                                    <div class="current-badge">Actual</div>
-                                                                {% else %}
-                                                                    <i class="fas fa-shield-alt"></i>
-                                                                    <p>Cambiar imagen del escudo</p>
-                                                                    <p class="upload-subtitle">Arrastra y suelta o haz clic para seleccionar</p>
-                                                                {% endif %}
-                                                            </div>
-                                                            {% if equipo.imagen_escudo %}
-                                                                <div class="current-file-info">
-                                                                    <small class="text-muted">
-                                                                        <i class="fas fa-info-circle me-1"></i>
-                                                                        Selecciona un nuevo archivo para reemplazar la imagen actual
-                                                                    </small>
-                                                                </div>
-                                                            {% endif %}
+                                                {% if field.name == 'team_shield' and equipo.team_shield %}
+                                                    <div class="current-file-info">
+                                                        <div class="current-file-preview">
+                                                            <img src="{{ equipo.team_shield.url }}" alt="Escudo actual">
+                                                            <div class="current-badge">Actual</div>
                                                         </div>
+                                                        <small class="file-info-text">
+                                                            <i class="fas fa-info-circle"></i>
+                                                            Selecciona un nuevo archivo para reemplazar el escudo actual
+                                                        </small>
                                                     </div>
-                                                {% else %}
-                                                    <div class="field-wrapper">
-                                                        {{ field }}
-                                                        {% if field.name == 'color_primario' or field.name == 'color_secundario' %}
-                                                            <div class="color-preview" data-field="{{ field.name }}">
-                                                                <div class="color-swatch" style="background-color: {{ field.value|default:'#8b5cf6' }}"></div>
-                                                                <span class="color-value">{{ field.value|default:'#8b5cf6' }}</span>
-                                                            </div>
-                                                        {% endif %}
-                                                    </div>
-                                                {% endif %}
-                                                
-                                                {% if field.help_text %}
-                                                    <small class="form-help">{{ field.help_text }}</small>
-                                                {% endif %}
-                                                {% if field.errors %}
-                                                    <div class="field-errors">
-                                                        {% for error in field.errors %}
-                                                            <small class="error-text">{{ error }}</small>
-                                                        {% endfor %}
+                                                {% elif field.name == 'team_banner' and equipo.team_banner %}
+                                                    <div class="current-file-info">
+                                                        <div class="current-file-preview">
+                                                            <img src="{{ equipo.team_banner.url }}" alt="Banner actual">
+                                                            <div class="current-badge">Actual</div>
+                                                        </div>
+                                                        <small class="file-info-text">
+                                                            <i class="fas fa-info-circle"></i>
+                                                            Selecciona un nuevo archivo para reemplazar el banner actual
+                                                        </small>
                                                     </div>
                                                 {% endif %}
                                             </div>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Comparación antes/después -->
-                        <div class="comparison-section">
-                            <h5 class="comparison-title">
-                                <i class="fas fa-exchange-alt me-2"></i>
-                                Vista Previa de Cambios
-                            </h5>
-                            <div class="comparison-grid">
-                                <div class="comparison-item">
-                                    <h6 class="comparison-label">Actual</h6>
-                                    <div class="team-preview-card current" id="current-preview">
-                                        <div class="preview-header">
-                                            <div class="preview-shield">
-                                                {% if equipo.imagen_escudo %}
-                                                    <img src="{{ equipo.imagen_escudo.url }}" alt="Escudo actual">
-                                                {% else %}
-                                                    <i class="fas fa-shield-alt"></i>
-                                                {% endif %}
-                                            </div>
-                                            <div class="preview-info">
-                                                <h6 class="preview-name">{{ equipo.nombre }}</h6>
-                                                <p class="preview-description">{{ equipo.descripcion|default:"Sin descripción" }}</p>
-                                            </div>
                                         </div>
-                                        <div class="preview-colors">
-                                            <div class="color-sample" style="background-color: {{ equipo.color_primario|default:'#8b5cf6' }}"></div>
-                                            <div class="color-sample" style="background-color: {{ equipo.color_secundario|default:'#a855f7' }}"></div>
+                                    {% else %}
+                                        <div class="field-wrapper">
+                                            {{ field }}
                                         </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="comparison-item">
-                                    <h6 class="comparison-label">Nuevo</h6>
-                                    <div class="team-preview-card new" id="new-preview">
-                                        <div class="preview-header">
-                                            <div class="preview-shield">
-                                                {% if equipo.imagen_escudo %}
-                                                    <img src="{{ equipo.imagen_escudo.url }}" alt="Escudo nuevo">
-                                                {% else %}
-                                                    <i class="fas fa-shield-alt"></i>
-                                                {% endif %}
-                                            </div>
-                                            <div class="preview-info">
-                                                <h6 class="preview-name">{{ equipo.nombre }}</h6>
-                                                <p class="preview-description">{{ equipo.descripcion|default:"Sin descripción" }}</p>
-                                            </div>
+                                    {% endif %}
+                                    
+                                    {% if field.help_text %}
+                                        <small class="form-help">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                        <div class="field-errors">
+                                            {% for error in field.errors %}
+                                                <small class="error-text">{{ error }}</small>
+                                            {% endfor %}
                                         </div>
-                                        <div class="preview-colors">
-                                            <div class="color-sample primary-color" style="background-color: {{ equipo.color_primario|default:'#8b5cf6' }}"></div>
-                                            <div class="color-sample secondary-color" style="background-color: {{ equipo.color_secundario|default:'#a855f7' }}"></div>
-                                        </div>
-                                    </div>
+                                    {% endif %}
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Botones de acción -->
-                        <div class="form-actions">
-                            <a href="{% url 'detalle_equipo' pk=equipo.id_equipo %}" class="btn btn-outline-primary">
-                                <i class="fas fa-arrow-left me-2"></i>
-                                Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-primary btn-submit">
-                                <i class="fas fa-save me-2"></i>
-                                <span class="btn-text">Guardar Cambios</span>
-                                <div class="btn-spinner d-none">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                </div>
-                            </button>
-                        </div>
-                    </form>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-        </div>
+            
+            <!-- Botones de acción -->
+            <div class="form-actions animate-in">
+                <a href="{% url 'detalle_equipo' pk=equipo.id_equipo %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Cancelar</span>
+                </a>
+                <button type="submit" class="btn btn-primary btn-submit">
+                    <div class="btn-content">
+                        <i class="fas fa-save btn-icon"></i>
+                        <span class="btn-text">Guardar Cambios</span>
+                    </div>
+                    <div class="btn-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'js/equipo/editar_equipo.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animaciones de entrada
+        const elements = document.querySelectorAll('.animate-in');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 150);
+                }
+            });
+        });
+        
+        elements.forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(30px)';
+            element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(element);
+        });
+
+        // Validación visual de campos
+        const inputs = document.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                const wrapper = this.closest('.field-wrapper');
+                if (wrapper) {
+                    if (this.value.trim() !== '') {
+                        wrapper.classList.add('valid');
+                        wrapper.classList.remove('invalid');
+                    } else if (this.hasAttribute('required')) {
+                        wrapper.classList.add('invalid');
+                        wrapper.classList.remove('valid');
+                    }
+                }
+            });
+        });
+
+        // Manejo del formulario de envío
+        const form = document.getElementById('editarEquipoForm');
+        const submitBtn = document.querySelector('.btn-submit');
+        
+        if (form && submitBtn) {
+            form.addEventListener('submit', function() {
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+            });
+        }
+
+        // Mejorar la experiencia de los campos de archivo
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const fileName = this.files[0].name;
+                    const wrapper = this.closest('.file-upload-wrapper');
+                    let feedback = wrapper.querySelector('.file-selected-feedback');
+                    
+                    if (!feedback) {
+                        feedback = document.createElement('div');
+                        feedback.className = 'file-selected-feedback';
+                        wrapper.appendChild(feedback);
+                    }
+                    
+                    feedback.innerHTML = `
+                        <i class="fas fa-check-circle"></i>
+                        <span>Archivo seleccionado: ${fileName}</span>
+                    `;
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

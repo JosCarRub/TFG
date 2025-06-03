@@ -1,186 +1,668 @@
-{% extends 'main.html' %}
+{% extends 'base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block title %}{{ titulo_pagina }} - De Rabona{% endblock %}
+{% block title %}{{ titulo_pagina|default:"Crear Equipo" }} - De Rabona{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/equipo/crear_equipo_styles.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid p-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10">
-            <div class="crear-equipo-card">
-                <div class="crear-equipo-header">
-                    <div class="header-icon">
-                        <i class="fas fa-users-cog"></i>
-                    </div>
-                    <h4 class="header-title">{{ titulo_pagina }}</h4>
-                    <p class="header-subtitle">Crea tu equipo y comienza a gestionar tus jugadores</p>
-                </div>
-                
-                <div class="crear-equipo-body">
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {{ form.non_field_errors }}
+<div class="crear-equipo-container">
+    <!-- Stepper Progress -->
+    <div class="progress-stepper">
+        <div class="step active" data-step="1">
+            <div class="step-circle">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <span class="step-label">Información</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" data-step="2">
+            <div class="step-circle">
+                <i class="fas fa-palette"></i>
+            </div>
+            <span class="step-label">Personalización</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" data-step="3">
+            <div class="step-circle">
+                <i class="fas fa-eye"></i>
+            </div>
+            <span class="step-label">Confirmar</span>
+        </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="form-main-card">
+        <!-- Header -->
+        <div class="form-header">
+            <h1 class="form-title">{{ titulo_pagina|default:"Crear Nuevo Equipo" }}</h1>
+            <p class="form-subtitle">Completa los pasos para crear tu equipo personalizado</p>
+        </div>
+
+        <!-- Form Content -->
+        <form method="post" enctype="multipart/form-data" class="multi-step-form">
+            {% csrf_token %}
+            
+            <!-- Step 1: Información Básica -->
+            <div class="form-step active" data-step="1">
+                <div class="step-content">
+                    <div class="step-header">
+                        <div class="step-icon">
+                            <i class="fas fa-info-circle"></i>
                         </div>
-                    {% endif %}
-                    
-                    <form method="post" enctype="multipart/form-data" class="equipo-form">
-                        {% csrf_token %}
-                        
-                        <div class="form-sections">
-                            <!-- Sección de información básica -->
-                            <div class="form-section">
-                                <div class="section-header">
-                                    <h5 class="section-title">
-                                        <i class="fas fa-info-circle me-2"></i>
-                                        Información Básica
-                                    </h5>
-                                    <p class="section-description">Datos principales de tu equipo</p>
-                                </div>
-                                
-                                <div class="form-grid">
-                                    {% for field in form %}
-                                        {% if field.name == 'nombre' or field.name == 'descripcion' %}
-                                            <div class="form-field {% if field.name == 'descripcion' %}form-field-full{% endif %}">
-                                                <label class="form-label" for="{{ field.id_for_label }}">
-                                                    {% if field.name == 'nombre' %}
-                                                        <i class="fas fa-tag me-2"></i>
-                                                    {% elif field.name == 'descripcion' %}
-                                                        <i class="fas fa-align-left me-2"></i>
-                                                    {% endif %}
-                                                    {{ field.label }}
-                                                    {% if field.field.required %}
-                                                        <span class="required-asterisk">*</span>
-                                                    {% endif %}
-                                                </label>
-                                                {{ field }}
-                                                {% if field.help_text %}
-                                                    <small class="form-help">{{ field.help_text }}</small>
-                                                {% endif %}
-                                                {% if field.errors %}
-                                                    <div class="field-errors">
-                                                        {% for error in field.errors %}
-                                                            <small class="error-text">{{ error }}</small>
-                                                        {% endfor %}
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                        {% endif %}
+                        <div class="step-info">
+                            <h2 class="step-title">Información del Equipo</h2>
+                            <p class="step-description">Ingresa los datos básicos de tu equipo</p>
+                        </div>
+                    </div>
+
+                    <div class="fields-container">
+                        <!-- Nombre del Equipo -->
+                        <div class="field-group">
+                            <label for="{{ form.nombre_equipo.id_for_label }}" class="field-label">
+                                <i class="fas fa-tag"></i>
+                                <span>Nombre del Equipo</span>
+                                {% if form.nombre_equipo.field.required %}<span class="required">*</span>{% endif %}
+                            </label>
+                            <div class="field-wrapper">
+                                {{ form.nombre_equipo }}
+                                <div class="field-feedback"></div>
+                            </div>
+                            {% if form.nombre_equipo.help_text %}
+                                <div class="field-help">{{ form.nombre_equipo.help_text }}</div>
+                            {% endif %}
+                            {% if form.nombre_equipo.errors %}
+                                <div class="field-errors">
+                                    {% for error in form.nombre_equipo.errors %}
+                                        <span class="error-text">{{ error }}</span>
                                     {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        
+
+                        <!-- Descripción -->
+                        <div class="field-group field-full">
+                            <label for="{{ form.descripcion.id_for_label }}" class="field-label">
+                                <i class="fas fa-align-left"></i>
+                                <span>Descripción</span>
+                                {% if form.descripcion.field.required %}<span class="required">*</span>{% endif %}
+                            </label>
+                            <div class="field-wrapper">
+                                {{ form.descripcion }}
+                                <div class="field-feedback"></div>
+                            </div>
+                            {% if form.descripcion.help_text %}
+                                <div class="field-help">{{ form.descripcion.help_text }}</div>
+                            {% endif %}
+                            {% if form.descripcion.errors %}
+                                <div class="field-errors">
+                                    {% for error in form.descripcion.errors %}
+                                        <span class="error-text">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="step-actions">
+                        <div></div> <!-- Spacer -->
+                        <button type="button" class="btn btn-primary btn-next" onclick="nextStep()">
+                            <span>Siguiente</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Personalización -->
+            <div class="form-step" data-step="2">
+                <div class="step-content">
+                    <div class="step-header">
+                        <div class="step-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <div class="step-info">
+                            <h2 class="step-title">Personalización</h2>
+                            <p class="step-description">Agrega elementos visuales a tu equipo</p>
+                        </div>
+                    </div>
+
+                    <div class="fields-container">
+                        <!-- Escudo del Equipo -->
+                        <div class="field-group field-full">
+                            <label for="{{ form.team_shield.id_for_label }}" class="field-label">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Escudo del Equipo</span>
+                                {% if form.team_shield.field.required %}<span class="required">*</span>{% endif %}
+                            </label>
+                            <div class="upload-zone" id="upload-zone">
+                                {{ form.team_shield }}
+                                <div class="upload-content">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <div class="upload-text">
+                                        <p class="upload-primary">Arrastra tu escudo aquí</p>
+                                        <p class="upload-secondary">o haz clic para seleccionar imagen</p>
+                                        <p class="upload-hint">Formatos: JPG, PNG, GIF (máx. 2MB)</p>
+                                    </div>
+                                </div>
+                                <div class="upload-preview" id="upload-preview">
+                                    <img src="" alt="Preview" id="preview-image">
+                                    <button type="button" class="remove-image" onclick="removeImage()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {% if form.team_shield.help_text %}
+                                <div class="field-help">{{ form.team_shield.help_text }}</div>
+                            {% endif %}
+                            {% if form.team_shield.errors %}
+                                <div class="field-errors">
+                                    {% for error in form.team_shield.errors %}
+                                        <span class="error-text">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Banner del Equipo -->
+                        <div class="field-group field-full">
+                            <label for="{{ form.team_banner.id_for_label }}" class="field-label">
+                                <i class="fas fa-image"></i>
+                                <span>Banner del Equipo</span>
+                                {% if form.team_banner.field.required %}<span class="required">*</span>{% endif %}
+                            </label>
+                            <div class="upload-zone" id="banner-upload-zone">
+                                {{ form.team_banner }}
+                                <div class="upload-content">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-panorama"></i>
+                                    </div>
+                                    <div class="upload-text">
+                                        <p class="upload-primary">Arrastra tu banner aquí</p>
+                                        <p class="upload-secondary">o haz clic para seleccionar imagen</p>
+                                        <p class="upload-hint">Recomendado: 1200x300px</p>
+                                    </div>
+                                </div>
+                                <div class="upload-preview banner-preview" id="banner-preview">
+                                    <img src="" alt="Banner Preview" id="banner-preview-image">
+                                    <button type="button" class="remove-image" onclick="removeBannerImage()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {% if form.team_banner.help_text %}
+                                <div class="field-help">{{ form.team_banner.help_text }}</div>
+                            {% endif %}
+                            {% if form.team_banner.errors %}
+                                <div class="field-errors">
+                                    {% for error in form.team_banner.errors %}
+                                        <span class="error-text">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="step-actions">
+                        <button type="button" class="btn btn-secondary btn-prev" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Anterior</span>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-next" onclick="nextStep()">
+                            <span>Siguiente</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Vista Previa y Confirmación -->
+            <div class="form-step" data-step="3">
+                <div class="step-content">
+                    <div class="step-header">
+                        <div class="step-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="step-info">
+                            <h2 class="step-title">Confirmar Equipo</h2>
+                            <p class="step-description">Revisa los datos antes de crear tu equipo</p>
+                        </div>
+                    </div>
+
+                    <div class="preview-container">
+                        <!-- Preview Card -->
+                        <div class="team-preview" id="team-preview">
+                            <!-- Banner Preview -->
+                            <div class="preview-banner" id="preview-banner">
+                                <div class="banner-placeholder">
+                                    <i class="fas fa-image"></i>
+                                    <span>Banner del Equipo</span>
                                 </div>
                             </div>
                             
-                            <!-- Sección de personalización -->
-                            <div class="form-section">
-                                <div class="section-header">
-                                    <h5 class="section-title">
-                                        <i class="fas fa-palette me-2"></i>
-                                        Personalización
-                                    </h5>
-                                    <p class="section-description">Agrega identidad visual a tu equipo</p>
-                                </div>
-                                
-                                <div class="form-grid">
-                                    {% for field in form %}
-                                        {% if field.name != 'nombre' and field.name != 'descripcion' %}
-                                            <div class="form-field {% if field.name == 'imagen_escudo' %}form-field-full{% endif %}">
-                                                <label class="form-label" for="{{ field.id_for_label }}">
-                                                    {% if field.name == 'imagen_escudo' %}
-                                                        <i class="fas fa-shield-alt me-2"></i>
-                                                    {% elif field.name == 'color_primario' %}
-                                                        <i class="fas fa-fill-drip me-2"></i>
-                                                    {% elif field.name == 'color_secundario' %}
-                                                        <i class="fas fa-tint me-2"></i>
-                                                    {% else %}
-                                                        <i class="fas fa-cog me-2"></i>
-                                                    {% endif %}
-                                                    {{ field.label }}
-                                                    {% if field.field.required %}
-                                                        <span class="required-asterisk">*</span>
-                                                    {% endif %}
-                                                </label>
-                                                
-                                                {% if field.name == 'imagen_escudo' %}
-                                                    <div class="file-upload-container">
-                                                        <div class="file-upload-wrapper">
-                                                            {{ field }}
-                                                            <div class="file-upload-preview" id="escudo-preview">
-                                                                <i class="fas fa-shield-alt"></i>
-                                                                <p>Selecciona una imagen para el escudo</p>
-                                                                <p class="upload-subtitle">Arrastra y suelta o haz clic para seleccionar</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                {% else %}
-                                                    {{ field }}
-                                                {% endif %}
-                                                
-                                                {% if field.help_text %}
-                                                    <small class="form-help">{{ field.help_text }}</small>
-                                                {% endif %}
-                                                {% if field.errors %}
-                                                    <div class="field-errors">
-                                                        {% for error in field.errors %}
-                                                            <small class="error-text">{{ error }}</small>
-                                                        {% endfor %}
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Vista previa del equipo -->
-                        <div class="preview-section">
-                            <h5 class="preview-title">
-                                <i class="fas fa-eye me-2"></i>
-                                Vista Previa
-                            </h5>
-                            <div class="team-preview-card" id="team-preview">
+                            <div class="preview-content">
                                 <div class="preview-header">
                                     <div class="preview-shield">
                                         <i class="fas fa-shield-alt"></i>
                                     </div>
                                     <div class="preview-info">
-                                        <h6 class="preview-name">Nombre del Equipo</h6>
-                                        <p class="preview-description">Descripción del equipo</p>
+                                        <h3 class="preview-name">Nombre del Equipo</h3>
+                                        <p class="preview-description">Descripción del equipo aparecerá aquí</p>
+                                        <div class="preview-type">
+                                            <i class="fas fa-tag"></i>
+                                            <span id="preview-tipo">Tipo de equipo</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="preview-colors">
-                                    <div class="color-sample primary-color"></div>
-                                    <div class="color-sample secondary-color"></div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Botones de acción -->
-                        <div class="form-actions">
-                            <a href="{% url 'lista_mis_equipos' %}" class="btn btn-outline-primary">
-                                <i class="fas fa-arrow-left me-2"></i>
-                                Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-primary btn-submit">
-                                <i class="fas fa-users-cog me-2"></i>
-                                <span class="btn-text">Crear Equipo</span>
-                                <div class="btn-spinner d-none">
-                                    <i class="fas fa-spinner fa-spin"></i>
+
+                        <!-- Summary -->
+                        <div class="form-summary">
+                            <h4 class="summary-title">
+                                <i class="fas fa-clipboard-list"></i>
+                                <span>Resumen</span>
+                            </h4>
+                            <div class="summary-items">
+                                <div class="summary-item">
+                                    <span class="summary-label">Nombre:</span>
+                                    <span class="summary-value" id="summary-name">-</span>
                                 </div>
-                            </button>
+                                <div class="summary-item">
+                                    <span class="summary-label">Tipo:</span>
+                                    <span class="summary-value" id="summary-tipo">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Descripción:</span>
+                                    <span class="summary-value" id="summary-description">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Escudo:</span>
+                                    <span class="summary-value" id="summary-escudo">Sin imagen</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Banner:</span>
+                                    <span class="summary-value" id="summary-banner">Sin imagen</span>
+                                </div>
+                            </div>
+                            
+                            <div class="captain-info">
+                                <div class="captain-label">
+                                    <i class="fas fa-crown"></i>
+                                    <span>Capitán del Equipo</span>
+                                </div>
+                                <div class="captain-name">{{ user.get_full_name|default:user.username }}</div>
+                            </div>
                         </div>
-                    </form>
+                    </div>
+
+                    <div class="step-actions">
+                        <button type="button" class="btn btn-secondary btn-prev" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Anterior</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-submit">
+                            <i class="fas fa-check"></i>
+                            <span class="submit-text">Crear Equipo</span>
+                            <div class="submit-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
-</div>
-{% endblock %}
 
-{% block extra_js %}
-<script src="{% static 'js/crear_equipo.js' %}"></script>
+    <!-- Form Errors -->
+    {% if form.non_field_errors %}
+        <div class="form-errors-container">
+            {% for error in form.non_field_errors %}
+                <div class="error-banner">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>{{ error }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<!-- Scripts -->
+<script>
+let currentStep = 1;
+const totalSteps = 3;
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeForm();
+    initializeUploads();
+    initializePreview();
+    console.log('Form initialized');
+});
+
+function initializeForm() {
+    const form = document.querySelector('.multi-step-form');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            validateField.call(this);
+            updatePreview();
+        });
+        input.addEventListener('blur', validateField);
+        input.addEventListener('change', updatePreview);
+    });
+
+    form.addEventListener('submit', handleSubmit);
+}
+
+function initializeUploads() {
+    // Shield upload
+    initializeUploadZone('upload-zone', 'team_shield', 'preview-image', showImagePreview);
+    
+    // Banner upload
+    initializeUploadZone('banner-upload-zone', 'team_banner', 'banner-preview-image', showBannerPreview);
+}
+
+function initializeUploadZone(zoneId, fieldName, previewImageId, previewCallback) {
+    const uploadZone = document.getElementById(zoneId);
+    const fileInput = document.querySelector(`input[name="${fieldName}"]`);
+    
+    if (!uploadZone || !fileInput) return;
+
+    uploadZone.addEventListener('dragover', handleDragOver);
+    uploadZone.addEventListener('dragleave', handleDragLeave);
+    uploadZone.addEventListener('drop', function(e) {
+        handleDrop.call(this, e, previewCallback);
+    });
+    
+    uploadZone.addEventListener('click', function(e) {
+        if (!e.target.closest('.upload-preview') && !e.target.closest('.remove-image')) {
+            fileInput.click();
+        }
+    });
+    
+    fileInput.addEventListener('change', function() {
+        handleFileSelect.call(this, previewCallback);
+    });
+}
+
+function initializePreview() {
+    updatePreview();
+}
+
+function nextStep() {
+    console.log('Moving from step:', currentStep);
+    
+    if (currentStep === 1 && !validateStep(currentStep)) {
+        console.log('Step 1 validation failed');
+        return;
+    }
+    
+    if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+        updateStepper();
+        updatePreview();
+    }
+}
+
+function prevStep() {
+    if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+        updateStepper();
+    }
+}
+
+function showStep(step) {
+    document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+    const targetStep = document.querySelector(`.form-step[data-step="${step}"]`);
+    if (targetStep) {
+        targetStep.classList.add('active');
+    }
+}
+
+function updateStepper() {
+    document.querySelectorAll('.step').forEach((step, index) => {
+        const stepNum = index + 1;
+        step.classList.toggle('active', stepNum === currentStep);
+        step.classList.toggle('completed', stepNum < currentStep);
+    });
+}
+
+function validateStep(step) {
+    const stepElement = document.querySelector(`.form-step[data-step="${step}"]`);
+    const requiredInputs = stepElement.querySelectorAll('input[required], textarea[required], select[required]');
+    
+    let isValid = true;
+    requiredInputs.forEach(input => {
+        if (!input.value.trim()) {
+            isValid = false;
+            showFieldError(input, 'Este campo es requerido');
+        } else {
+            clearFieldError(input);
+        }
+    });
+
+    return isValid;
+}
+
+function validateField() {
+    const value = this.value.trim();
+    const isRequired = this.hasAttribute('required');
+    
+    if (isRequired && !value) {
+        showFieldError(this, 'Este campo es requerido');
+        return false;
+    } else {
+        clearFieldError(this);
+        return true;
+    }
+}
+
+function showFieldError(field, message) {
+    const wrapper = field.closest('.field-wrapper');
+    if (!wrapper) return;
+    
+    const feedback = wrapper.querySelector('.field-feedback');
+    if (!feedback) return;
+    
+    wrapper.classList.add('error');
+    wrapper.classList.remove('success');
+    feedback.textContent = message;
+    feedback.classList.add('show');
+}
+
+function clearFieldError(field) {
+    const wrapper = field.closest('.field-wrapper');
+    if (!wrapper) return;
+    
+    const feedback = wrapper.querySelector('.field-feedback');
+    if (!feedback) return;
+    
+    wrapper.classList.remove('error');
+    wrapper.classList.add('success');
+    feedback.classList.remove('show');
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    this.classList.add('dragover');
+}
+
+function handleDragLeave() {
+    this.classList.remove('dragover');
+}
+
+function handleDrop(e, previewCallback) {
+    e.preventDefault();
+    this.classList.remove('dragover');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        processFile(files[0], previewCallback);
+    }
+}
+
+function handleFileSelect(previewCallback) {
+    if (this.files && this.files[0]) {
+        processFile(this.files[0], previewCallback);
+    }
+}
+
+function processFile(file, previewCallback) {
+    if (!file.type.startsWith('image/')) {
+        alert('Por favor selecciona una imagen válida');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        previewCallback(e.target.result);
+    };
+    reader.readAsDataURL(file);
+}
+
+function showImagePreview(src) {
+    const uploadZone = document.getElementById('upload-zone');
+    const preview = document.getElementById('upload-preview');
+    const image = document.getElementById('preview-image');
+    
+    if (image && preview && uploadZone) {
+        image.src = src;
+        uploadZone.classList.add('has-image');
+        preview.classList.add('show');
+        updatePreview();
+    }
+}
+
+function showBannerPreview(src) {
+    const uploadZone = document.getElementById('banner-upload-zone');
+    const preview = document.getElementById('banner-preview');
+    const image = document.getElementById('banner-preview-image');
+    
+    if (image && preview && uploadZone) {
+        image.src = src;
+        uploadZone.classList.add('has-image');
+        preview.classList.add('show');
+        updatePreview();
+    }
+}
+
+function removeImage() {
+    const uploadZone = document.getElementById('upload-zone');
+    const preview = document.getElementById('upload-preview');
+    const fileInput = document.querySelector('input[name="team_shield"]');
+    
+    if (uploadZone && preview && fileInput) {
+        uploadZone.classList.remove('has-image');
+        preview.classList.remove('show');
+        fileInput.value = '';
+        updatePreview();
+    }
+}
+
+function removeBannerImage() {
+    const uploadZone = document.getElementById('banner-upload-zone');
+    const preview = document.getElementById('banner-preview');
+    const fileInput = document.querySelector('input[name="team_banner"]');
+    
+    if (uploadZone && preview && fileInput) {
+        uploadZone.classList.remove('has-image');
+        preview.classList.remove('show');
+        fileInput.value = '';
+        updatePreview();
+    }
+}
+
+function updatePreview() {
+    const nombreInput = document.querySelector('input[name="nombre_equipo"]');
+    const descripcionInput = document.querySelector('textarea[name="descripcion"]');
+    const tipoInput = document.querySelector('select[name="tipo_equipo"]');
+    const shieldImage = document.getElementById('preview-image');
+    const bannerImage = document.getElementById('banner-preview-image');
+    
+    // Update preview card
+    const previewName = document.querySelector('.preview-name');
+    const previewDesc = document.querySelector('.preview-description');
+    const previewTipo = document.getElementById('preview-tipo');
+    const previewShield = document.querySelector('.preview-shield');
+    const previewBanner = document.getElementById('preview-banner');
+    
+    if (previewName && nombreInput) {
+        previewName.textContent = nombreInput.value || 'Nombre del Equipo';
+    }
+    
+    if (previewDesc && descripcionInput) {
+        previewDesc.textContent = descripcionInput.value || 'Descripción del equipo aparecerá aquí';
+    }
+    
+    if (previewTipo && tipoInput) {
+        const selectedOption = tipoInput.options[tipoInput.selectedIndex];
+        previewTipo.textContent = selectedOption ? selectedOption.text : 'Tipo de equipo';
+    }
+    
+    if (previewShield && shieldImage && shieldImage.src && shieldImage.src !== window.location.href) {
+        previewShield.innerHTML = `<img src="${shieldImage.src}" alt="Escudo">`;
+    }
+    
+    if (previewBanner && bannerImage && bannerImage.src && bannerImage.src !== window.location.href) {
+        previewBanner.innerHTML = `<img src="${bannerImage.src}" alt="Banner">`;
+    }
+    
+    updateSummary();
+}
+
+function updateSummary() {
+    const summaryName = document.getElementById('summary-name');
+    const summaryTipo = document.getElementById('summary-tipo');
+    const summaryDesc = document.getElementById('summary-description');
+    const summaryEscudo = document.getElementById('summary-escudo');
+    const summaryBanner = document.getElementById('summary-banner');
+    
+    const nombreInput = document.querySelector('input[name="nombre_equipo"]');
+    const tipoInput = document.querySelector('select[name="tipo_equipo"]');
+    const descripcionInput = document.querySelector('textarea[name="descripcion"]');
+    const shieldImage = document.getElementById('preview-image');
+    const bannerImage = document.getElementById('banner-preview-image');
+    
+    if (summaryName && nombreInput) {
+        summaryName.textContent = nombreInput.value || '-';
+    }
+    
+    if (summaryTipo && tipoInput) {
+        const selectedOption = tipoInput.options[tipoInput.selectedIndex];
+        summaryTipo.textContent = selectedOption ? selectedOption.text : '-';
+    }
+    
+    if (summaryDesc && descripcionInput) {
+        summaryDesc.textContent = descripcionInput.value || '-';
+    }
+    
+    if (summaryEscudo) {
+        const hasShield = shieldImage && shieldImage.src && shieldImage.src !== window.location.href;
+        summaryEscudo.textContent = hasShield ? 'Imagen seleccionada' : 'Sin imagen';
+    }
+    
+    if (summaryBanner) {
+        const hasBanner = bannerImage && bannerImage.src && bannerImage.src !== window.location.href;
+        summaryBanner.textContent = hasBanner ? 'Imagen seleccionada' : 'Sin imagen';
+    }
+}
+
+function handleSubmit(e) {
+    const submitBtn = document.querySelector('.btn-submit');
+    if (submitBtn) {
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+    }
+}
+</script>
 {% endblock %}

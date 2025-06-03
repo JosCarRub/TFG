@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}{{ titulo_pagina }} - De Rabona{% endblock %}
@@ -8,31 +8,39 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid p-4">
-    <!-- Header con título y acción principal -->
-    <div class="page-header">
-        <div class="header-content">
-            <div class="header-info">
-                <h4 class="page-title">{{ titulo_pagina }}</h4>
-                <p class="page-subtitle">Gestiona y visualiza todos tus equipos</p>
+<div class="equipos-container">
+    <!-- Hero Section -->
+    <div class="equipos-hero-section animate-in">
+        <div class="hero-content">
+            <div class="hero-icon">
+                <i class="fas fa-users"></i>
             </div>
-            <div class="header-actions">
-                <a href="{% url 'crear_equipo_permanente' %}" class="btn btn-primary btn-create">
-                    <i class="fas fa-plus-circle me-2"></i>
-                    <span>Crear Nuevo Equipo</span>
-                </a>
+            <div class="hero-text">
+                <h1 class="hero-title">{{ titulo_pagina }}</h1>
+                <p class="hero-subtitle">Gestiona y visualiza todos tus equipos</p>
             </div>
+        </div>
+        
+        <div class="header-actions">
+            <a href="{% url 'crear_equipo_permanente' %}" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i>
+                <span>Crear Nuevo Equipo</span>
+            </a>
         </div>
     </div>
 
-    <!-- Mensajes del sistema -->
+    <!-- Mensajes del Sistema -->
     {% if messages %}
-        <div class="messages-container">
+        <div class="messages-section">
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show custom-alert" role="alert">
-                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="custom-alert alert-{{ message.tags }}">
+                    <div class="alert-icon">
+                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                    </div>
+                    <div class="alert-content">{{ message }}</div>
+                    <button type="button" class="alert-dismiss" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             {% endfor %}
         </div>
@@ -42,7 +50,7 @@
         <!-- Estadísticas rápidas -->
         <div class="stats-section">
             <div class="stats-grid">
-                <div class="stat-card">
+                <div class="stat-card animate-in">
                     <div class="stat-icon">
                         <i class="fas fa-users"></i>
                     </div>
@@ -52,21 +60,17 @@
                     </div>
                 </div>
                 
-                <div class="stat-card">
+                <div class="stat-card animate-in">
                     <div class="stat-icon">
                         <i class="fas fa-crown"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-number">
-                            {% with capitaneados=equipos_list|length %}
-                                {{ capitaneados }}
-                            {% endwith %}
-                        </div>
+                        <div class="stat-number">{{ equipos_list|length }}</div>
                         <div class="stat-label">Capitaneando</div>
                     </div>
                 </div>
                 
-                <div class="stat-card">
+                <div class="stat-card animate-in">
                     <div class="stat-icon">
                         <i class="fas fa-trophy"></i>
                     </div>
@@ -78,38 +82,44 @@
             </div>
         </div>
 
-        <!-- Grid de equipos -->
+        <!-- Lista de Equipos -->
         <div class="equipos-section">
             <div class="section-header">
-                <h5 class="section-title">
-                    <i class="fas fa-shield-alt me-2"></i>
+                <h2 class="section-title">
+                    <i class="fas fa-shield-alt"></i>
                     Mis Equipos
-                </h5>
+                </h2>
+                <div class="section-meta">
+                    <div class="equipos-count">
+                        {{ equipos_list|length }} equipos encontrados
+                    </div>
+                </div>
             </div>
             
             <div class="equipos-grid">
                 {% for equipo in equipos_list %}
-                <div class="equipo-card" data-equipo-id="{{ equipo.id_equipo }}">
+                <div class="equipo-card animate-in" data-equipo-id="{{ equipo.id_equipo }}">
                     <!-- Banner del equipo -->
-                    <div class="equipo-banner">
+                    <div class="equipo-image">
                         {% if equipo.team_banner %}
-                            <img src="{{ equipo.team_banner.url }}" alt="Banner de {{ equipo.nombre_equipo }}" class="banner-image">
+                            <img src="{{ equipo.team_banner.url }}" alt="Banner de {{ equipo.nombre_equipo }}" class="equipo-img">
                         {% else %}
-                            <div class="banner-placeholder">
-                                <i class="fas fa-image banner-placeholder-icon"></i>
+                            <div class="image-placeholder">
+                                <i class="fas fa-image"></i>
                             </div>
                         {% endif %}
-                        <div class="banner-overlay">
-                            <div class="equipo-badge">
-                                <i class="fas fa-crown me-1"></i>
-                                Capitán
-                            </div>
+                        <div class="image-overlay">
+                            <h3 class="equipo-title">{{ equipo.nombre_equipo }}</h3>
+                        </div>
+                        <div class="equipo-badge">
+                            <i class="fas fa-crown"></i>
+                            Capitán
                         </div>
                     </div>
                     
                     <!-- Contenido del equipo -->
                     <div class="equipo-content">
-                        <!-- Header con escudo y nombre -->
+                        <!-- Header con escudo y descripción -->
                         <div class="equipo-header">
                             <div class="escudo-container">
                                 {% if equipo.team_shield %}
@@ -121,117 +131,96 @@
                                 {% endif %}
                             </div>
                             <div class="equipo-info">
-                                <h5 class="equipo-name">{{ equipo.nombre_equipo }}</h5>
-                                <p class="equipo-description">{{ equipo.descripcion|truncatewords:12|default:"Sin descripción disponible." }}</p>
+                                <p class="equipo-description">{{ equipo.descripcion|truncatewords:15|default:"Sin descripción disponible." }}</p>
                             </div>
                         </div>
                         
-                        <!-- Estadísticas del equipo -->
-                        <div class="equipo-stats">
-                            <div class="stat-item">
-                                <i class="fas fa-user-shield stat-icon"></i>
-                                <div class="stat-details">
-                                    <span class="stat-value">{{ equipo.capitan.nombre }}</span>
-                                    <span class="stat-label">Capitán</span>
+                        <!-- Información del equipo -->
+                        <div class="equipo-details">
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-user-shield"></i>
                                 </div>
+                                <div class="info-text">{{ equipo.capitan.nombre }}</div>
                             </div>
                             
-                            <div class="stat-item">
-                                <i class="fas fa-users stat-icon"></i>
-                                <div class="stat-details">
-                                    <span class="stat-value">{{ equipo.jugadores.count }}</span>
-                                    <span class="stat-label">Jugador{{ equipo.jugadores.count|pluralize:"es" }}</span>
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-users"></i>
                                 </div>
+                                <div class="info-text">{{ equipo.jugadores.count }} jugador{{ equipo.jugadores.count|pluralize:"es" }}</div>
                             </div>
                             
-                            <div class="stat-item">
-                                <i class="fas fa-calendar-alt stat-icon"></i>
-                                <div class="stat-details">
-                                    <span class="stat-value">{{ equipo.fecha_creacion|date:"M Y" }}</span>
-                                    <span class="stat-label">Creado</span>
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-calendar-alt"></i>
                                 </div>
+                                <div class="info-text">Creado {{ equipo.fecha_creacion|date:"M Y" }}</div>
                             </div>
                         </div>
                         
                         <!-- Acciones del equipo -->
                         <div class="equipo-actions">
-                            <a href="{% url 'detalle_equipo' pk=equipo.id_equipo %}" class="btn btn-primary btn-view">
-                                <i class="fas fa-eye me-2"></i>
+                            <a href="{% url 'detalle_equipo' pk=equipo.id_equipo %}" class="btn btn-primary">
+                                <i class="fas fa-eye"></i>
                                 Ver Detalles
                             </a>
-                            <div class="action-menu">
-                                <button class="btn btn-outline-secondary btn-menu" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-ellipsis-v"></i>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
                                         <a class="dropdown-item" href="{% url 'editar_equipo_permanente' pk=equipo.id_equipo %}">
-                                            <i class="fas fa-edit me-2"></i>Editar
+                                            <i class="fas fa-edit"></i>Editar
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="#">
-                                            <i class="fas fa-users me-2"></i>Gestionar Jugadores
+                                            <i class="fas fa-users"></i>Gestionar Jugadores
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <a class="dropdown-item text-danger" href="#" onclick="confirmDelete('{{ equipo.nombre_equipo }}', '{{ equipo.id_equipo }}')">
-                                            <i class="fas fa-trash me-2"></i>Eliminar
+                                            <i class="fas fa-trash"></i>Eliminar
                                         </a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Indicador de actividad -->
-                    <div class="activity-indicator active">
-                        <i class="fas fa-circle"></i>
-                        <span>Activo</span>
-                    </div>
                 </div>
                 {% endfor %}
             </div>
         </div>
 
-        <!-- Paginación (si es necesaria) -->
-        {% comment %}
-        <div class="pagination-section">
-            <nav aria-label="Navegación de equipos">
-                <ul class="pagination justify-content-center">
-                    <!-- Controles de paginación aquí -->
-                </ul>
-            </nav>
-        </div>
-        {% endcomment %}
-
     {% else %}
         <!-- Estado vacío -->
-        <div class="empty-state">
-            <div class="empty-state-content">
-                <div class="empty-state-icon">
-                    <i class="fas fa-users-slash"></i>
-                </div>
-                <h5 class="empty-state-title">No tienes equipos todavía</h5>
-                <p class="empty-state-message">
+        <div class="empty-state animate-in">
+            <div class="empty-icon">
+                <i class="fas fa-users-slash"></i>
+            </div>
+            <div class="empty-content">
+                <h2 class="empty-title">No tienes equipos todavía</h2>
+                <p class="empty-desc">
                     Parece que aún no perteneces ni capitaneas ningún equipo permanente.<br>
                     ¡Es el momento perfecto para crear tu primer equipo!
                 </p>
-                <div class="empty-state-actions">
-                    <a href="{% url 'crear_equipo_permanente' %}" class="btn btn-primary btn-create-first">
-                        <i class="fas fa-plus-circle me-2"></i>
+                <div class="empty-actions">
+                    <a href="{% url 'crear_equipo_permanente' %}" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i>
                         Crear Mi Primer Equipo
                     </a>
-                    <a href="#" class="btn btn-outline-secondary">
-                        <i class="fas fa-search me-2"></i>
+                    <a href="#" class="btn btn-secondary">
+                        <i class="fas fa-search"></i>
                         Buscar Equipos
                     </a>
                 </div>
                 
                 <!-- Sugerencias -->
                 <div class="suggestions">
-                    <h6 class="suggestions-title">¿Qué puedes hacer con un equipo?</h6>
+                    <h3 class="suggestions-title">¿Qué puedes hacer con un equipo?</h3>
                     <div class="suggestions-grid">
                         <div class="suggestion-item">
                             <i class="fas fa-calendar-check"></i>
@@ -287,4 +276,39 @@
 
 {% block extra_js %}
 <script src="{% static 'js/equipo/lista_equipos.js' %}"></script>
+<script>
+    // Función para confirmar eliminación
+    function confirmDelete(teamName, teamId) {
+        document.getElementById('teamNameToDelete').textContent = teamName;
+        document.getElementById('confirmDeleteBtn').onclick = function() {
+            // Aquí iría la lógica para eliminar el equipo
+            console.log('Eliminar equipo:', teamId);
+            // Por ejemplo, enviar formulario o hacer petición AJAX
+        };
+        new bootstrap.Modal(document.getElementById('confirmDeleteModal')).show();
+    }
+    
+    // Animaciones de entrada
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.animate-in');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+        });
+        
+        cards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    });
+</script>
 {% endblock %}

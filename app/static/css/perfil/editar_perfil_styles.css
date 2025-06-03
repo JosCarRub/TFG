@@ -1,0 +1,425 @@
+/* ======= Variables específicas para Editar Perfil ======= */
+.editar-perfil-page {
+    --perfil-accent: #f7835c; /* Naranja principal */
+    --mint: #00d4b1; /* Verde menta para acentos secundarios o foco */
+    --perfil-accent-subtle: rgba(247, 131, 92, 0.08);
+    --perfil-accent-border: rgba(247, 131, 92, 0.2); /* Borde más visible */
+
+    --perfil-text-primary: #e0e0e0; /* Texto principal ligeramente menos brillante */
+    --perfil-text-secondary: #b0b0b0; /* Texto secundario */
+    --perfil-text-muted: #757575;    /* Texto más apagado */
+
+    --perfil-bg-base: #12121f; /* Fondo principal de la página */
+    --perfil-bg-card: #1a1a2e; /* Fondo de la tarjeta del formulario */
+    --perfil-bg-input: rgba(255, 255, 255, 0.05);
+    --perfil-bg-input-focus: rgba(255, 255, 255, 0.08);
+    --perfil-bg-button-secondary: #2c2c44; /* Fondo para botón secundario */
+
+    --perfil-border-color: rgba(255, 255, 255, 0.12); /* Borde un poco más visible */
+    --perfil-focus-shadow: 0 0 0 3px rgba(0, 212, 177, 0.25); /* Sombra de foco con el color mint */
+
+    --perfil-radius-main: 12px; /* Radio para la tarjeta principal */
+    --perfil-radius-input: 8px;  /* Radio para inputs y botones */
+    --perfil-transition: all 0.25s ease-in-out;
+
+    /* Integración con variables de Bootstrap para consistencia si es posible */
+    --bs-body-bg: var(--perfil-bg-base);
+    --bs-body-color: var(--perfil-text-primary);
+    --bs-border-color: var(--perfil-border-color);
+}
+
+/* ======= Estilos Generales para la Página de Perfil ======= */
+.editar-perfil-page {
+    background-color: var(--perfil-bg-base);
+    color: var(--perfil-text-primary);
+    min-height: 100vh; /* Asegura que el fondo cubra toda la altura vista */
+    font-family: 'Inter', sans-serif; /* Asegura la fuente base */
+}
+
+.editar-perfil-container {
+    max-width: 800px; /* Ancho máximo para el contenido del formulario */
+    margin: 0 auto;
+    padding: 2rem 1rem; /* Espacio arriba/abajo y a los lados */
+}
+
+/* ======= Contenedor del Formulario (Tarjeta Principal) ======= */
+.form-container {
+    background: var(--perfil-bg-card);
+    border: 1px solid var(--perfil-border-color);
+    border-radius: var(--perfil-radius-main);
+    overflow: hidden; /* Para que los bordes redondeados funcionen bien */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+    margin-top: 1rem; /* Espacio desde el navbar si es fijo */
+}
+
+/* ======= Cabecera del Formulario ======= */
+.form-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--perfil-border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.form-header .form-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--perfil-text-primary);
+    margin-bottom: 0;
+    line-height: 1.3;
+}
+
+.form-header .form-title i {
+    color: var(--perfil-accent); /* Ícono principal con el color de acento */
+    margin-right: 0.5rem; /* Espacio entre ícono y texto */
+    font-size: 1.1em;
+}
+
+/* ======= Cuerpo del Formulario ======= */
+.form-body {
+    padding: 1.5rem;
+}
+
+/* Mensajes de Alerta (Django Messages) */
+.messages-section .alert {
+    border-radius: var(--perfil-radius-input);
+    font-size: 0.9rem;
+    /* Estilos específicos por tipo de alerta si se desea, Bootstrap ya los maneja bien */
+}
+.messages-section .alert-success {
+    background-color: rgba(0, 212, 177, 0.1); /* Fondo con color mint sutil */
+    color: var(--mint);
+    border-color: rgba(0, 212, 177, 0.3);
+}
+.messages-section .alert-danger,
+.messages-section .alert-error {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    border-color: rgba(220, 53, 69, 0.3);
+}
+.messages-section .btn-close {
+    filter: invert(75%) sepia(10%) saturate(500%) hue-rotate(180deg); /* Para que se vea bien en fondos oscuros */
+}
+
+/* ======= Secciones dentro del Formulario (Información Personal, Fútbol, etc.) ======= */
+.profile-form .form-section {
+    margin-bottom: 2rem;
+}
+.profile-form .form-section:last-of-type {
+    margin-bottom: 1rem; /* Menos margen para la última sección antes de los botones */
+}
+
+.profile-form .form-section-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--perfil-text-primary);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--perfil-border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.profile-form .form-section-title i {
+    color: var(--perfil-text-secondary); /* Íconos de sección más sutiles */
+    font-size: 1em;
+}
+
+/* ======= Campos del Formulario (Labels, Inputs, Selects) ======= */
+.profile-form .form-group {
+    margin-bottom: 1.25rem; /* Espacio entre cada grupo de label e input */
+}
+
+.profile-form .form-label {
+    font-size: 0.875rem; /* Tamaño de etiqueta ligeramente más pequeño */
+    font-weight: 500;
+    color: var(--perfil-text-secondary);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.profile-form .form-control,
+.profile-form .form-select,
+.profile-form input[type="text"],
+.profile-form input[type="email"],
+.profile-form input[type="password"],
+.profile-form input[type="date"],
+.profile-form input[type="file"],
+.profile-form textarea {
+    background-color: var(--perfil-bg-input);
+    border: 1px solid var(--perfil-border-color);
+    border-radius: var(--perfil-radius-input);
+    padding: 0.75rem 1rem;
+    color: var(--perfil-text-primary);
+    font-size: 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
+    transition: var(--perfil-transition);
+    box-shadow: none; /* Resetear sombras de Bootstrap */
+}
+
+.profile-form .form-control:focus,
+.profile-form .form-select:focus,
+.profile-form input[type="text"]:focus,
+.profile-form input[type="email"]:focus,
+.profile-form input[type="password"]:focus,
+.profile-form input[type="date"]:focus,
+.profile-form input[type="file"]:focus,
+.profile-form textarea:focus {
+    background-color: var(--perfil-bg-input-focus);
+    border-color: var(--mint); /* Borde de foco con color mint */
+    box-shadow: var(--perfil-focus-shadow);
+    outline: none; /* Quitar outline por defecto */
+}
+
+.profile-form .form-control::placeholder,
+.profile-form textarea::placeholder {
+    color: var(--perfil-text-muted);
+    opacity: 0.8;
+}
+
+/* Estilo para campos de archivo */
+.profile-form input[type="file"].form-control {
+    padding: 0.5rem 1rem; /* Ajuste para inputs de archivo */
+    line-height: 1.5;
+}
+.profile-form input[type="file"]::-webkit-file-upload-button { /* Chrome/Edge/Opera */
+    background: var(--perfil-bg-button-secondary);
+    color: var(--perfil-text-secondary);
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: calc(var(--perfil-radius-input) - 2px);
+    margin-right: 0.8rem;
+    cursor: pointer;
+    transition: var(--perfil-transition);
+}
+.profile-form input[type="file"]::-webkit-file-upload-button:hover {
+    background: var(--perfil-accent);
+    color: white;
+}
+.profile-form input[type="file"]::file-selector-button { /* Firefox */
+    background: var(--perfil-bg-button-secondary);
+    color: var(--perfil-text-secondary);
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: calc(var(--perfil-radius-input) - 2px);
+    margin-right: 0.8rem;
+    cursor: pointer;
+    transition: var(--perfil-transition);
+}
+.profile-form input[type="file"]::file-selector-button:hover {
+    background: var(--perfil-accent);
+    color: white;
+}
+
+
+/* Errores de validación */
+.profile-form .form-control.is-invalid,
+.profile-form .form-select.is-invalid {
+    border-color: #dc3545 !important; /* Color de error de Bootstrap */
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2) !important;
+}
+.profile-form .invalid-feedback.d-block {
+    color: #e74c3c; /* Un rojo más vibrante para el texto de error */
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+}
+.profile-form .form-text { /* Para el help_text */
+    font-size: 0.8rem;
+    color: var(--perfil-text-muted);
+    margin-top: 0.3rem;
+}
+
+
+/* ======= Previsualización de Imágenes ======= */
+.current-image-preview {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem; /* Espacio si hay una imagen actual */
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    background-color: var(--perfil-bg-input); /* Fondo sutil */
+    border: 1px solid var(--perfil-border-color);
+    border-radius: var(--perfil-radius-input);
+}
+
+.current-image-preview img {
+    object-fit: cover;
+    border-radius: calc(var(--perfil-radius-input) - 2px); /* Un poco menos que el contenedor */
+}
+
+.current-avatar {
+    width: 50px;
+    height: 50px;
+}
+
+.current-banner {
+    width: 90px;
+    height: 50px;
+}
+
+.current-image-info small {
+    display: block;
+    color: var(--perfil-text-muted);
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.view-image-link {
+    font-size: 0.8rem;
+    color: var(--mint);
+    text-decoration: none;
+    transition: var(--perfil-transition);
+}
+.view-image-link:hover {
+    color: var(--perfil-accent);
+    text-decoration: underline;
+}
+.view-image-link i {
+    margin-right: 0.25rem;
+}
+
+/* ======= Botones de Acción ======= */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--perfil-border-color);
+}
+
+.profile-form .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.4rem;
+    border-radius: var(--perfil-radius-input);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: var(--perfil-transition);
+    line-height: 1.5; /* Asegura altura consistente */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra sutil para botones */
+}
+.profile-form .btn:focus {
+    outline: none;
+    box-shadow: var(--perfil-focus-shadow), 0 2px 5px rgba(0,0,0,0.1); /* Mantener sombra del botón */
+}
+.profile-form .btn i {
+    line-height: 1; /* Alineación del ícono */
+}
+
+
+.profile-form .btn-secondary {
+    background-color: var(--perfil-bg-button-secondary);
+    color: var(--perfil-text-secondary);
+    border-color: var(--perfil-border-color);
+}
+.profile-form .btn-secondary:hover {
+    background-color: lighten(var(--perfil-bg-button-secondary), 5%);
+    color: var(--perfil-text-primary);
+    border-color: var(--perfil-text-secondary);
+    transform: translateY(-1px);
+}
+
+.profile-form .btn-primary {
+    background-color: var(--perfil-accent);
+    color: white;
+    border-color: var(--perfil-accent);
+}
+.profile-form .btn-primary:hover:not(:disabled) {
+    background-color: darken(var(--perfil-accent), 8%);
+    border-color: darken(var(--perfil-accent), 8%);
+    transform: translateY(-1px);
+}
+
+.profile-form .btn:disabled,
+.profile-form .btn.loading {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+}
+.profile-form .btn.loading i.fa-save {
+    display: none; /* Ocultar ícono de guardar cuando está cargando */
+}
+.profile-form .btn.loading .spinner { /* Necesitarías añadir un span con clase spinner dentro del botón en el JS */
+    display: inline-block;
+}
+
+
+/* Spinner (si lo añades dinámicamente con JS) */
+.spinner {
+    width: 1em; /* Relativo al tamaño de fuente del botón */
+    height: 1em;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white; /* Color del acento del spinner */
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: none; /* Oculto por defecto */
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+
+/* ======= Diseño Responsivo ======= */
+@media (max-width: 768px) {
+    .editar-perfil-container {
+        padding: 1.5rem 0.75rem;
+    }
+    .form-header {
+        padding: 1rem 1.25rem;
+    }
+    .form-header .form-title {
+        font-size: 1.2rem;
+    }
+    .form-body {
+        padding: 1.25rem;
+    }
+    .form-actions {
+        flex-direction: column-reverse; /* Botones apilados */
+    }
+    .profile-form .btn {
+        width: 100%; /* Botones a ancho completo */
+    }
+    .profile-form .row > [class*="col-"] { /* Quitar padding lateral de columnas de Bootstrap en móvil si es necesario */
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    .profile-form .form-group { /* Asegurar que los grupos de formulario dentro de .row no tengan demasiado margen */
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .editar-perfil-container {
+        padding: 1rem 0.5rem;
+    }
+    .form-header {
+        padding: 0.75rem 1rem;
+    }
+    .form-header .form-title {
+        font-size: 1.1rem;
+    }
+    .form-body {
+        padding: 1rem;
+    }
+    .profile-form .form-label {
+        font-size: 0.825rem;
+    }
+    .profile-form .form-control,
+    .profile-form .form-select {
+        font-size: 0.85rem;
+        padding: 0.65rem 0.8rem;
+    }
+    .profile-form .btn {
+        font-size: 0.85rem;
+        padding: 0.65rem 1rem;
+    }
+}
