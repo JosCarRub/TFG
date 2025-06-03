@@ -1,0 +1,511 @@
+/* ======= Variables CSS para Registro de Canchas ======= */
+:root {
+    --cancha-accent: #f7835c;
+    --cancha-accent-subtle: rgba(247, 131, 92, 0.06);
+    --cancha-accent-border: rgba(247, 131, 92, 0.12);
+    --cancha-text-primary: #ffffff;
+    --cancha-text-secondary: #a8a8a8;
+    --cancha-text-muted: #6b7280;
+    --cancha-bg-primary: #0F172A;
+    --cancha-bg-card: #1a1a2e;
+    --cancha-bg-elevated: #242438;
+    --cancha-border: rgba(255, 255, 255, 0.08);
+    --cancha-border-strong: rgba(255, 255, 255, 0.12);
+    --cancha-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    --cancha-shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.25);
+    --cancha-radius: 16px;
+    --cancha-radius-small: 12px;
+    --cancha-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --cancha-success: #10b981;
+    --cancha-info: #3b82f6;
+}
+
+/* ======= Reset y Base ======= */
+body {
+    background-color: var(--cancha-bg-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--cancha-text-primary);
+    line-height: 1.6;
+}
+
+/* ======= Container Principal ======= */
+.registro-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* ======= Hero Section ======= */
+.hero-section {
+    background: linear-gradient(135deg, var(--cancha-bg-card) 0%, var(--cancha-bg-elevated) 100%);
+    border: 1px solid var(--cancha-border);
+    border-radius: var(--cancha-radius);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: var(--cancha-transition);
+}
+
+.hero-section.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, var(--cancha-accent-subtle) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(50%, -50%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.hero-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--cancha-border);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.hero-icon i {
+    font-size: 1.5rem;
+    color: var(--cancha-accent);
+}
+
+.hero-text {
+    flex: 1;
+}
+
+.hero-title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    color: var(--cancha-text-primary);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 1rem;
+    color: var(--cancha-text-secondary);
+    font-weight: 400;
+    margin: 0;
+}
+
+/* ======= Form Section ======= */
+.form-section {
+    flex: 1;
+}
+
+.form-card {
+    background: var(--cancha-bg-card);
+    border: 1px solid var(--cancha-border);
+    border-radius: var(--cancha-radius);
+    overflow: hidden;
+    box-shadow: var(--cancha-shadow);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: var(--cancha-transition);
+}
+
+.form-card.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ======= Info Alert ======= */
+.info-alert {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.04) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.12);
+    border-radius: var(--cancha-radius-small);
+    padding: 1.5rem;
+    margin: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.alert-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.alert-icon i {
+    font-size: 1rem;
+    color: var(--cancha-info);
+}
+
+.alert-content {
+    flex: 1;
+}
+
+.alert-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--cancha-info);
+    margin-bottom: 0.5rem;
+}
+
+.alert-text {
+    font-size: 0.875rem;
+    color: var(--cancha-text-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ======= Formulario ======= */
+.registro-form {
+    padding: 0 1.5rem 1.5rem;
+}
+
+.form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Estilos para campos de Crispy Forms */
+.form-group,
+.field-wrapper {
+    opacity: 0;
+    transform: translateY(15px);
+    transition: var(--cancha-transition);
+}
+
+.form-group.animate-in,
+.field-wrapper.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.form-group.focused,
+.field-wrapper.focused {
+    transform: scale(1.01);
+}
+
+/* Labels */
+label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--cancha-text-primary);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Inputs */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--cancha-border);
+    border-radius: var(--cancha-radius-small);
+    color: var(--cancha-text-primary);
+    font-size: 0.9rem;
+    transition: var(--cancha-transition);
+    font-family: inherit;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--cancha-accent);
+    box-shadow: 0 0 0 3px rgba(247, 131, 92, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--cancha-text-muted);
+}
+
+/* Textarea específico */
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Select */
+select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
+
+/* File Input */
+input[type="file"] {
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed var(--cancha-border);
+    border-radius: var(--cancha-radius-small);
+    color: var(--cancha-text-secondary);
+    cursor: pointer;
+    transition: var(--cancha-transition);
+}
+
+input[type="file"]:hover {
+    border-color: var(--cancha-accent);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Checkbox y Radio */
+input[type="checkbox"],
+input[type="radio"] {
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-right: 0.5rem;
+    accent-color: var(--cancha-accent);
+}
+
+/* Help Text */
+.form-text,
+.helptext {
+    font-size: 0.8rem;
+    color: var(--cancha-text-muted);
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Error Styles */
+.invalid-feedback,
+.error {
+    color: #ef4444;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.is-invalid,
+input.error,
+select.error,
+textarea.error {
+    border-color: #ef4444;
+}
+
+/* ======= Form Actions ======= */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--cancha-border);
+}
+
+/* ======= Botones ======= */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border-radius: var(--cancha-radius-small);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: var(--cancha-transition);
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.btn-primary {
+    background: var(--cancha-accent);
+    color: white;
+    border: 1px solid var(--cancha-accent);
+}
+
+.btn-primary:hover {
+    background: #e6743f;
+    border-color: #e6743f;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(247, 131, 92, 0.3);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--cancha-text-secondary);
+    border: 1px solid var(--cancha-border);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--cancha-text-primary);
+    border-color: var(--cancha-border-strong);
+    transform: translateY(-1px);
+}
+
+/* ======= Responsive Design ======= */
+@media (max-width: 768px) {
+    .registro-container {
+        padding: 1rem;
+        gap: 1.5rem;
+    }
+    
+    .hero-section {
+        padding: 2rem;
+    }
+    
+    .hero-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .hero-icon {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .hero-icon i {
+        font-size: 1.25rem;
+    }
+    
+    .info-alert {
+        margin: 1rem;
+        padding: 1.25rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .alert-icon {
+        margin: 0 auto;
+    }
+    
+    .registro-form {
+        padding: 0 1rem 1rem;
+    }
+    
+    .form-actions {
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+    }
+    
+    .btn {
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .registro-container {
+        padding: 0.75rem;
+    }
+    
+    .hero-section {
+        padding: 1.5rem;
+    }
+    
+    .info-alert {
+        margin: 0.75rem;
+        padding: 1rem;
+    }
+    
+    .alert-icon {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .form-fields {
+        gap: 1.25rem;
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="url"],
+    textarea,
+    select {
+        padding: 0.75rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* ======= Animaciones ======= */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-in {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+/* ======= Estados de carga ======= */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* ======= Accesibilidad ======= */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

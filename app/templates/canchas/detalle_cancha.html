@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}{{ cancha.nombre_cancha }} - Detalle de Cancha - De Rabona{% endblock %}
@@ -8,152 +8,147 @@
 {% endblock %}
 
 {% block content %}
-<div class="detalle-cancha-container">
-    <!-- Header con breadcrumb -->
-    <div class="detalle-header">
-        <div class="breadcrumb-container">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="{% url 'home' %}">
-                            <i class="fas fa-home"></i>
-                            Inicio
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <a href="{% url 'canchas_lista' %}">
-                            <i class="fas fa-map-marker-alt"></i>
-                            Canchas
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">
-                        {{ cancha.nombre_cancha }}
-                    </li>
-                </ol>
-            </nav>
-        </div>
+<div class="detalle-container">
+    <!-- Breadcrumb Section -->
+    <div class="breadcrumb-section">
+        <nav class="breadcrumb-nav" aria-label="breadcrumb">
+            <div class="breadcrumb">
+                <a href="{% url 'home' %}" class="breadcrumb-item">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+                <div class="breadcrumb-separator">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <a href="{% url 'canchas_lista' %}" class="breadcrumb-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Canchas</span>
+                </a>
+                <div class="breadcrumb-separator">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <span class="breadcrumb-item active">{{ cancha.nombre_cancha }}</span>
+            </div>
+        </nav>
     </div>
 
-    <!-- Card principal de la cancha -->
-    <div class="cancha-main-card">
-        <div class="cancha-hero">
-            <!-- Imagen principal -->
-            <div class="hero-image">
-                <img src="{% if cancha.imagen %}{{ cancha.imagen.url }}{% else %}{% static 'images/cancha_default_large.jpg' %}{% endif %}" 
-                     alt="{{ cancha.nombre_cancha }}" 
-                     class="cancha-image">
-                <div class="image-overlay">
-                    <!-- Badge de disponibilidad -->
-                    <div class="availability-badge {% if cancha.disponible %}badge-available{% else %}badge-unavailable{% endif %}">
-                        <i class="fas {% if cancha.disponible %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
-                        {% if cancha.disponible %}Disponible{% else %}No Disponible{% endif %}
-                    </div>
+    <!-- Hero Section -->
+    <div class="cancha-hero-section">
+        <!-- Imagen Principal -->
+        <div class="hero-image-container">
+            <img src="{% if cancha.imagen %}{{ cancha.imagen.url }}{% else %}{% static 'images/cancha_default_large.jpg' %}{% endif %}" 
+                 alt="{{ cancha.nombre_cancha }}" 
+                 class="hero-image">
+            
+            <!-- Badge de Disponibilidad -->
+            <div class="availability-badge {% if cancha.disponible %}badge-available{% else %}badge-unavailable{% endif %}">
+                <i class="fas {% if cancha.disponible %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+                <span>{% if cancha.disponible %}Disponible{% else %}No Disponible{% endif %}</span>
+            </div>
+        </div>
+
+        <!-- Contenido Hero -->
+        <div class="hero-content">
+            <!-- Título y Badge de Propiedad -->
+            <div class="title-section">
+                <h1 class="cancha-title">
+                    <i class="fas fa-futbol"></i>
+                    <span>{{ cancha.nombre_cancha }}</span>
+                </h1>
+                
+                <div class="propiedad-badge {% if cancha.propiedad == 'PRIVADA' %}badge-privada{% else %}badge-publica{% endif %}">
+                    <i class="fas {% if cancha.propiedad == 'PRIVADA' %}fa-lock{% else %}fa-building{% endif %}"></i>
+                    <span>{{ cancha.get_propiedad_display }}</span>
                 </div>
             </div>
 
-            <!-- Información principal -->
-            <div class="hero-content">
-                <div class="cancha-title-section">
-                    <h1 class="cancha-title">
-                        <i class="fas fa-futbol me-3"></i>
-                        {{ cancha.nombre_cancha }}
-                    </h1>
-                    
-                    <!-- Badge de propiedad -->
-                    <div class="propiedad-badge {% if cancha.propiedad == 'PRIVADA' %}badge-privada{% else %}badge-publica{% endif %}">
-                        <i class="fas {% if cancha.propiedad == 'PRIVADA' %}fa-lock{% else %}fa-building{% endif %}"></i>
-                        {{ cancha.get_propiedad_display }}
+            <!-- Grid de Información -->
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3 class="info-title">Ubicación</h3>
+                        <p class="info-text">{{ cancha.ubicacion }}</p>
                     </div>
                 </div>
 
-                <!-- Grid de información -->
-                <div class="cancha-info-grid">
-                    <div class="info-card">
-                        <div class="info-icon">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                        <div class="info-content">
-                            <h3 class="info-title">Ubicación</h3>
-                            <p class="info-text">{{ cancha.ubicacion }}</p>
-                        </div>
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-futbol"></i>
                     </div>
-
-                    <div class="info-card">
-                        <div class="info-icon">
-                            <i class="fas fa-futbol"></i>
-                        </div>
-                        <div class="info-content">
-                            <h3 class="info-title">Tipo</h3>
-                            <p class="info-text">{{ cancha.get_tipo_display }}</p>
-                        </div>
+                    <div class="info-content">
+                        <h3 class="info-title">Tipo</h3>
+                        <p class="info-text">{{ cancha.get_tipo_display }}</p>
                     </div>
-
-                    <div class="info-card">
-                        <div class="info-icon">
-                            <i class="fas fa-layer-group"></i>
-                        </div>
-                        <div class="info-content">
-                            <h3 class="info-title">Superficie</h3>
-                            <p class="info-text">{{ cancha.get_superficie_display }}</p>
-                        </div>
-                    </div>
-
-                    {% if cancha.costo_partido is not None %}
-                    <div class="info-card">
-                        <div class="info-icon">
-                            <i class="fas fa-euro-sign"></i>
-                        </div>
-                        <div class="info-content">
-                            <h3 class="info-title">Costo</h3>
-                            <p class="info-text">
-                                {% if cancha.costo_partido > 0 %}
-                                    {{ cancha.costo_partido|floatformat:2 }}€
-                                {% else %}
-                                    Gratis
-                                {% endif %}
-                            </p>
-                        </div>
-                    </div>
-                    {% endif %}
                 </div>
 
-                <!-- Descripción -->
-                {% if cancha.descripcion %}
-                <div class="descripcion-section">
-                    <h3 class="descripcion-title">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Descripción
-                    </h3>
-                    <div class="descripcion-content">
-                        {{ cancha.descripcion|linebreaksbr }}
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3 class="info-title">Superficie</h3>
+                        <p class="info-text">{{ cancha.get_superficie_display }}</p>
+                    </div>
+                </div>
+
+                {% if cancha.costo_partido is not None %}
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-euro-sign"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3 class="info-title">Costo</h3>
+                        <p class="info-text">
+                            {% if cancha.costo_partido > 0 %}
+                                {{ cancha.costo_partido|floatformat:2 }}€
+                            {% else %}
+                                Gratis
+                            {% endif %}
+                        </p>
                     </div>
                 </div>
                 {% endif %}
+            </div>
 
-                <!-- Botones de acción -->
-                <div class="action-buttons">
-                    {% if cancha.propiedad == 'PRIVADA' and cancha.disponible %}
-                    <button class="btn-action btn-primary" onclick="contactarReserva()">
-                        <i class="fas fa-calendar-plus"></i>
-                        <span>Contactar para Reservar</span>
-                    </button>
-                    {% endif %}
-                    
-                    <a href="{% url 'canchas_lista' %}" class="btn-action btn-outline">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Volver al listado</span>
-                    </a>
+            <!-- Descripción -->
+            {% if cancha.descripcion %}
+            <div class="descripcion-section">
+                <h3 class="descripcion-title">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Descripción</span>
+                </h3>
+                <div class="descripcion-content">
+                    <p>{{ cancha.descripcion|linebreaksbr }}</p>
                 </div>
+            </div>
+            {% endif %}
+
+            <!-- Botones de Acción -->
+            <div class="action-section">
+                {% if cancha.propiedad == 'PRIVADA' and cancha.disponible %}
+                <button class="btn btn-primary" onclick="contactarReserva()">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>Contactar para Reservar</span>
+                </button>
+                {% endif %}
+                
+                <a href="{% url 'canchas_lista' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Volver al listado</span>
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- Sección de próximos partidos -->
-    <div class="proximos-partidos-section">
+    <!-- Sección de Próximos Partidos -->
+    <div class="partidos-section">
         <div class="section-header">
             <h2 class="section-title">
-                <i class="fas fa-calendar-alt me-3"></i>
-                Próximos Partidos en esta Cancha
+                <i class="fas fa-calendar-alt"></i>
+                <span>Próximos Partidos en esta Cancha</span>
             </h2>
             {% if proximos_partidos %}
                 <div class="partidos-count">
@@ -166,85 +161,81 @@
             {% if proximos_partidos %}
                 <div class="partidos-list">
                     {% for partido_item in proximos_partidos %}
-                    <div class="partido-item">
-                        <a href="{% url 'detalle_partido' pk=partido_item.id_partido %}" class="partido-link">
-                            <div class="partido-content">
-                                <!-- Fecha y hora -->
-                                <div class="partido-fecha">
-                                    <div class="fecha-container">
-                                        <div class="fecha-dia">{{ partido_item.fecha|date:"d" }}</div>
-                                        <div class="fecha-mes">{{ partido_item.fecha|date:"M" }}</div>
-                                        <div class="fecha-ano">{{ partido_item.fecha|date:"Y" }}</div>
-                                    </div>
-                                    <div class="hora-container">
-                                        <div class="hora">{{ partido_item.fecha|date:"H:i" }}</div>
-                                    </div>
-                                </div>
+                    <a href="{% url 'detalle_partido' pk=partido_item.id_partido %}" class="partido-card">
+                        <!-- Fecha y Hora -->
+                        <div class="partido-fecha">
+                            <div class="fecha-display">
+                                <div class="fecha-dia">{{ partido_item.fecha|date:"d" }}</div>
+                                <div class="fecha-mes">{{ partido_item.fecha|date:"M" }}</div>
+                                <div class="fecha-ano">{{ partido_item.fecha|date:"Y" }}</div>
+                            </div>
+                            <div class="hora-display">
+                                <span class="hora">{{ partido_item.fecha|date:"H:i" }}</span>
+                            </div>
+                        </div>
 
-                                <!-- Información del partido -->
-                                <div class="partido-info">
-                                    <h3 class="partido-titulo">{{ partido_item.get_tipo_display }}</h3>
-                                    <div class="partido-detalles">
-                                        <div class="detalle-item">
-                                            <i class="fas fa-users detalle-icon"></i>
-                                            <span class="detalle-text">{{ partido_item.get_modalidad_display }}</span>
-                                        </div>
-                                        <div class="detalle-item">
-                                            <i class="fas fa-signal detalle-icon"></i>
-                                            <span class="detalle-text">{{ partido_item.get_nivel_display|default:"Todos los niveles" }}</span>
-                                        </div>
-                                    </div>
+                        <!-- Información del Partido -->
+                        <div class="partido-info">
+                            <h3 class="partido-titulo">{{ partido_item.get_tipo_display }}</h3>
+                            <div class="partido-detalles">
+                                <div class="detalle-item">
+                                    <i class="fas fa-users"></i>
+                                    <span>{{ partido_item.get_modalidad_display }}</span>
                                 </div>
-
-                                <!-- Progreso de jugadores -->
-                                <div class="partido-progreso">
-                                    <div class="progreso-info">
-                                        <span class="progreso-text">{{ partido_item.jugadores.count }}/{{ partido_item.max_jugadores }}</span>
-                                        <span class="progreso-label">Jugadores</span>
-                                    </div>
-                                    <div class="progreso-bar">
-                                        <div class="progreso-fill" style="width: {% widthratio partido_item.jugadores.count partido_item.max_jugadores 100 %}%"></div>
-                                    </div>
-                                </div>
-
-                                <!-- Estado del partido -->
-                                <div class="partido-estado">
-                                    {% if partido_item.jugadores.count >= partido_item.max_jugadores %}
-                                        <span class="estado-badge estado-completo">
-                                            <i class="fas fa-users"></i>
-                                            Completo
-                                        </span>
-                                    {% else %}
-                                        <span class="estado-badge estado-disponible">
-                                            <i class="fas fa-user-plus"></i>
-                                            Disponible
-                                        </span>
-                                    {% endif %}
+                                <div class="detalle-item">
+                                    <i class="fas fa-signal"></i>
+                                    <span>{{ partido_item.get_nivel_display|default:"Todos los niveles" }}</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Indicador de enlace -->
-                            <div class="link-indicator">
-                                <i class="fas fa-chevron-right"></i>
+                        <!-- Progreso de Jugadores -->
+                        <div class="partido-progreso">
+                            <div class="progreso-info">
+                                <span class="progreso-text">{{ partido_item.jugadores.count }}/{{ partido_item.max_jugadores }}</span>
+                                <span class="progreso-label">Jugadores</span>
                             </div>
-                        </a>
-                    </div>
+                            <div class="progreso-bar">
+                                <div class="progreso-fill" style="width: {% widthratio partido_item.jugadores.count partido_item.max_jugadores 100 %}%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Estado -->
+                        <div class="partido-estado">
+                            {% if partido_item.jugadores.count >= partido_item.max_jugadores %}
+                                <span class="estado-badge estado-completo">
+                                    <i class="fas fa-users"></i>
+                                    <span>Completo</span>
+                                </span>
+                            {% else %}
+                                <span class="estado-badge estado-disponible">
+                                    <i class="fas fa-user-plus"></i>
+                                    <span>Disponible</span>
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Indicador de Enlace -->
+                        <div class="link-indicator">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </a>
                     {% endfor %}
                 </div>
             {% else %}
-                <!-- Estado vacío -->
-                <div class="empty-partidos">
+                <!-- Estado Vacío -->
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
                     <div class="empty-content">
-                        <div class="empty-icon">
-                            <i class="fas fa-calendar-times"></i>
-                        </div>
                         <h3 class="empty-title">No hay partidos programados</h3>
-                        <p class="empty-message">
+                        <p class="empty-desc">
                             Actualmente no hay partidos programados en esta cancha.
                             <br>¡Sé el primero en organizar uno!
                         </p>
                         <div class="empty-actions">
-                            <a href="{% url 'crear_partidos' %}" class="btn-action btn-primary">
+                            <a href="{% url 'crear_partidos' %}" class="btn btn-primary">
                                 <i class="fas fa-plus-circle"></i>
                                 <span>Crear Partido</span>
                             </a>
@@ -256,104 +247,88 @@
     </div>
 </div>
 
-<!-- Modal para contacto de reserva -->
-<div class="modal fade" id="contactoModal" tabindex="-1" aria-labelledby="contactoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark text-white">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title" id="contactoModalLabel">
-                    <i class="fas fa-phone me-2"></i>
-                    Contactar para Reservar
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="contact-info">
-                    <div class="info-item">
-                        <i class="fas fa-futbol text-success me-3"></i>
-                        <strong>{{ cancha.nombre_cancha }}</strong>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt text-success me-3"></i>
-                        {{ cancha.ubicacion }}
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-info-circle text-success me-3"></i>
-                        Para reservar esta cancha privada, ponte en contacto directamente con los administradores.
-                    </div>
+<!-- Modal para Contacto de Reserva -->
+<div class="modal-overlay" id="contactoModal" onclick="cerrarModal()">
+    <div class="modal-container" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                <i class="fas fa-phone"></i>
+                <span>Contactar para Reservar</span>
+            </h3>
+            <button class="modal-close" onclick="cerrarModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-futbol"></i>
+                    <span><strong>{{ cancha.nombre_cancha }}</strong></span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{{ cancha.ubicacion }}</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Para reservar esta cancha privada, ponte en contacto directamente con los administradores.</span>
                 </div>
             </div>
-            <div class="modal-footer border-secondary">
-                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cerrar</button>
-            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
         </div>
     </div>
 </div>
 
+<!-- Scripts -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Función para abrir modal de contacto
-    window.contactarReserva = function() {
-        const modal = new bootstrap.Modal(document.getElementById('contactoModal'));
-        modal.show();
-    };
+    initializeAnimations();
+    setupModal();
 
-    // Efecto parallax en la imagen hero
-    const heroImage = document.querySelector('.cancha-image');
-    if (heroImage) {
-        window.addEventListener('scroll', function() {
-            const scrolled = window.pageYOffset;
-            const parallax = scrolled * 0.5;
-            heroImage.style.transform = `translateY(${parallax}px)`;
+    function initializeAnimations() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // Animar elementos principales
+        document.querySelectorAll('.cancha-hero-section, .info-item, .partido-card, .empty-state').forEach((el, index) => {
+            setTimeout(() => {
+                observer.observe(el);
+            }, index * 100);
         });
+
+        // Animar barras de progreso
+        setTimeout(() => {
+            document.querySelectorAll('.progreso-fill').forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 300);
+            });
+        }, 800);
     }
 
-    // Animación de las cards de información
-    const infoCards = document.querySelectorAll('.info-card');
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
+    function setupModal() {
+        window.contactarReserva = function() {
+            document.getElementById('contactoModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        };
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
+        window.cerrarModal = function() {
+            document.getElementById('contactoModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+    }
 
-    infoCards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(30px)';
-        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(card);
-    });
-
-    // Efecto hover en los items de partidos
-    const partidoItems = document.querySelectorAll('.partido-item');
-    partidoItems.forEach(item => {
-        item.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateX(10px)';
-        });
-        
-        item.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateX(0)';
-        });
-    });
-
-    // Animación de barras de progreso
-    const progressBars = document.querySelectorAll('.progreso-fill');
-    progressBars.forEach(bar => {
-        const width = bar.style.width;
-        bar.style.width = '0';
-        setTimeout(() => {
-            bar.style.width = width;
-        }, 500);
-    });
-
-    // Lazy loading para la imagen principal
+    // Lazy loading para imagen hero
+    const heroImage = document.querySelector('.hero-image');
     if (heroImage) {
         heroImage.style.opacity = '0';
         heroImage.style.transition = 'opacity 0.5s ease';

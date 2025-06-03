@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'base.html' %}
 {% load attribute_filters %}
 {% load static %}
 
@@ -9,41 +9,57 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid p-4">
-    <!-- Header de Estadísticas -->
-    <div class="stats-header">
-        <div class="header-content">
-            <div class="header-info">
-                <h4 class="page-title">{{ titulo_pagina|default:"Estadísticas" }}</h4>
-                <p class="page-subtitle">Rankings y datos de la comunidad de De Rabona</p>
+<div class="estadisticas-container">
+    <!-- Hero Section -->
+    <div class="stats-hero-section">
+        <div class="hero-content">
+            <div class="hero-icon">
+                <i class="fas fa-chart-line"></i>
             </div>
-            <div class="header-actions">
-                <div class="period-filter-inline">
-                    <span class="filter-label">Período:</span>
-                    <div class="period-buttons">
-                        <a href="?periodo=7dias" class="btn-period {% if periodo_actual_param == '7dias' %}active{% endif %}">7 Días</a>
-                        <a href="?periodo=30dias" class="btn-period {% if periodo_actual_param == '30dias' %}active{% endif %}">Último Mes</a>
-                        <a href="?periodo=todo" class="btn-period {% if periodo_actual_param == 'todo' %}active{% endif %}">Todo</a>
-                    </div>
-                </div>
+            <div class="hero-text">
+                <h1 class="hero-title">{{ titulo_pagina|default:"Estadísticas" }}</h1>
+                <p class="hero-subtitle">Rankings y datos de la comunidad De Rabona</p>
             </div>
         </div>
+        
+        <!-- Filtro de Período -->
+        <div class="period-filter">
+            <span class="filter-label">Período:</span>
+            <div class="period-buttons">
+                <a href="?periodo=7dias" class="btn-period {% if periodo_actual_param == '7dias' %}active{% endif %}">
+                    <span>7 Días</span>
+                </a>
+                <a href="?periodo=30dias" class="btn-period {% if periodo_actual_param == '30dias' %}active{% endif %}">
+                    <span>Último Mes</span>
+                </a>
+                <a href="?periodo=todo" class="btn-period {% if periodo_actual_param == 'todo' %}active{% endif %}">
+                    <span>Todo</span>
+                </a>
+            </div>
+        </div>
+
         {% if periodo_seleccionado != "Todo el tiempo" %}
             <div class="period-indicator">
-                <i class="fas fa-calendar-alt me-2"></i>
-                Mostrando estadísticas para: <strong>{{ periodo_seleccionado }}</strong>
+                <i class="fas fa-calendar-alt"></i>
+                <span>Mostrando: <strong>{{ periodo_seleccionado }}</strong></span>
             </div>
         {% endif %}
     </div>
 
-    <!-- Mensajes del sistema -->
+    <!-- Mensajes del Sistema -->
     {% if messages %}
-        <div class="messages-container">
+        <div class="messages-section">
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show custom-alert" role="alert">
-                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="custom-alert alert-{{ message.tags }}">
+                    <div class="alert-icon">
+                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                    </div>
+                    <div class="alert-content">
+                        <span>{{ message }}</span>
+                    </div>
+                    <button type="button" class="alert-dismiss" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             {% endfor %}
         </div>
@@ -52,54 +68,66 @@
     <!-- Rankings Principales -->
     <div class="rankings-section">
         <div class="section-header">
-            <h5 class="section-title">
-                <i class="fas fa-trophy me-2"></i>
-                Rankings de la Comunidad
-            </h5>
+            <h2 class="section-title">
+                <i class="fas fa-trophy"></i>
+                <span>Rankings de la Comunidad</span>
+            </h2>
+            <div class="title-accent"></div>
         </div>
 
         <div class="rankings-grid">
             <!-- Top Jugadores por ELO -->
             <div class="ranking-card elo-ranking">
-                <div class="ranking-header">
-                    <h6 class="ranking-title">
-                        <i class="fas fa-star me-2"></i>
-                        Top 10 Jugadores por ELO
-                    </h6>
-                    <span class="ranking-badge badge-gold">ELO</span>
+                <div class="card-header">
+                    <div class="header-content">
+                        <h3 class="card-title">
+                            <i class="fas fa-star"></i>
+                            <span>Top 10 Jugadores por ELO</span>
+                        </h3>
+                        <span class="ranking-badge elo-badge">ELO</span>
+                    </div>
                 </div>
-                <div class="ranking-list">
+                
+                <div class="card-body">
                     {% if top_elo_jugadores %}
-                        {% for jugador in top_elo_jugadores %}
-                        <div class="player-item" data-rank="{{ forloop.counter }}">
-                            <div class="player-rank">
-                                <span class="rank-number {% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">{{ forloop.counter }}</span>
+                        <div class="players-list">
+                            {% for jugador in top_elo_jugadores %}
+                            <div class="player-item" data-rank="{{ forloop.counter }}">
+                                <div class="player-rank">
+                                    <span class="rank-number rank-{{ forloop.counter }}">{{ forloop.counter }}</span>
+                                </div>
+                                <div class="player-avatar">
+                                    <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" alt="{{ jugador.nombre }}">
+                                </div>
+                                <div class="player-info">
+                                    <h4 class="player-name">{{ jugador.nombre }}</h4>
+                                    <p class="player-position">Posición {{ forloop.counter }}</p>
+                                </div>
+                                <div class="player-stat">
+                                    <span class="stat-value">{{ jugador.calificacion|floatformat:0 }}</span>
+                                    <span class="stat-unit">ELO</span>
+                                </div>
                             </div>
-                            <div class="player-avatar">
-                                <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" alt="{{ jugador.nombre }}">
-                            </div>
-                            <div class="player-info">
-                                <h6 class="player-name">{{ jugador.nombre }}</h6>
-                                <p class="player-position">Jugador {{ forloop.counter }}</p>
-                            </div>
-                            <div class="player-stat">
-                                <span class="stat-value">{{ jugador.calificacion|floatformat:0 }}</span>
-                                <span class="stat-unit">ELO</span>
-                            </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
                     {% else %}
-                        <div class="empty-state-small">
-                            <i class="fas fa-star fa-2x mb-2"></i>
-                            <p>No hay datos de ELO para mostrar</p>
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="empty-content">
+                                <h4 class="empty-title">Sin datos de ELO</h4>
+                                <p class="empty-desc">No hay datos disponibles para mostrar</p>
+                            </div>
                         </div>
                     {% endif %}
                 </div>
+
                 {% if top_elo_jugadores %}
-                <div class="ranking-footer">
-                    <a href="#" class="btn btn-sm btn-outline-primary">
-                        Ver ranking ELO completo
-                        <i class="fas fa-arrow-right ms-1"></i>
+                <div class="card-footer">
+                    <a href="#" class="btn btn-secondary">
+                        <span>Ver ranking completo</span>
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
                 {% endif %}
@@ -107,45 +135,56 @@
 
             <!-- Jugadores Más Activos -->
             <div class="ranking-card activity-ranking">
-                <div class="ranking-header">
-                    <h6 class="ranking-title">
-                        <i class="fas fa-running me-2"></i>
-                        Top 10 Jugadores Más Activos
-                    </h6>
-                    <span class="ranking-badge badge-blue">{{ periodo_seleccionado }}</span>
+                <div class="card-header">
+                    <div class="header-content">
+                        <h3 class="card-title">
+                            <i class="fas fa-running"></i>
+                            <span>Top 10 Jugadores Activos</span>
+                        </h3>
+                        <span class="ranking-badge activity-badge">{{ periodo_seleccionado }}</span>
+                    </div>
                 </div>
-                <div class="ranking-list">
+                
+                <div class="card-body">
                     {% if top_jugadores_activos %}
-                        {% for jugador in top_jugadores_activos %}
-                        <div class="player-item" data-rank="{{ forloop.counter }}">
-                            <div class="player-rank">
-                                <span class="rank-number {% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">{{ forloop.counter }}</span>
+                        <div class="players-list">
+                            {% for jugador in top_jugadores_activos %}
+                            <div class="player-item" data-rank="{{ forloop.counter }}">
+                                <div class="player-rank">
+                                    <span class="rank-number rank-{{ forloop.counter }}">{{ forloop.counter }}</span>
+                                </div>
+                                <div class="player-avatar">
+                                    <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" alt="{{ jugador.nombre }}">
+                                </div>
+                                <div class="player-info">
+                                    <h4 class="player-name">{{ jugador.nombre }}</h4>
+                                    <p class="player-position">Jugador activo</p>
+                                </div>
+                                <div class="player-stat">
+                                    <span class="stat-value">{{ jugador.num_partidos_periodo }}</span>
+                                    <span class="stat-unit">Partidos</span>
+                                </div>
                             </div>
-                            <div class="player-avatar">
-                                <img src="{% if jugador.imagen_perfil %}{{ jugador.imagen_perfil.url }}{% else %}{% static 'images/avatar_default.png' %}{% endif %}" alt="{{ jugador.nombre }}">
-                            </div>
-                            <div class="player-info">
-                                <h6 class="player-name">{{ jugador.nombre }}</h6>
-                                <p class="player-position">Jugador activo</p>
-                            </div>
-                            <div class="player-stat">
-                                <span class="stat-value">{{ jugador.num_partidos_periodo }}</span>
-                                <span class="stat-unit">Partidos</span>
-                            </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
                     {% else %}
-                        <div class="empty-state-small">
-                            <i class="fas fa-running fa-2x mb-2"></i>
-                            <p>No hay datos de actividad para este período</p>
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-running"></i>
+                            </div>
+                            <div class="empty-content">
+                                <h4 class="empty-title">Sin actividad</h4>
+                                <p class="empty-desc">No hay datos de actividad para este período</p>
+                            </div>
                         </div>
                     {% endif %}
                 </div>
+
                 {% if top_jugadores_activos %}
-                <div class="ranking-footer">
-                    <a href="#" class="btn btn-sm btn-outline-primary">
-                        Ver ranking completo
-                        <i class="fas fa-arrow-right ms-1"></i>
+                <div class="card-footer">
+                    <a href="#" class="btn btn-secondary">
+                        <span>Ver ranking completo</span>
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
                 {% endif %}
@@ -156,47 +195,47 @@
     <!-- Equipos y Canchas -->
     <div class="teams-venues-section">
         <div class="section-header">
-            <h5 class="section-title">
-                <i class="fas fa-chart-line me-2"></i>
-                Equipos y Canchas Destacados
-            </h5>
+            <h2 class="section-title">
+                <i class="fas fa-chart-bar"></i>
+                <span>Equipos y Canchas Destacados</span>
+            </h2>
+            <div class="title-accent"></div>
         </div>
 
         <div class="tv-grid">
             <!-- Top Equipos -->
-            <div class="data-table-card teams-table">
-                <div class="table-header">
-                    <h6 class="table-title">
-                        <i class="fas fa-users me-2"></i>
-                        Top 10 Equipos
-                    </h6>
-                    <span class="table-badge badge-purple">{{ periodo_seleccionado }}</span>
+            <div class="data-card teams-card">
+                <div class="card-header">
+                    <div class="header-content">
+                        <h3 class="card-title">
+                            <i class="fas fa-users"></i>
+                            <span>Top 10 Equipos</span>
+                        </h3>
+                        <span class="ranking-badge teams-badge">{{ periodo_seleccionado }}</span>
+                    </div>
+                    <p class="card-subtitle">Ordenados por victorias y partidos jugados</p>
                 </div>
-                <div class="table-subtitle">
-                    Ordenados por victorias, luego por partidos jugados
-                </div>
-                <div class="table-container">
+                
+                <div class="card-body">
                     {% if top_equipos_activos %}
                         <div class="teams-list">
                             {% for equipo_stat in top_equipos_activos %}
                             <div class="team-item" data-rank="{{ forloop.counter }}">
                                 <div class="team-rank">
-                                    <span class="rank-badge {% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">{{ forloop.counter }}</span>
+                                    <span class="rank-badge rank-{{ forloop.counter }}">{{ forloop.counter }}</span>
+                                </div>
+                                <div class="team-avatar">
+                                    {% if equipo_stat.team_shield %}
+                                        <img src="{{ equipo_stat.team_shield.url }}" alt="Escudo {{ equipo_stat.nombre_equipo }}">
+                                    {% else %}
+                                        <div class="team-shield-placeholder">
+                                            <i class="fas fa-shield-alt"></i>
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="team-info">
-                                    <div class="team-avatar">
-                                        {% if equipo_stat.team_shield %}
-                                            <img src="{{ equipo_stat.team_shield.url }}" alt="Escudo {{ equipo_stat.nombre_equipo }}">
-                                        {% else %}
-                                            <div class="team-shield-placeholder">
-                                                <i class="fas fa-shield-alt"></i>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="team-details">
-                                        <h6 class="team-name">{{ equipo_stat.nombre_equipo }}</h6>
-                                        <small class="team-meta">Equipo {{ forloop.counter }}</small>
-                                    </div>
+                                    <h4 class="team-name">{{ equipo_stat.nombre_equipo }}</h4>
+                                    <p class="team-meta">Equipo {{ forloop.counter }}</p>
                                 </div>
                                 <div class="team-stats">
                                     <div class="stat-group">
@@ -233,53 +272,58 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <div class="empty-state-small">
-                            <i class="fas fa-users fa-2x mb-2"></i>
-                            <p>No hay datos de equipos para este período</p>
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="empty-content">
+                                <h4 class="empty-title">Sin datos de equipos</h4>
+                                <p class="empty-desc">No hay datos para este período</p>
+                            </div>
                         </div>
                     {% endif %}
                 </div>
+
                 {% if top_equipos_activos %}
-                <div class="table-footer">
-                    <a href="#" class="btn btn-sm btn-outline-primary">
-                        Ver ranking completo
-                        <i class="fas fa-arrow-right ms-1"></i>
+                <div class="card-footer">
+                    <a href="#" class="btn btn-secondary">
+                        <span>Ver ranking completo</span>
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
                 {% endif %}
             </div>
 
             <!-- Top Canchas -->
-            <div class="data-table-card venues-table">
-                <div class="table-header">
-                    <h6 class="table-title">
-                        <i class="fas fa-map-marked-alt me-2"></i>
-                        Top 10 Canchas Más Populares
-                    </h6>
-                    <span class="table-badge badge-green">{{ periodo_seleccionado }}</span>
+            <div class="data-card venues-card">
+                <div class="card-header">
+                    <div class="header-content">
+                        <h3 class="card-title">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Top 10 Canchas Populares</span>
+                        </h3>
+                        <span class="ranking-badge venues-badge">{{ periodo_seleccionado }}</span>
+                    </div>
+                    <p class="card-subtitle">Ordenadas por partidos jugados</p>
                 </div>
-                <div class="table-subtitle">
-                    Ordenadas por número de partidos jugados
-                </div>
-                <div class="table-container">
+                
+                <div class="card-body">
                     {% if top_canchas_populares %}
                         <div class="venues-list">
                             {% for cancha_stat in top_canchas_populares %}
                             <div class="venue-item" data-rank="{{ forloop.counter }}">
                                 <div class="venue-rank">
-                                    <span class="rank-badge {% if forloop.counter == 1 %}gold{% elif forloop.counter == 2 %}silver{% elif forloop.counter == 3 %}bronze{% endif %}">{{ forloop.counter }}</span>
+                                    <span class="rank-badge rank-{{ forloop.counter }}">{{ forloop.counter }}</span>
+                                </div>
+                                <div class="venue-icon">
+                                    <i class="fas fa-map-pin"></i>
                                 </div>
                                 <div class="venue-info">
-                                    <div class="venue-icon">
-                                        <i class="fas fa-map-pin"></i>
-                                    </div>
-                                    <div class="venue-details">
-                                        <h6 class="venue-name">{{ cancha_stat.nombre_cancha }}</h6>
-                                        <small class="venue-meta">
-                                            <i class="fas fa-map-marker-alt me-1"></i>
-                                            Cancha {{ forloop.counter }}
-                                        </small>
-                                    </div>
+                                    <h4 class="venue-name">{{ cancha_stat.nombre_cancha }}</h4>
+                                    <p class="venue-meta">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>Cancha {{ forloop.counter }}</span>
+                                    </p>
                                 </div>
                                 <div class="venue-stats">
                                     <div class="stat-group">
@@ -291,17 +335,23 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <div class="empty-state-small">
-                            <i class="fas fa-map-marked-alt fa-2x mb-2"></i>
-                            <p>No hay datos de canchas para este período</p>
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="empty-content">
+                                <h4 class="empty-title">Sin datos de canchas</h4>
+                                <p class="empty-desc">No hay datos para este período</p>
+                            </div>
                         </div>
                     {% endif %}
                 </div>
+
                 {% if top_canchas_populares %}
-                <div class="table-footer">
-                    <a href="#" class="btn btn-sm btn-outline-primary">
-                        Ver listado completo
-                        <i class="fas fa-arrow-right ms-1"></i>
+                <div class="card-footer">
+                    <a href="#" class="btn btn-secondary">
+                        <span>Ver listado completo</span>
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
                 {% endif %}
@@ -310,22 +360,25 @@
     </div>
 
     <!-- Información Adicional -->
-    <div class="additional-info-section">
+    <div class="info-section">
         <div class="info-card">
-            <div class="info-header">
-                <h6 class="info-title">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Acerca de estas estadísticas
-                </h6>
+            <div class="card-header">
+                <div class="header-content">
+                    <h3 class="card-title">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Acerca de estas estadísticas</span>
+                    </h3>
+                </div>
             </div>
-            <div class="info-content">
+            
+            <div class="card-body">
                 <div class="info-grid">
                     <div class="info-item">
                         <div class="info-icon">
                             <i class="fas fa-star"></i>
                         </div>
                         <div class="info-text">
-                            <h6>Sistema ELO</h6>
+                            <h4>Sistema ELO</h4>
                             <p>El ranking ELO se calcula basado en victorias, derrotas y la calidad de los oponentes.</p>
                         </div>
                     </div>
@@ -334,7 +387,7 @@
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <div class="info-text">
-                            <h6>Actividad</h6>
+                            <h4>Actividad</h4>
                             <p>Los jugadores más activos son aquellos que han participado en más partidos en el período seleccionado.</p>
                         </div>
                     </div>
@@ -343,7 +396,7 @@
                             <i class="fas fa-trophy"></i>
                         </div>
                         <div class="info-text">
-                            <h6>Equipos</h6>
+                            <h4>Equipos</h4>
                             <p>Los equipos se ordenan por número de victorias y, en caso de empate, por partidos jugados.</p>
                         </div>
                     </div>
@@ -352,7 +405,7 @@
                             <i class="fas fa-map-marker-alt"></i>
                         </div>
                         <div class="info-text">
-                            <h6>Canchas</h6>
+                            <h4>Canchas</h4>
                             <p>La popularidad de las canchas se mide por el número total de partidos jugados en cada una.</p>
                         </div>
                     </div>
@@ -362,45 +415,45 @@
     </div>
 </div>
 
-<!-- Script embebido para funcionalidades básicas -->
+<!-- Scripts para animaciones -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar animaciones básicas
     initializeAnimations();
-    
-    // Efectos hover para items
-    addHoverEffects();
-    
-    // Destacar período actual
-    highlightCurrentPeriod();
+    addInteractiveEffects();
+    highlightActivePeriod();
 
     function initializeAnimations() {
-        // Animar entrada de elementos
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.classList.add('animate-in');
                 }
             });
         }, { threshold: 0.1 });
 
-        // Aplicar animación a cards
-        document.querySelectorAll('.ranking-card, .data-table-card, .info-card').forEach((el, index) => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'all 0.6s ease';
-            el.style.transitionDelay = `${index * 0.1}s`;
-            observer.observe(el);
+        // Animar secciones principales
+        document.querySelectorAll('.stats-hero-section, .ranking-card, .data-card, .info-card').forEach((el, index) => {
+            setTimeout(() => {
+                observer.observe(el);
+            }, index * 100);
         });
+
+        // Animar items de manera escalonada
+        setTimeout(() => {
+            document.querySelectorAll('.player-item, .team-item, .venue-item').forEach((item, index) => {
+                setTimeout(() => {
+                    item.classList.add('animate-in');
+                }, index * 50);
+            });
+        }, 500);
     }
 
-    function addHoverEffects() {
-        // Efectos para items de jugadores
+    function addInteractiveEffects() {
+        // Efectos hover para items de jugadores
         document.querySelectorAll('.player-item').forEach(item => {
             item.addEventListener('mouseenter', function() {
                 this.style.transform = 'translateX(8px) scale(1.02)';
-                this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.3)';
+                this.style.boxShadow = '0 12px 32px rgba(247, 131, 92, 0.15)';
             });
             
             item.addEventListener('mouseleave', function() {
@@ -409,11 +462,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // Efectos para items de equipos
+        // Efectos hover para equipos y canchas
         document.querySelectorAll('.team-item, .venue-item').forEach(item => {
             item.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-2px) scale(1.01)';
-                this.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
+                this.style.transform = 'translateY(-3px) scale(1.01)';
+                this.style.boxShadow = '0 8px 24px rgba(0, 212, 177, 0.1)';
             });
             
             item.addEventListener('mouseleave', function() {
@@ -421,13 +474,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.style.boxShadow = '';
             });
         });
+
+        // Efectos para botones
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
     }
 
-    function highlightCurrentPeriod() {
-        // Agregar efecto al período activo
+    function highlightActivePeriod() {
         const activePeriod = document.querySelector('.btn-period.active');
         if (activePeriod) {
-            activePeriod.style.boxShadow = '0 0 15px rgba(59, 130, 246, 0.4)';
+            activePeriod.style.boxShadow = '0 0 20px rgba(247, 131, 92, 0.3)';
         }
     }
 });
