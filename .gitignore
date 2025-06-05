@@ -1,3 +1,6 @@
 *env
 db.sqlite3
 migrations
+agent
+/ia_database_agent
+schema_description.txt

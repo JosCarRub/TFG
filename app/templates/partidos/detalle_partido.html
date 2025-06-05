@@ -177,7 +177,7 @@
                     <div class="progress-container">
                         {% widthratio partido.jugadores.count partido.max_jugadores 100 as progress_width %}
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: {{ progress_width }}%"></div>
+                            <div class="progress-fill"></div>
                         </div>
                         <div class="progress-labels">
                             <span>{{ plazas_disponibles }} plaza{{ plazas_disponibles|pluralize }} disponible{{ plazas_disponibles|pluralize }}</span>

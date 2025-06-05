@@ -39,12 +39,7 @@
             <!-- User Section -->
             <div class="navbar-user-section" id="base-navbar-user-section">
                 <!-- Notifications -->
-                <div class="navbar-notifications" id="base-navbar-notifications">
-                    <button class="notification-btn" id="base-notification-btn">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </button>
-                </div>
+                
 
                 <!-- User Menu -->
                 <div class="dropdown">
@@ -62,9 +57,7 @@
                         <li><a class="dropdown-item" href="{% url 'perfil' %}">
                             <i class="fas fa-user me-2"></i>Mi Perfil
                         </a></li>
-                        <li><a class="dropdown-item" href="#">
-                            <i class="fas fa-cog me-2"></i>Configuración
-                        </a></li>
+                        
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="{% url 'logout' %}">
                             <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
@@ -108,13 +101,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'buscar_partidos' %}" class="nav-link {% if 'partidos' in request.resolver_match.url_name %}active{% endif %}">
+                        <a href="{% url 'buscar_partidos' %}" class="nav-link {% if 'buscar_partidos' in request.resolver_match.url_name %}active{% endif %}">
                             <i class="fas fa-search"></i>
                             <span>Buscar Partidos</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'crear_partidos' %}" class="nav-link {% if 'crear' in request.resolver_match.url_name %}active{% endif %}">
+                        <a href="{% url 'crear_partidos' %}" class="nav-link {% if 'crear_partidos' in request.resolver_match.url_name %}active{% endif %}">
                             <i class="fas fa-plus"></i>
                             <span>Crear Partido</span>
                         </a>
@@ -149,6 +142,14 @@
                             <span>Mi Perfil</span>
                         </a>
                     </li>
+                    {% if user.is_superuser %}
+                    <li class="nav-item">
+                        <a href="{% url 'dashboard' %}" class="nav-link {% if 'dashboard' in request.resolver_match.url_name %}active{% endif %}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
             </nav>
 
@@ -171,7 +172,7 @@
         {% endblock %}
     </main>
 
-    <!-- Sidebar Overlay (móvil) -->
+    <!-- movil -->
     <div class="sidebar-overlay d-lg-none" id="base-sidebar-overlay"></div>
 
     <!-- Bootstrap JS -->

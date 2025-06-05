@@ -23,19 +23,6 @@
         
         <!-- Acciones del Header -->
         <div class="header-actions">
-            <!-- Buscador -->
-            <form method="get" action="{% url 'canchas_lista' %}" class="search-form">
-                <div class="search-container">
-                    <div class="search-icon">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <input type="text" name="q" class="search-input" placeholder="Buscar canchas por nombre..." value="{{ request.GET.q }}">
-                    <button class="search-btn" type="submit">
-                        <span>Buscar</span>
-                    </button>
-                </div>
-            </form>
-            
             <!-- Botón Añadir Cancha -->
             <a href="{% url 'canchas_registrar' %}" class="btn btn-primary">
                 <i class="fas fa-plus-circle"></i>

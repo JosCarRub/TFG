@@ -13,9 +13,9 @@
     <div class="editar-perfil-container"> 
 
             
-            <div class="form-container"> {# Reemplaza .content-card #}
-                <div class="form-header"> {# Reemplaza .content-card-header #}
-                    {# <h4 class="content-card-title"> Mapea a .form-title #}
+            <div class="form-container"> 
+                <div class="form-header"> 
+                    <h4 class="content-card-title"> 
                     <h4 class="form-title">
                         <i class="fas fa-user-edit"></i> 
                         {{ titulo_pagina|default:"Editar Perfil" }}
@@ -219,21 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Validación del formulario (opcional, Django ya valida)
-    const form = document.querySelector('.profile-form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-           
-            const submitButton = form.querySelector('button[type="submit"].btn-primary');
-            if (submitButton) {
-                submitButton.classList.add('loading'); // Necesitarías CSS para .loading
-
-                const icon = submitButton.querySelector('i');
-                if (icon) icon.className = 'fas fa-spinner fa-spin'; // Cambia el ícono a spinner
-                submitButton.disabled = true;
-            }
-        });
-    }
+    
 });
 </script>
 {% endblock %}

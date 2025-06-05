@@ -9,7 +9,7 @@ from django.db.models import Q
 class EquipoPermanenteForm(forms.ModelForm):
 
     miembros_iniciales = forms.ModelMultipleChoiceField(
-        queryset=User.objects.all().order_by('nombre'), # Podrías filtrar esto
+        queryset=User.objects.all().order_by('nombre'),
         widget=forms.SelectMultiple(attrs={'class': 'form-select bg-dark text-white border-secondary', 'size': '5'}),
         required=False,
         label="Añadir Miembros Iniciales (Opcional)",
@@ -36,11 +36,10 @@ class EquipoPermanenteForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None) # Recibir el usuario actual
+        self.user = kwargs.pop('user', None) # usuario actual
         super().__init__(*args, **kwargs)
         
-        # Excluir al usuario actual de la lista de miembros iniciales seleccionables,
-        # ya que se añadirá automáticamente como capitán y miembro.
+        # se incluye al usuario actual de la lista de miembros iniciales
         if self.user:
             self.fields['miembros_iniciales'].queryset = User.objects.exclude(pk=self.user.pk).order_by('nombre')
 
@@ -49,7 +48,7 @@ class EquipoPermanenteForm(forms.ModelForm):
         nombre = self.cleaned_data.get('nombre_equipo')
         query = Equipo.objects.filter(nombre_equipo__iexact=nombre, tipo_equipo='PERMANENTE')
         
-        # Si estamos editando (self.instance.pk existe), excluimos el propio equipo de la comprobación
+        # si se edita excluimos el propio equipo de la comprobación
         if self.instance and self.instance.pk:
             query = query.exclude(pk=self.instance.pk)
             

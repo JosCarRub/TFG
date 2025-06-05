@@ -48,4 +48,10 @@ class Home(LoginRequiredMixin, TemplateView):
 
 
         return context
+    
+class DashboardAdmin(TemplateView):
+    template_name = 'secret/dashboard.html'
+
+class DashboardAdminVoice(TemplateView):
+    template_name = 'secret/dashboard_voice.html'
 

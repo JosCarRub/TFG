@@ -11,8 +11,11 @@ urlpatterns = [
     path('', Landing.as_view(), name='landing'),
     path('home', Home.as_view(), name='home'),
 
+    path('dashboard', DashboardAdmin.as_view(), name = 'dashboard'),
+    path('dashboard_voice', DashboardAdminVoice.as_view(), name = 'dashboard_voice'),
+
 #---------- REGISTRO --------------------------------------------------------------------------------------------
-    path('registro',UserRegister.as_view(), name='registro' ),
+    path('registro/',UserRegister.as_view(), name='registro' ),
 
 ##---------- PERFIL --------------------------------------------------------------------------------------------
     path('perfil/', Perfil.as_view(), name='perfil'),
